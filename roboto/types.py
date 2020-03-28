@@ -5,14 +5,6 @@ from dataclasses import dataclass, field
 from typing import Any, List, Optional, Union
 
 
-class Token(str):
-    """Strong type for API tokens."""
-
-
-class URL(str):
-    """Strong type for URLs."""
-
-
 class UserID(int):
     """Strong type for user IDs."""
 
@@ -27,11 +19,6 @@ class MessageID(int):
 
 class FileID(str):
     """Strong type for file IDs."""
-
-
-def api_url(token: Token) -> URL:
-    """Get the API url based on the bot token."""
-    return URL(f'https://api.telegram.org/bot{token}/')
 
 
 @dataclass(frozen=True)
@@ -462,9 +449,41 @@ class GetUpdatesRequest:
     allowed_updates: Optional[List[str]] = None
 
 
-@dataclass(frozen=True)
-class APIInfo:
-    """Type representing a Bot."""
-
-    token: Token
-    url: URL
+__all__ = [
+    'APIResponse',
+    'Animation',
+    'Audio',
+    'CallbackQuery',
+    'Chat',
+    'ChatID',
+    'ChatPhoto',
+    'ChosenInlineResult',
+    'Contact',
+    'Document',
+    'FileID',
+    'Game',
+    'GetUpdatesRequest',
+    'InlineQuery',
+    'Invoice',
+    'Location',
+    'MaskPosition',
+    'Message',
+    'MessageBase',
+    'MessageEntity',
+    'MessageID',
+    'OrderInfo',
+    'PhotoSize',
+    'PreCheckoutQuery',
+    'SendMessageRequest',
+    'ShippingAddress',
+    'ShippingQuery',
+    'Sticker',
+    'SuccessfulPayment',
+    'Update',
+    'User',
+    'UserID',
+    'Venue',
+    'Video',
+    'VideoNote',
+    'Voice',
+]
