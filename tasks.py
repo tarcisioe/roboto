@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from invoke import Result, UnexpectedExit, task
+from invoke import Result, task
 
 PACKAGE_NAME = "roboto"
 
@@ -25,7 +25,7 @@ def check_all(results: List[Result]):
 
 
 @task
-def test(c, coverage = False):
+def test(c, coverage=False):
     coverage_flag = f'--cov={PACKAGE_NAME}' if coverage else None
 
     command = ' '.join(piece for piece in (
