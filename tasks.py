@@ -30,12 +30,12 @@ def test(c, coverage = False):
 @task
 def lint(c):
     check_all([
-        c.run(f'mypy {PACKAGE_NAME}'),
-        c.run(f'flake8 {PACKAGE_NAME}'),
-        c.run(f'pylint {PACKAGE_NAME}'),
-        c.run(f'mypy tests'),
-        c.run(f'flake8 tests'),
-        c.run(f'pylint tests'),
+        c.run(f'mypy {PACKAGE_NAME}', warn=True, hide='out'),
+        c.run(f'flake8 {PACKAGE_NAME}', warn=True, hide='out'),
+        c.run(f'pylint {PACKAGE_NAME}', warn=True, hide='out'),
+        c.run(f'mypy tests', warn=True, hide='out'),
+        c.run(f'flake8 tests', warn=True, hide='out'),
+        c.run(f'pylint tests', warn=True, hide='out'),
     ])
 
 
@@ -50,10 +50,10 @@ def format(c):
 @task
 def format_check(c):
     check_all([
-        c.run(f'black --check -q {PACKAGE_NAME}', warn=True),
-        c.run(f'black --check -q tests', warn=True),
-        c.run(f'isort -rc -c -q {PACKAGE_NAME}', warn=True),
-        c.run(f'isort -rc -c -q tests', warn=True),
+        c.run(f'black --check -q {PACKAGE_NAME}', warn=True, hide='out'),
+        c.run(f'black --check -q tests', warn=True, hide='out'),
+        c.run(f'isort -rc -c -q {PACKAGE_NAME}', warn=True, hide='out'),
+        c.run(f'isort -rc -c -q tests', warn=True, hide='out'),
     ])
 
 
