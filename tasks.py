@@ -1,17 +1,27 @@
+from dataclasses import dataclass
 from typing import List
 
 from invoke import Result, UnexpectedExit, task
 
-PACKAGE_NAME="roboto"
+PACKAGE_NAME = "roboto"
+
+
+@dataclass
+class UnexpectedExits(Exception):
+    failed_results: List[Result]
+
+    def __repr__(self):
+        return '\n'.join(repr(r) for r in self.failed_results)
+
+    def __str__(self):
+        return '\n'.join(str(r) for r in self.failed_results)
 
 
 def check_all(results: List[Result]):
-    try:
-        result = next(result for result in results if result.exited != 0)
-    except StopIteration:
-        pass
-    else:
-        raise UnexpectedExit(result)
+    results = [result for result in results if result.exited != 0]
+
+    if results:
+        raise UnexpectedExits(results)
 
 
 @task
