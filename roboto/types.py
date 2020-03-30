@@ -2,23 +2,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, List, Optional, Union
+from typing import Any, List, NewType, Optional, Union
 
-
-class UserID(int):
-    """Strong type for user IDs."""
-
-
-class ChatID(int):
-    """Strong type for chat IDs."""
-
-
-class MessageID(int):
-    """Strong type for message IDs."""
-
-
-class FileID(str):
-    """Strong type for file IDs."""
+Token = NewType('Token', str)
+UserID = NewType('UserID', int)
+ChatID = NewType('ChatID', int)
+MessageID = NewType('MessageID', int)
+FileID = NewType('FileID', str)
 
 
 @dataclass(frozen=True)
@@ -27,6 +17,8 @@ class User:
 
     id: UserID
     first_name: str
+    is_bot: bool
+    can_join_groups: bool
     last_name: str = ''
     username: str = ''
     language_code: str = ''
@@ -479,6 +471,7 @@ __all__ = [
     'ShippingQuery',
     'Sticker',
     'SuccessfulPayment',
+    'Token',
     'Update',
     'User',
     'UserID',
