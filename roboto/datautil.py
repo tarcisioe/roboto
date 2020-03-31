@@ -1,12 +1,13 @@
 """Utilities from deserializing values as dataclasses."""
 import sys
 from dataclasses import Field, fields, is_dataclass
-from typing import Any, Dict, List, Optional, Type, TypeVar, Union, overload
+from typing import Any, Dict, List, Optional, Type, TypeVar, Union, cast, overload
 
-from typing_extensions import Protocol, runtime_checkable
+from typing_extensions import Protocol
 from typing_inspect import get_args, get_origin, is_optional_type
 
 from .error import RobotoError
+from .typing_util import evaluate_type, is_new_type, original_type, type_name
 
 T = TypeVar('T')
 
@@ -15,52 +16,45 @@ JSONPrimitives = Optional[Union[Number, str, bool, None]]
 JSONLike = Union[JSONPrimitives, Dict[str, Any], List[Any]]
 
 
-@runtime_checkable
 class Dataclass(Protocol):
-    """A class that is a dataclass."""
+    """Protocol for a dataclass instance or type."""
 
     __dataclass_fields__: Dict[str, Field]
 
 
-def renames(cls: Type[Dataclass]) -> Dict[str, str]:
-    """Get all renames from a dataclass."""
+def renames(cls: Dataclass) -> Dict[str, str]:
+    """Get all serialization renames from a dataclass.
+
+    Args:
+        cls: A dataclass type.
+
+    Return:
+        A mapping of class attribute names to the name they expect when
+        deserializing.
+    """
     return {
-        field.name: field.metadata['rename']
+        field.metadata['rename']: field.name
         for field in fields(cls)
         if 'rename' in field.metadata
     }
 
 
-def is_new_type(tp) -> bool:
-    """Check if a given type is a NewType strong type alias."""
-    return getattr(tp, '__supertype__', None) is not None
+def field_type(cls: Type[T], field_name: str) -> type:
+    """Get the type of a field from a dataclass.
 
-
-def original_type(tp) -> type:
-    """Return the base type of a strong type alias.
+    `cls` is expected to be a dataclass type.
 
     Args:
-        tp: A NewType type-alias.
+        cls: A dataclass type.
+        field_name: The name of the field to query the type of.
 
     Returns:
-        The underlying type of the type-alias.
+        The type of the requested field.
     """
-    return tp.__supertype__
+    as_dataclass = cast(Dataclass, cls)
 
-
-TypeHint = Union[str, type]
-
-
-def field_type(cls: Type[Dataclass], field_name: str) -> type:
-    """Get the type of a field from a dataclass."""
-    candidate: TypeHint = cls.__dataclass_fields__[field_name].type
-
-    def evaluate_type(type_annotation: str) -> type:
-        return eval(  # pylint: disable=eval-used
-            type_annotation, vars(sys.modules[cls.__module__]),
-        )
-
-    return evaluate_type(candidate) if isinstance(candidate, str) else candidate
+    tp = as_dataclass.__dataclass_fields__[field_name].type
+    return evaluate_type(tp, vars(sys.modules[cls.__module__]))
 
 
 def from_list(list_type: Type[List[T]], v: List[JSONLike]) -> List[T]:
@@ -69,19 +63,21 @@ def from_list(list_type: Type[List[T]], v: List[JSONLike]) -> List[T]:
     return [from_json(inner_type, value) for value in v]
 
 
-def from_dict(cls: Type[Dataclass], d: Dict[str, JSONLike]):
+def from_dict(cls: Type[T], d: Dict[str, JSONLike]):
     """Transform a JSON-like structure into a JSON-compatible dataclass."""
-    field_renames = renames(cls)
+    as_dataclass = cast(Dataclass, cls)
 
-    for k in d:
-        if k in field_renames:
+    field_renames = renames(as_dataclass)
+
+    for k in field_renames:
+        if k in d:
             d[field_renames[k]] = d.pop(k)
 
     return cls(
         **{
             k: from_json(field_type(cls, k), v)
             for k, v in d.items()
-            if k in cls.__dataclass_fields__
+            if k in as_dataclass.__dataclass_fields__
         }
     )  # type: ignore
 
@@ -98,19 +94,19 @@ class JSONConversionError(RobotoError):
 @overload
 def from_json(schema_class: Type[List[T]], j: JSONLike) -> List[T]:
     """Overload declaration of from_json."""
-    ...
+    ...  # pragma: no cover
 
 
 @overload
 def from_json(schema_class: Type[T], j: JSONLike) -> T:
     """Overload declaration of from_json."""
-    ...
+    ...  # pragma: no cover
 
 
 @overload
 def from_json(schema_class: None, j: JSONLike) -> None:
     """Overload declaration of from_json."""
-    ...
+    ...  # pragma: no cover
 
 
 def from_json(schema_class, j):
@@ -147,16 +143,19 @@ def from_json(schema_class, j):
         return strict_type
 
     strict_type = resolve_type(schema_class)
-
-    strict_type_name = strict_type.__name__
-    type_name = strict_type_name if not optional else f'Optional[{strict_type_name}]'
+    strict_type_name = type_name(strict_type)
+    schema_class_name = (
+        strict_type_name if not optional else f'Optional[{strict_type_name}]'
+    )
 
     if j is None:
         if optional:
             return None
 
         raise JSONConversionError(
-            f'Cannot read None into non-optional type {type_name}.', schema_class, j,
+            f'Cannot read None into non-optional type {schema_class_name}.',
+            schema_class,
+            j,
         )
 
     if isinstance(j, get_args(JSONPrimitives)):  # type: ignore
@@ -168,17 +167,18 @@ def from_json(schema_class, j):
                 return schema_class(j)
 
         raise JSONConversionError(
-            f'Cannot read primitive value {j} into non-primitive type {type_name}.',
+            'Cannot read primitive value {j} into non-primitive type '
+            f'{schema_class_name}.',
             schema_class,
             j,
         )
 
     if isinstance(j, dict):
-        if is_dataclass(schema_class):
+        if is_dataclass(strict_type):
             return from_dict(strict_type, j)
 
         raise JSONConversionError(
-            f'Cannot read dictionary into non-dataclass type {type_name}.',
+            f'Cannot read dictionary into non-dataclass type {schema_class_name}.',
             schema_class,
             j,
         )
@@ -188,9 +188,11 @@ def from_json(schema_class, j):
             return from_list(strict_type, j)
 
         raise JSONConversionError(
-            f'Failed to read value into type {type_name}.', schema_class, j,
+            f'Failed to read list of types into non-list type {schema_class_name}.',
+            schema_class,
+            j,
         )
 
     raise JSONConversionError(
-        f'Failed to read value into type {type_name}.', schema_class, j,
+        f'Failed to read value into type {schema_class_name}.', schema_class, j,
     )
