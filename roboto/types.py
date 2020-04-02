@@ -12,16 +12,34 @@ FileID = NewType('FileID', str)
 
 
 @dataclass(frozen=True)
-class User:
+class _UserRequiredCommon:
+    id: UserID
+    is_bot: bool
+    first_name: str
+
+
+@dataclass(frozen=True)
+class _BotUserRequired(_UserRequiredCommon):
+    can_join_groups: bool
+    can_read_all_group_messages: bool
+    supports_inline_queries: bool
+
+
+@dataclass(frozen=True)
+class _UserOptionalCommon:
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    language_code: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class User(_UserOptionalCommon, _UserRequiredCommon):
     """Representation of a user returned by the Bot API."""
 
-    id: UserID
-    first_name: str
-    is_bot: bool
-    can_join_groups: bool
-    last_name: str = ''
-    username: str = ''
-    language_code: str = ''
+
+@dataclass(frozen=True)
+class BotUser(_UserOptionalCommon, _BotUserRequired):
+    """Representation of a Bot user returned by the Bot API through getMe."""
 
 
 @dataclass(frozen=True)
@@ -445,6 +463,7 @@ __all__ = [
     'APIResponse',
     'Animation',
     'Audio',
+    'BotUser',
     'CallbackQuery',
     'Chat',
     'ChatID',
