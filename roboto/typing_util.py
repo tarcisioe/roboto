@@ -5,6 +5,11 @@ from typing import Any, Dict, Type, TypeVar, Union
 T = TypeVar('T')
 
 
+def is_none_type(tp: Type[T]) -> bool:
+    """Check if a type is NoneType (type(None))."""
+    return tp is type(None)  # noqa
+
+
 def is_new_type(tp: Type[T]) -> bool:
     """Check if a given type is a NewType strong type alias."""
     return getattr(tp, '__supertype__', None) is not None

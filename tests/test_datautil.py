@@ -196,6 +196,13 @@ def test_from_json_with_list() -> None:
         assert from_json(int, [1, 2, 3],)
 
 
+def test_from_json_with_optional_list() -> None:
+    """Ensure `from_json` can read an optional list of values."""
+
+    assert from_json(Optional[List[int]], None) is None
+    assert from_json(Optional[List[int]], [1, 2, 3]) == [1, 2, 3]
+
+
 def test_json_incompatible_type() -> None:
     """Ensure from_json fails in an expected way if value is unsupported."""
     with raises(JSONConversionError):

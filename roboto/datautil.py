@@ -7,7 +7,13 @@ from typing_extensions import Protocol
 from typing_inspect import get_args, get_origin, is_optional_type
 
 from .error import RobotoError
-from .typing_util import evaluate_type, is_new_type, original_type, type_name
+from .typing_util import (
+    evaluate_type,
+    is_new_type,
+    is_none_type,
+    original_type,
+    type_name,
+)
 
 T = TypeVar('T')
 
@@ -22,8 +28,10 @@ class Dataclass(Protocol):
     __dataclass_fields__: Dict[str, Field]
 
 
-def renames(cls: Dataclass) -> Dict[str, str]:
+def renames(cls: Type[T]) -> Dict[str, str]:
     """Get all serialization renames from a dataclass.
+
+    `cls` is expected to be a Dataclass type.
 
     Args:
         cls: A dataclass type.
@@ -65,9 +73,9 @@ def from_list(list_type: Type[List[T]], v: List[JSONLike]) -> List[T]:
 
 def from_dict(cls: Type[T], d: Dict[str, JSONLike]):
     """Transform a JSON-like structure into a JSON-compatible dataclass."""
-    as_dataclass = cast(Dataclass, cls)
+    field_renames = renames(cls)
 
-    field_renames = renames(as_dataclass)
+    as_dataclass = cast(Dataclass, cls)
 
     for k in field_renames:
         if k in d:
@@ -132,7 +140,7 @@ def from_json(schema_class, j):
 
     def resolve_type(schema_class):
         (strict_type,) = (
-            [t for t in get_args(schema_class) if not isinstance(None, t)]
+            [t for t in get_args(schema_class) if not is_none_type(t)]
             if optional
             else (schema_class,)
         )
