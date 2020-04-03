@@ -1,6 +1,6 @@
 """Utilities from deserializing values as dataclasses."""
 import sys
-from dataclasses import Field, fields, is_dataclass
+from dataclasses import Field, asdict, fields, is_dataclass
 from typing import Any, Dict, List, Optional, Type, TypeVar, Union, cast, overload
 
 from typing_extensions import Protocol
@@ -203,4 +203,36 @@ def from_json(schema_class, j):
 
     raise JSONConversionError(
         f'Failed to read value into type {schema_class_name}.', schema_class, j,
+    )
+
+
+def to_json(obj: Any) -> JSONLike:
+    """Serialize an object to a JSON-compatible representation.
+
+    `obj` must be:
+        - a JSON primitive (int, float, str, bool or None),
+        - an object of a dataclass where every field is JSON-compatible, or
+        - a list of JSON-compatible objects.
+
+    Args:
+        obj: The object to serialize.
+
+    Returns:
+        A representation that can be converted to JSON.
+    """
+    if isinstance(obj, get_args(JSONPrimitives)):  # type: ignore
+        return obj
+    if isinstance(obj, dict):
+        return {k: to_json(v) for k, v in obj.items() if v is not None}
+    if is_dataclass(obj):
+        return {k: to_json(v) for k, v in asdict(obj).items() if v is not None}
+    if isinstance(obj, List):
+        return [to_json(v) for v in obj]
+
+    obj_type = type(obj)
+
+    raise JSONConversionError(
+        f'Failed to turn value of type {type_name(obj_type)} into a JSONLike.',
+        obj_type,
+        obj,
     )

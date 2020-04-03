@@ -11,6 +11,7 @@ from roboto.datautil import (
     from_json,
     from_list,
     renames,
+    to_json,
 )
 
 
@@ -163,7 +164,7 @@ def test_from_json_with_dict():
         from_json(int, {'a': 1})
 
     class _NotADataclass:
-        def __init__(self, a, b='test'):
+        def __init__(self, a: int, b: str = 'test'):
             self.a = a
             self.b = b
 
@@ -203,10 +204,63 @@ def test_from_json_with_optional_list() -> None:
     assert from_json(Optional[List[int]], [1, 2, 3]) == [1, 2, 3]
 
 
-def test_json_incompatible_type() -> None:
+def test_from_json_incompatible_type() -> None:
     """Ensure from_json fails in an expected way if value is unsupported."""
     with raises(JSONConversionError):
         # To be fair, mypy won't let you.
         assert from_json(  # type: ignore
             List[int], {1, 2, 3},
         )
+
+
+def test_to_json_primitive_types() -> None:
+    """Ensure to_json doesn't change primitive types."""
+    assert to_json(1) == 1
+    assert to_json(1.0) == 1.0
+    assert to_json('text') == 'text'
+    assert to_json(True)
+
+
+def test_to_json_dataclass_type() -> None:
+    """Ensure to_json doesn't change primitive types."""
+
+    @dataclass
+    class _Serializable:
+        x: int
+        y: str
+
+    assert to_json(_Serializable(1, 'bla')) == {'x': 1, 'y': 'bla'}
+
+    @dataclass
+    class _Nested:
+        x: int
+        y: _Serializable
+
+    print(_Nested(1, _Serializable(1, 'bla')).y)
+
+    assert to_json(_Nested(1, _Serializable(1, 'bla')))  # == {'x': 1, 'y': 'bla'}
+
+
+def test_to_json_list_type() -> None:
+    """Ensure to_json doesn't change primitive types."""
+
+    @dataclass
+    class _Serializable:
+        x: int
+        y: str
+
+    assert to_json([_Serializable(1, 'text'), _Serializable(2, 'other')]) == (
+        [{'x': 1, 'y': 'text'}, {'x': 2, 'y': 'other'}]
+    )
+
+
+def test_to_json_unsupported_type() -> None:
+    """Ensure to_json raises with unsupported object."""
+
+    class _NotADataclass:
+        def __init__(self, a: int, b: str):
+            self.a = a
+            self.b = b
+
+    with raises(JSONConversionError):
+        to_json(_NotADataclass(1, 'text'))
