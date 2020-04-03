@@ -1,6 +1,7 @@
 """Utilities from deserializing values as dataclasses."""
 import sys
 from dataclasses import Field, asdict, fields, is_dataclass
+from enum import Enum
 from typing import Any, Dict, List, Optional, Type, TypeVar, Union, cast, overload
 
 from typing_extensions import Protocol
@@ -228,6 +229,8 @@ def to_json(obj: Any) -> JSONLike:
         return {k: to_json(v) for k, v in asdict(obj).items() if v is not None}
     if isinstance(obj, List):
         return [to_json(v) for v in obj]
+    if isinstance(obj, Enum):
+        return to_json(obj.value)
 
     obj_type = type(obj)
 

@@ -1,5 +1,6 @@
 """Tests for the roboto.datautil module."""
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import Any, List, NewType, Optional
 
 from pytest import raises
@@ -252,6 +253,29 @@ def test_to_json_list_type() -> None:
     assert to_json([_Serializable(1, 'text'), _Serializable(2, 'other')]) == (
         [{'x': 1, 'y': 'text'}, {'x': 2, 'y': 'other'}]
     )
+
+
+def test_to_json_enum_type() -> None:
+    """Ensure to_json supports Enum types."""
+
+    class _MyEnum(Enum):
+        A = 1
+        B = 2
+
+    assert to_json(_MyEnum.A) == 1
+
+    class _StrEnum(Enum):
+        A = 'text'
+        B = 'other'
+
+    assert to_json(_StrEnum.A) == 'text'
+
+    @dataclass
+    class _HasEnumMembers:
+        x: _MyEnum
+        y: _StrEnum
+
+    assert to_json(_HasEnumMembers(_MyEnum.B, _StrEnum.B)) == {'x': 2, 'y': 'other'}
 
 
 def test_to_json_unsupported_type() -> None:
