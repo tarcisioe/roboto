@@ -1,15 +1,17 @@
 [tool.poetry]
-name = "roboto"
+name = "roboto-telegram"
 version = "0.1.0"
-description = "A type-hinted Telegram bot library."
+description = "A type-hinted async Telegram bot library."
 authors = ["Tarcísio Eduardo Moreira Crocomo <tarcisioe@pm.me>"]
 license = "MIT"
 readme = "README.md"
+packages = [
+    { include = "roboto" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"
 validators = "^0.14.2"
-pytest-cov = "^2.8.1"
 aiohttp = "^3.6.2"
 typing-extensions = "^3.7.4"
 typing-inspect = "^0.5.0"
@@ -24,6 +26,7 @@ pylint = "^2.4.4"
 pylint-quotes = "^0.2.1"
 mypy = "^0.770"
 flake8-bugbear = "^20.1.4"
+pytest-cov = "^2.8.1"
 
 [tool.black]
 skip_string_normalization = true
