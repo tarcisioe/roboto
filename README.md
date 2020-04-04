@@ -29,23 +29,20 @@ api_token = Token('your-bot-token')
 async def main() -> None:
     bot = BotAPI(api_token)
 
-    print(await bot.get_me())
-
     offset = 0
 
     while True:
         updates = await bot.get_updates(offset)
-        print(updates)
+
+        for update in updates:
+            if update.message is not None and update.message.text is not None:
+                await bot.send_message(
+                    update.message.chat.id,
+                    update.message.text,
+                )
+
         if updates:
-            for update in updates:
-                if update.message is not None and update.message.text is not None:
-                    await bot.send_message(
-                        update.message.chat.id,
-                        update.message.text,
-                    )
-
             offset = updates[-1].update_id + 1
-
 
 run(main())
 ```
