@@ -1,12 +1,11 @@
 """Bot API request function."""
-from dataclasses import asdict
 from enum import Enum
 from typing import Any
 from urllib.parse import urljoin
 
 from aiohttp import ClientSession
 
-from .datautil import from_json
+from .datautil import from_json, to_json
 from .error import BotAPIError
 from .types import APIResponse
 from .url import URL
@@ -38,7 +37,7 @@ async def make_request(
     url = urljoin(api_url, endpoint)
 
     if body is not None:
-        body = {k: v for k, v in asdict(body).items() if v is not None}
+        body = to_json(body)
 
     async with ClientSession() as s:
         content = await s.request(method.value, url, json=body)
