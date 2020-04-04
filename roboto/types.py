@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import Any, List, NewType, Optional, Union
 
 Token = NewType('Token', str)
@@ -436,15 +437,22 @@ class Update:
     pre_checkout_query: Optional[PreCheckoutQuery] = None
 
 
+class ParseMode(Enum):
+    """Parse mode for text messages."""
+
+    MARKDOWN = 'Markdown'
+    HTML = 'HTML'
+
+
 @dataclass(frozen=True)
 class SendMessageRequest:
     """Parameters for sending a message."""
 
     chat_id: Union[ChatID, str]
     text: str
-    parse_mode: Optional[str] = None
-    disable_web_page_preview: bool = False
-    disable_notification: bool = False
+    parse_mode: Optional[ParseMode] = None
+    disable_web_page_preview: Optional[bool] = None
+    disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[int] = None
     reply_markup: Optional[str] = None
 
@@ -483,6 +491,7 @@ __all__ = [
     'MessageEntity',
     'MessageID',
     'OrderInfo',
+    'ParseMode',
     'PhotoSize',
     'PreCheckoutQuery',
     'SendMessageRequest',

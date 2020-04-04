@@ -1,6 +1,6 @@
 """The main bot class for Roboto."""
 from dataclasses import InitVar, dataclass, field
-from typing import List, Union
+from typing import List, Optional, Union
 
 from .datautil import from_json
 from .http import HTTPMethod, make_request
@@ -9,6 +9,7 @@ from .types import (
     ChatID,
     GetUpdatesRequest,
     Message,
+    ParseMode,
     SendMessageRequest,
     Token,
     Update,
@@ -65,14 +66,29 @@ class BotAPI:
         )
         return from_json(List[Update], response)
 
-    async def send_message(self, chat_id: Union[ChatID, str], text: str) -> Message:
+    async def send_message(
+        self,
+        chat_id: Union[ChatID, str],
+        text: str,
+        parse_mode: Optional[ParseMode] = None,
+        disable_web_page_preview: Optional[bool] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[int] = None,
+    ) -> Message:
         """sendMessage API method.
 
         Args:
             chat_id: The ID of the chat to send a message to.
             text: The message text.
         """
-        request = SendMessageRequest(chat_id, text)
+        request = SendMessageRequest(
+            chat_id,
+            text,
+            parse_mode,
+            disable_web_page_preview,
+            disable_notification,
+            reply_to_message_id,
+        )
         response = await make_request(
             self.api_url, HTTPMethod.POST, 'sendMessage', request
         )
