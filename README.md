@@ -1,4 +1,74 @@
 Roboto
 ======
 
-A type-hinted Telegram bot library.
+
+A type-hinted async Telegram bot library.
+
+Roboto's API is not perfectly stable nor complete yet. It will be kept a 0.x.0
+until the Telegram Bot API is completely implemented, and will be bumped to
+1.0.0 when it is complete.
+
+
+Basic usage
+===========
+
+Roboto is still a low-level bot API, meaning it does not provide much
+abstraction over the Bot API yet (that is planned, though).
+
+Currently, a basic echo bot with roboto looks like:
+
+```python
+from roboto import Token, BotAPI
+
+from asyncio import run
+
+
+api_token = Token('your-bot-token')
+
+
+async def main() -> None:
+    bot = BotAPI(api_token)
+
+    print(await bot.get_me())
+
+    offset = 0
+
+    while True:
+        updates = await bot.get_updates(offset)
+        print(updates)
+        if updates:
+            for update in updates:
+                if update.message is not None and update.message.text is not None:
+                    await bot.send_message(
+                        update.message.chat.id,
+                        update.message.text,
+                    )
+
+            offset = updates[-1].update_id + 1
+
+
+run(main())
+```
+
+Being statically-typed, Roboto supports easy autocompletion and `mypy` static
+checking.
+
+
+Goals
+=====
+
+Principles
+----------
+
+- Ease of static checking for client code, especially static typing.
+- Forwards compatibility (additions to the bot HTTP API should not break older
+  versions of Roboto easily).
+
+Next milestones
+---------------
+
+- [ ] Full Telegram Bot API implementation.
+- [ ] High-level API (abstraction for command handlers, necessary internal
+      state, etc.).
+- [ ] Support for other async runtimes other than asyncio (especially
+      [`trio`](https://github.com/python-trio/trio)).
