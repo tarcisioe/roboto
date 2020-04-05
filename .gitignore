@@ -4,4 +4,5 @@ dist/
 htmlcov/
 .mypy_cache/
 __pycache__/
+/test.py
 .venv/
