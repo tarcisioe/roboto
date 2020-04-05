@@ -92,6 +92,14 @@ def test_from_json_with_any():
     assert from_json(Any, value) is value
 
 
+def test_from_json_optional_any() -> None:
+    """Ensure `from_json` understands Optional[Any]."""
+    value = {'a': 1, 'b': 'text'}
+
+    assert from_json(Optional[Any], value) is value
+    assert from_json(Optional[Any], None) is None
+
+
 def test_from_json_with_optional() -> None:
     """Ensure `from_json` accepts None with Optional and rejects otherwise."""
     assert from_json(Optional[int], None) is None

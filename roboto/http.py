@@ -44,7 +44,10 @@ async def make_request(
 
     response: APIResponse = from_json(APIResponse, await content.json())
 
-    if not response.ok:
-        raise BotAPIError('Failed to read response from Telegram Bot API')
+    if response.result is None:
+        assert response.error_code is not None and response.description is not None
+        raise BotAPIError(
+            response.error_code, response.description,
+        )
 
     return response.result

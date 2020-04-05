@@ -134,9 +134,6 @@ def from_json(schema_class, j):
     Returns:
         An object of the type given by `schema_class`.
     """
-    if schema_class is Any:
-        return j
-
     optional = is_optional_type(schema_class)
 
     def resolve_type(schema_class):
@@ -152,6 +149,10 @@ def from_json(schema_class, j):
         return strict_type
 
     strict_type = resolve_type(schema_class)
+
+    if strict_type is Any:
+        return j
+
     strict_type_name = type_name(strict_type)
     schema_class_name = (
         strict_type_name if not optional else f'Optional[{strict_type_name}]'
