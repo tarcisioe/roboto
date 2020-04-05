@@ -1,6 +1,8 @@
 Roboto
 ======
 
+![](https://github.com/tarcisioe/roboto/workflows/CI/badge.svg)
+[![codecov](https://codecov.io/gh/tarcisioe/roboto/branch/master/graph/badge.svg)](https://codecov.io/gh/tarcisioe/roboto)
 
 A type-hinted async Telegram bot library.
 
