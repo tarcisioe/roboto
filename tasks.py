@@ -1,20 +1,31 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 
-from invoke import Result, task
+from invoke import Result, task, UnexpectedExit
 
 PACKAGE_NAME = "roboto"
 
 
 @dataclass
-class UnexpectedExits(Exception):
+class UnexpectedExits(UnexpectedExit):
     failed_results: List[Result]
 
-    def __repr__(self):
-        return '\n'.join(repr(r) for r in self.failed_results)
+    @dataclass
+    class _FakeResult:
+        hide: bool = field(default=True, init=False)
+        exited: int = field(default=1, init=False)
+
+    result: Result = field(default_factory=_FakeResult, init=False)
 
     def __str__(self):
-        return '\n'.join(str(r) for r in self.failed_results)
+        return '\n'.join(
+            '\n'.join(
+                (
+                    f'### Command \'{r.command}\' failed',
+                    str(r)
+                )
+            ) for r in self.failed_results
+        )
 
 
 def check_all(results: List[Result]):
@@ -67,7 +78,11 @@ def format_check(c):
     ])
 
 
-@task
+@task(pre=[lint, format])
+def static_checks(c):
+    pass
+
+
+@task(pre=[static_checks, test])
 def all_checks(c):
-    lint(c)
-    format_check(c)
+    pass
