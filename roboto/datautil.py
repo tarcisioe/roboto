@@ -82,13 +82,13 @@ def from_dict(cls: Type[T], d: Dict[str, JSONLike]):
         if k in d:
             d[field_renames[k]] = d.pop(k)
 
-    return cls(
+    return cls(  # type: ignore
         **{
             k: from_json(field_type(cls, k), v)
             for k, v in d.items()
             if k in as_dataclass.__dataclass_fields__
         }
-    )  # type: ignore
+    )
 
 
 class JSONConversionError(RobotoError):
