@@ -36,6 +36,22 @@ def check_all(results: List[Result]):
 
 
 @task
+def install_dev_tools(c):
+    c.run(
+        ' '.join((
+            'poetry run pip install',
+            'black',
+            'flake8',
+            'flake8-bugbear',
+            'isort',
+            'mypy',
+            'pylint',
+            'pylint-quotes',
+        ))
+    )
+
+
+@task
 def test(c, coverage=False):
     coverage_flag = f'--cov={PACKAGE_NAME}' if coverage else None
 
