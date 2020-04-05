@@ -48,7 +48,9 @@ class APIResponse:
     """API Response format."""
 
     ok: bool
-    result: Any
+    result: Optional[Any] = None
+    error_code: Optional[int] = None
+    description: Optional[str] = None
 
 
 @dataclass(frozen=True)
