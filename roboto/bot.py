@@ -9,6 +9,7 @@ from .types import (
     ChatID,
     GetUpdatesRequest,
     Message,
+    MessageID,
     ParseMode,
     SendMessageRequest,
     Token,
@@ -73,7 +74,7 @@ class BotAPI:
         parse_mode: Optional[ParseMode] = None,
         disable_web_page_preview: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
+        reply_to_message_id: Optional[MessageID] = None,
     ) -> Message:
         """sendMessage API method.
 
