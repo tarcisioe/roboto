@@ -19,7 +19,7 @@ from .typing_util import (
 T = TypeVar('T')
 
 Number = Union[int, float]
-JSONPrimitives = Optional[Union[Number, str, bool, None]]
+JSONPrimitives = Optional[Union[Number, str, bool]]
 JSONLike = Union[JSONPrimitives, Dict[str, Any], List[Any]]
 
 
