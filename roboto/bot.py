@@ -3,7 +3,7 @@ from dataclasses import InitVar, dataclass, field
 from typing import List, Optional, Union
 
 from .datautil import from_json
-from .http import HTTPMethod, make_request
+from .http_api import HTTPMethod, make_request
 from .types import (
     BotUser,
     ChatID,

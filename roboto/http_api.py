@@ -19,6 +19,28 @@ class HTTPMethod(Enum):
     PUT = 'put'
 
 
+def validate_response(response: APIResponse) -> Any:
+    """Validate a Telegram Bot API Response.
+
+    Args:
+        response: A Telegram Bot API response to validate.
+
+    Returns:
+        The contents of the response if it response.ok is true.
+
+    Raises:
+        BotAPIError: If response.ok is false.
+    """
+    if response.result is None:
+        assert response.error_code is not None and response.description is not None
+        raise BotAPIError(
+            response.error_code, response.description,
+        )
+
+    assert response is not None
+    return response.result
+
+
 async def make_request(
     api_url: URL, method: HTTPMethod, endpoint: str, body: Any = None
 ) -> Any:
@@ -42,12 +64,6 @@ async def make_request(
     async with ClientSession() as s:
         content = await s.request(method.value, url, json=body)
 
-    response: APIResponse = from_json(APIResponse, await content.json())
+    response = from_json(APIResponse, await content.json())
 
-    if response.result is None:
-        assert response.error_code is not None and response.description is not None
-        raise BotAPIError(
-            response.error_code, response.description,
-        )
-
-    return response.result
+    return validate_response(response)
