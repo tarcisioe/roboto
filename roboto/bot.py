@@ -3,7 +3,7 @@ from dataclasses import InitVar, dataclass, field
 from typing import List, Optional, Union
 
 from .datautil import from_json
-from .http import HTTPMethod, make_request
+from .http_api import HTTPMethod, make_request
 from .types import (
     BotUser,
     ChatID,
@@ -62,10 +62,11 @@ class BotAPI:
             A list of Update objects.
         """
         request = GetUpdatesRequest(offset, limit, timeout, allowed_updates)
-        response = await make_request(
-            self.api_url, HTTPMethod.GET, 'getUpdates', request
+
+        return from_json(
+            List[Update],
+            await make_request(self.api_url, HTTPMethod.GET, 'getUpdates', request),
         )
-        return from_json(List[Update], response)
 
     async def send_message(
         self,
@@ -90,10 +91,11 @@ class BotAPI:
             disable_notification,
             reply_to_message_id,
         )
-        response = await make_request(
-            self.api_url, HTTPMethod.POST, 'sendMessage', request
+
+        return from_json(
+            Message,
+            await make_request(self.api_url, HTTPMethod.POST, 'sendMessage', request),
         )
-        return from_json(Message, response)
 
 
 __all__ = [
