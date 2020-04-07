@@ -94,11 +94,11 @@ def format_check(c):
     ])
 
 
-@task(pre=[lint, format])
-def static_checks(c):
+@task(pre=[lint, format_check])
+def static_checks(_):
     pass
 
 
 @task(pre=[static_checks, test])
-def all_checks(c):
+def all_checks(_):
     pass

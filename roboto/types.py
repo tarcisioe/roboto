@@ -447,6 +447,92 @@ class ParseMode(Enum):
 
 
 @dataclass(frozen=True)
+class LoginURL:
+    """A parameter of an inline keyboard button used to automatically authorize a user.
+    """
+
+    url: str
+    forward_text: Optional[str] = None
+    bot_username: Optional[str] = None
+    request_write_access: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class KeyboardButtonPollType:
+    """The type of a poll.
+
+    The poll is allowed to be created and sent when the corresponding button is
+    pressed.
+    """
+
+    type: str
+
+
+@dataclass(frozen=True)
+class KeyboardButton:
+    """One button of the reply keyboard.
+
+    At most one of the optional parameters can be present.
+    """
+
+    text: str
+    request_contact: Optional[bool] = None
+    request_location: Optional[bool] = None
+    request_poll: Optional[KeyboardButtonPollType] = None
+
+
+@dataclass(frozen=True)
+class InlineKeyboardButton:
+    """One button of an inline keyboard.
+
+    At most one of the optional parameters can be present.
+    """
+
+    text: str
+    url: Optional[str] = None
+    login_url: Optional[LoginURL] = None
+    callback_data: Optional[str] = None
+    switch_inline_query: Optional[str] = None
+    switch_inline_query_current_chat: Optional[str] = None
+    callback_game: Optional[Any] = None
+    pay: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class ReplyKeyboardMarkup:
+    """A custom keyboard with reply options.
+
+    At most one of the optional parameters can be present.
+    """
+
+    keyboard: List[List[KeyboardButton]]
+    resize_keyboard: Optional[bool] = None
+    one_time_keyboard: Optional[bool] = None
+    selective: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class ReplyKeyboardRemove:
+    """Request for a client to remove the custom current keyboard."""
+
+    remove_keyboard: bool = field(default=True, init=False)
+    selective: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class ForceReply:
+    """Request for a client to display a reply interface to the user."""
+
+    force_reply: bool = field(default=True, init=False)
+    selective: Optional[bool] = None
+
+
+ReplyMarkup = Union[
+    InlineKeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply
+]
+
+
+@dataclass(frozen=True)
 class SendMessageRequest:
     """Parameters for sending a message."""
 
@@ -456,7 +542,7 @@ class SendMessageRequest:
     disable_web_page_preview: Optional[bool] = None
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
-    reply_markup: Optional[str] = None
+    reply_markup: Optional[ReplyMarkup] = None
 
 
 @dataclass(frozen=True)
