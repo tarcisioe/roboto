@@ -11,6 +11,7 @@ from .types import (
     Message,
     MessageID,
     ParseMode,
+    ReplyMarkup,
     SendMessageRequest,
     Token,
     Update,
@@ -76,6 +77,7 @@ class BotAPI:
         disable_web_page_preview: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
     ) -> Message:
         """sendMessage API method.
 
@@ -90,6 +92,7 @@ class BotAPI:
             disable_web_page_preview,
             disable_notification,
             reply_to_message_id,
+            reply_markup,
         )
 
         return from_json(
