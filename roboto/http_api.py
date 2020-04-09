@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Any
 from urllib.parse import urljoin
 
-from aiohttp import ClientSession
+from asks import Session
 
 from .datautil import from_json, to_json
 from .error import BotAPIError
@@ -61,9 +61,9 @@ async def make_request(
     if body is not None:
         body = to_json(body)
 
-    async with ClientSession() as s:
+    async with Session() as s:
         content = await s.request(method.value, url, json=body)
 
-    response = from_json(APIResponse, await content.json())
+    response = from_json(APIResponse, content.json())
 
     return validate_response(response)
