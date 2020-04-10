@@ -4,7 +4,7 @@ Roboto
 ![](https://github.com/tarcisioe/roboto/workflows/CI/badge.svg)
 [![codecov](https://codecov.io/gh/tarcisioe/roboto/branch/master/graph/badge.svg)](https://codecov.io/gh/tarcisioe/roboto)
 
-A type-hinted async Telegram bot library.
+A type-hinted async Telegram bot library, supporting `trio`, `curio` and `asyncio`.
 
 Roboto's API is not perfectly stable nor complete yet. It will be kept a 0.x.0
 until the Telegram Bot API is completely implemented, and will be bumped to
@@ -21,32 +21,32 @@ Currently, a basic echo bot with roboto looks like:
 
 ```python
 from roboto import Token, BotAPI
-
-from asyncio import run
+from trio import run  # This could be asyncio or curio as well!
 
 
 api_token = Token('your-bot-token')
 
 
 async def main() -> None:
-    bot = BotAPI(api_token)
+    async with BotAPI.make(api_token) as bot:
+        offset = 0
 
-    offset = 0
+        while True:
+            updates = await bot.get_updates(offset)
 
-    while True:
-        updates = await bot.get_updates(offset)
+            for update in updates:
+                if update.message is not None and update.message.text is not None:
+                    await bot.send_message(
+                        update.message.chat.id,
+                        update.message.text,
+                    )
 
-        for update in updates:
-            if update.message is not None and update.message.text is not None:
-                await bot.send_message(
-                    update.message.chat.id,
-                    update.message.text,
-                )
+            if updates:
+                offset = updates[-1].update_id + 1
 
-        if updates:
-            offset = updates[-1].update_id + 1
 
-run(main())
+# In asyncio it should be "main()".
+run(main)
 ```
 
 Being statically-typed, Roboto supports easy autocompletion and `mypy` static
@@ -63,11 +63,15 @@ Principles
 - Forwards compatibility (additions to the bot HTTP API should not break older
   versions of Roboto easily).
 
+Achieved milestones
+-------------------
+- [X] Support for other async runtimes other than asyncio (especially
+      [`trio`](https://github.com/python-trio/trio)).
+
 Next milestones
 ---------------
 
 - [ ] Full Telegram Bot API implementation.
 - [ ] High-level API (abstraction for command handlers, necessary internal
       state, etc.).
-- [ ] Support for other async runtimes other than asyncio (especially
-      [`trio`](https://github.com/python-trio/trio)).
+

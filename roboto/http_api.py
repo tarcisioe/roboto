@@ -1,14 +1,12 @@
 """Bot API request function."""
 from enum import Enum
 from typing import Any
-from urllib.parse import urljoin
 
 from asks import Session
 
 from .datautil import from_json, to_json
 from .error import BotAPIError
 from .types import APIResponse
-from .url import URL
 
 
 class HTTPMethod(Enum):
@@ -42,13 +40,15 @@ def validate_response(response: APIResponse) -> Any:
 
 
 async def make_request(
-    api_url: URL, method: HTTPMethod, endpoint: str, body: Any = None
+    session: Session, method: HTTPMethod, api_method: str, body: Any = None
 ) -> Any:
     """Basic request function for the telegram API
 
     Args:
-        api_url: The bot API URL (including token).
-        method:
+        session: An `asks.Session` object with the correct `base_location` and
+                 `endpoint` set up.
+        method: The HTTP method to use.
+        body: An object to send as JSON.
 
     Returns:
         The APIResponse contents if everything went right.
@@ -56,13 +56,10 @@ async def make_request(
     Raises:
         BotAPIError: If response.ok is false.
     """
-    url = urljoin(api_url, endpoint)
-
     if body is not None:
         body = to_json(body)
 
-    async with Session() as s:
-        content = await s.request(method.value, url, json=body)
+    content = await session.request(method.value, path=api_method, json=body)
 
     response = from_json(APIResponse, content.json())
 

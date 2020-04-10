@@ -1,6 +1,9 @@
 """The main bot class for Roboto."""
-from dataclasses import InitVar, dataclass, field
+from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from typing import List, Optional, Union
+
+from asks import Session
 
 from .datautil import from_json
 from .http_api import HTTPMethod, make_request
@@ -18,21 +21,43 @@ from .types import (
 )
 from .url import URL
 
+TELEGRAM_BOT_API_URL = URL.make('https://api.telegram.org')
+
 
 @dataclass
 class BotAPI:
-    """Bot API wrapper."""
+    """Bot API wrapper.
 
-    token: InitVar[Token]
-    api_url: URL = field(init=False)
+    Avoid creating objects from this class directly through its constructor.
+    Use the static method `make` which does everything for you (and its API
+    is independent from the HTTP library).
 
-    def __post_init__(self, token: Token) -> None:
-        """Constructor for bot objects.
+    Args:
+        token: The Telegram API token for the bot.
+        session: An asks.Session object.
+    """
+
+    session: Session
+
+    @staticmethod
+    @asynccontextmanager
+    async def make(
+        token: Token, api_url: Optional[URL] = TELEGRAM_BOT_API_URL,
+    ):
+        """Context manager for creating a BotAPI object.
+
+        This is the preferred method to create a BotAPI object.
 
         Args:
-            token: The Bot API token.
+            token: The Telegram Bot API token for the bot.
+            api_url: The Telegram Bot API URL. Just for future-proofing. The
+                     default should be ok.
+
+        Yields:
+            A BotAPI object.
         """
-        self.api_url = URL.make(f'https://api.telegram.org/bot{token}/')
+        async with Session(base_location=api_url, endpoint=f'/bot{token}') as s:
+            yield BotAPI(s)
 
     async def get_me(self) -> BotUser:
         """getMe API method.
@@ -41,7 +66,7 @@ class BotAPI:
             User: the user object representing the bot itself.
         """
         return from_json(
-            BotUser, await make_request(self.api_url, HTTPMethod.GET, 'getMe')
+            BotUser, await make_request(self.session, HTTPMethod.GET, '/getMe')
         )
 
     async def get_updates(
@@ -66,7 +91,7 @@ class BotAPI:
 
         return from_json(
             List[Update],
-            await make_request(self.api_url, HTTPMethod.GET, 'getUpdates', request),
+            await make_request(self.session, HTTPMethod.GET, '/getUpdates', request),
         )
 
     async def send_message(
@@ -97,7 +122,7 @@ class BotAPI:
 
         return from_json(
             Message,
-            await make_request(self.api_url, HTTPMethod.POST, 'sendMessage', request),
+            await make_request(self.session, HTTPMethod.POST, '/sendMessage', request),
         )
 
 
