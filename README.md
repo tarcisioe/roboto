@@ -53,6 +53,13 @@ Being statically-typed, Roboto supports easy autocompletion and `mypy` static
 checking.
 
 
+Contributing
+------------
+
+Check our [contributing guide](CONTRIBUTING.md) to know how to develop on
+Roboto and contribute to our project.
+
+
 Goals
 =====
 

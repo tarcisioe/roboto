@@ -36,7 +36,9 @@ def check_all(results: List[Result]):
 
 
 @task
-def install_dev_tools(c):
+def install_dev_tools(c, ci=False):
+    extra_deps = ['pre-commit'] if not ci else []
+
     c.run(
         ' '.join((
             'poetry run pip install',
@@ -47,12 +49,16 @@ def install_dev_tools(c):
             'mypy',
             'pylint',
             'pylint-quotes',
+            *extra_deps
         ))
     )
 
+    if not ci:
+        c.run('pre-commit install')
+
 
 @task
-def test(c, coverage=False):
+def test(c, coverage=False, html=False):
     coverage_flag = f'--cov={PACKAGE_NAME}' if coverage else None
 
     command = ' '.join(piece for piece in (
@@ -62,6 +68,9 @@ def test(c, coverage=False):
     ) if piece is not None)
 
     c.run(command)
+
+    if coverage and html:
+        coverage_html(c)
 
 
 @task
@@ -92,6 +101,11 @@ def format_check(c):
         c.run(f'isort -rc -c -q {PACKAGE_NAME}', warn=True, hide='out'),
         c.run(f'isort -rc -c -q tests', warn=True, hide='out'),
     ])
+
+
+@task
+def coverage_html(c):
+    c.run(f'coverage html')
 
 
 @task(pre=[lint, format_check])
