@@ -12,7 +12,7 @@ So you want to contribute to Roboto! Thanks! You will need:
 To set up your develop environment, run:
 
 ```bash
-python develop.py
+$ python develop.py
 ```
 
 and then poetry will be used to:
@@ -32,7 +32,7 @@ We expect a few static checkers to be clean, according to our project configs:
 
 - Pylint (with `pylint-quotes`)
 - Mypy
-- Fláke8 (with `flake8-bugbear`)
+- Flake8 (with `flake8-bugbear`)
 
 Those will run on the CI, therefore they should be clean. They will be run by
 pre-commit, so if you set your environment correctly, you should have no
@@ -66,13 +66,13 @@ code through absolute imports.
 To run tests use:
 
 ```bash
-inv test
+$ inv test
 ```
 
 To run tests with coverage:
 
 ```bash
-inv test --coverage
+$ inv test --coverage
 ```
 
 
@@ -81,14 +81,14 @@ Checking coverage
 
 To check the code coverage with details, you can run
 
-```
-inv coverage-html
+```bash
+$ inv coverage-html
 ```
 
 or run the tests like this:
 
-```
-inv test --coverage --html
+```bash
+$ inv test --coverage --html
 ```
 
 and open `htmlcov/index.html` in your browser.
