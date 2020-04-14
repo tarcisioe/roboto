@@ -19,6 +19,9 @@ asks = "^2.3.7"
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 pytest-cov = "^2.8.1"
+pytest-mock = "^3.0.0"
+pytest-trio = "^0.5.2"
+asynctest = "^0.13.0"
 
 [tool.black]
 skip_string_normalization = true
