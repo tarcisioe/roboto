@@ -48,3 +48,18 @@ async def test_get_me(mocked_bot_api: MockedBotAPI):
         can_read_all_group_messages=True,
         supports_inline_queries=False,
     )
+
+
+@pytest.mark.trio
+async def test_empty_updates(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.get_updates produces an empty list when there are no updates."""
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': [],
+    }
+
+    updates = await mocked_bot_api.api.get_updates(0)
+
+    mocked_bot_api.request.assert_called_once()
+
+    assert updates == []
