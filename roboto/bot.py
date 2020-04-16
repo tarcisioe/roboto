@@ -42,7 +42,7 @@ class BotAPI:
     @staticmethod
     @asynccontextmanager
     async def make(
-        token: Token, api_url: Optional[URL] = TELEGRAM_BOT_API_URL,
+        token: Token, api_url: URL = TELEGRAM_BOT_API_URL,
     ):
         """Context manager for creating a BotAPI object.
 

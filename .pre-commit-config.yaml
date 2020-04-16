@@ -11,11 +11,11 @@ repos:
     name: Lint
     entry: inv lint
     language: python
-    files: ^roboto/
+    files: ^(roboto|tests)/
     pass_filenames: false
   - id: formatters
     name: Format
     entry: inv format
     language: python
-    files: ^roboto/
+    files: ^(roboto|tests)/
     pass_filenames: false
