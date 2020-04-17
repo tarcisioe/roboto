@@ -430,7 +430,7 @@ class Update:
 
 
 class ParseMode(Enum):
-    """Parse mode for text messages."""
+    """Parse mode for applying markup to text messages."""
 
     MARKDOWN = 'Markdown'
     HTML = 'HTML'
