@@ -44,16 +44,6 @@ class BotUser(_UserOptionalCommon, _BotUserRequired):
 
 
 @dataclass(frozen=True)
-class APIResponse:
-    """API Response format."""
-
-    ok: bool
-    result: Optional[Any] = None
-    error_code: Optional[int] = None
-    description: Optional[str] = None
-
-
-@dataclass(frozen=True)
 class ChatPhoto:
     """Information for fetching the chat picture."""
 
@@ -532,31 +522,7 @@ ReplyMarkup = Union[
 ]
 
 
-@dataclass(frozen=True)
-class SendMessageRequest:
-    """Parameters for sending a message."""
-
-    chat_id: Union[ChatID, str]
-    text: str
-    parse_mode: Optional[ParseMode] = None
-    disable_web_page_preview: Optional[bool] = None
-    disable_notification: Optional[bool] = None
-    reply_to_message_id: Optional[MessageID] = None
-    reply_markup: Optional[ReplyMarkup] = None
-
-
-@dataclass(frozen=True)
-class GetUpdatesRequest:
-    """Parameters for getting updates for a bot."""
-
-    offset: Optional[int] = None
-    limit: Optional[int] = None
-    timeout: Optional[int] = None
-    allowed_updates: Optional[List[str]] = None
-
-
 __all__ = [
-    'APIResponse',
     'Animation',
     'Audio',
     'BotUser',
@@ -569,7 +535,6 @@ __all__ = [
     'Document',
     'FileID',
     'Game',
-    'GetUpdatesRequest',
     'InlineQuery',
     'Invoice',
     'Location',
@@ -582,7 +547,6 @@ __all__ = [
     'ParseMode',
     'PhotoSize',
     'PreCheckoutQuery',
-    'SendMessageRequest',
     'ShippingAddress',
     'ShippingQuery',
     'Sticker',

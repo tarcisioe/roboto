@@ -5,20 +5,19 @@ from typing import List, Optional, Union
 
 from asks import Session
 
-from .datautil import from_json
-from .http_api import HTTPMethod, make_request
-from .types import (
+from .api_types import (
     BotUser,
     ChatID,
-    GetUpdatesRequest,
     Message,
     MessageID,
     ParseMode,
     ReplyMarkup,
-    SendMessageRequest,
     Token,
     Update,
 )
+from .datautil import from_json
+from .http_api import HTTPMethod, make_request
+from .request_types import GetUpdatesRequest, SendMessageRequest
 from .url import URL
 
 TELEGRAM_BOT_API_URL = URL.make('https://api.telegram.org')

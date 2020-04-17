@@ -1,12 +1,22 @@
 """Bot API request function."""
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 
 from asks import Session
 
 from .datautil import from_json, to_json
 from .error import BotAPIError
-from .types import APIResponse
+
+
+@dataclass(frozen=True)
+class APIResponse:
+    """API Response format."""
+
+    ok: bool
+    result: Optional[Any] = None
+    error_code: Optional[int] = None
+    description: Optional[str] = None
 
 
 class HTTPMethod(Enum):
