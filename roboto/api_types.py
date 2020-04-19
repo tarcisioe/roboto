@@ -48,7 +48,9 @@ class ChatPhoto:
     """Information for fetching the chat picture."""
 
     small_file_id: str
+    small_file_unique_id: str  #don't know if changed or made by design
     big_file_id: str
+    big_file_unique_id: str  #don't know if changed or made by design
 
 
 @dataclass(frozen=True)
