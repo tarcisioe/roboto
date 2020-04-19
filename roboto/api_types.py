@@ -53,20 +53,50 @@ class ChatPhoto:
     big_file_unique_id: str  #don't know if changed or made by design
 
 
+# should this be private? (_Chat_Type)
+class Chat_Type(Enum):
+    """Chat type as atribute of the Chat class
+    There is currently no functionality associated to this"""
+
+    PRIVATE = 'private'
+    GROUP = 'group'
+    SUPERGROUP = 'supergroup'
+    CHANNEL = 'channel'
+
+
+@dataclass(frozen=True)
+class ChatPermissions:
+    """Describes actions that a non-administrator user is allowed to take in a chat."""
+
+    can_send_messages: Optional[bool] = None
+    can_send_media_messages: Optional[bool] = None
+    can_send_polls: Optional[bool] = None
+    can_send_other_messages: Optional[bool] = None
+    can_add_web_page_previews: Optional[bool] = None
+    can_change_info: Optional[bool] = None
+    can_invite_users: Optional[bool] = None
+    can_pin_messages: Optional[bool] = None
+
+
 @dataclass(frozen=True)
 class Chat:
     """Representation of a given chat."""
 
     id: ChatID
-    type: str
+    type: Chat_Type
     title: Optional[str] = None
     username: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     all_members_are_administrators: Optional[bool] = None
     photo: Optional[ChatPhoto] = None
-    descriptions: Optional[str] = None
+    description: Optional[str] = None
     invite_link: Optional[str] = None
+    pinned_message: Optional[Message] = None
+    permissions: Optional[ChatPermissions] = None
+    slow_mode_delay: Optional[int] = None
+    sticker_set_name: Optional[str] = None
+    can_set_sticker_set: Optional[bool] = None
 
 
 @dataclass(frozen=True)
