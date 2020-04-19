@@ -53,8 +53,8 @@ class ChatPhoto:
     big_file_unique_id: str  #don't know if changed or made by design
 
 
-# should this be private? (_Chat_Type)
-class Chat_Type(Enum):
+# should this be private? (_ChatType)
+class ChatType(Enum):
     """Chat type as atribute of the Chat class
     There is currently no functionality associated to this"""
 
@@ -83,7 +83,7 @@ class Chat:
     """Representation of a given chat."""
 
     id: ChatID
-    type: Chat_Type
+    type: ChatType
     title: Optional[str] = None
     username: Optional[str] = None
     first_name: Optional[str] = None
@@ -231,7 +231,8 @@ class Contact:
     phone_number: str
     first_name: str
     last_name: Optional[str] = None
-    user_id: Optional[int] = None
+    user_id: Optional[int] = None # maybe use UserID here?
+    vcard: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -250,6 +251,46 @@ class Venue:
     title: str
     address: str
     foursquare_id: Optional[str] = None
+    foursquare_type: Optional[str] = None
+
+
+# should this be private? (_PollType)
+class PollType(Enum):
+    """Poll type as atribute of the Poll class.
+    There is currently no functionality associated to this."""
+
+    REGULAR = 'regular'
+    QUIZ = 'quiz'
+
+
+@dataclass(frozen=True)
+class PollOption:
+    """Option/Answer for a Poll"""
+    text: str
+    voter_count: int
+
+
+@dataclass(frozen=True)
+class Poll:
+    """Representation of a Poll."""
+
+    id: str
+    question: str
+    options: List[PollOption] = None
+    total_voter_count: int 
+    is_closed: bool
+    is_anonymous: bool
+    type: PollType
+    allows_multiple_answers: bool
+    correct_option_id: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class Dice:
+    """Representation of a Dice"""
+
+    value: int
+
 
 
 @dataclass(frozen=True)
@@ -292,41 +333,57 @@ class SuccessfulPayment:
     currency: str
     total_amount: int
     invoice_payload: str
-    telegram_payment_charge_id: str
-    provider_payment_charge_id: str
     shipping_option_id: Optional[str] = None
     order_info: Optional[OrderInfo] = None
+    telegram_payment_charge_id: str
+    provider_payment_charge_id: str
+
+
+# remember to reset previous 2 commits and then commit this one
 
 
 @dataclass(frozen=True)
 class MessageBase:
-    """Base data for a Telegram message."""
+    """Base data for a Telegram message.
+    this class exists to satisfy a particular specifity on reply_to_message and pinned_message
+    arguments on the Message class: 
+    Type Message: note that the Message object in this field will not contain further reply_to_message fields
+    even if it itself is a reply."""
 
     message_id: MessageID
     date: int
     chat: Chat
-    from_: User = field(metadata={'rename': 'from'})
+    # Optional. Sender, empty for messages sent to channels
+    # don't know if this should be ignored thou
+    from_: Optional[User] = field(metadata={'rename': 'from'})
     forward_from: Optional[User] = None
     forward_from_chat: Optional[Chat] = None
     forward_from_message_id: Optional[int] = None
+    forward_signature: Optional[str] = None
+    forward_sender_name: Optional[str] = None
     forward_date: Optional[int] = None
     edit_date: Optional[int] = None
+    media_group_id: Optional[str] = None
+    author_signature: Optional[str] = None
     text: Optional[str] = None
     entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[List[MessageEntity]] = None
     audio: Optional[Audio] = None
     document: Optional[Document] = None
+    animation: Optional[Animation] = None
     game: Optional[Game] = None
     photo: Optional[List[PhotoSize]] = None
     sticker: Optional[Sticker] = None
     video: Optional[Video] = None
     voice: Optional[Voice] = None
     video_note: Optional[VideoNote] = None
-    new_chat_members: Optional[List[User]] = None
     caption: Optional[str] = None
     contact: Optional[Contact] = None
     location: Optional[Location] = None
     venue: Optional[Venue] = None
-    new_chat_member: Optional[User] = None
+    poll: Optional[Poll] = None
+    dice: Optional[Dice] = None
+    new_chat_members: Optional[List[User]] = None
     left_chat_member: Optional[User] = None
     new_chat_title: Optional[str] = None
     new_chat_photo: Optional[List[PhotoSize]] = None
@@ -338,50 +395,17 @@ class MessageBase:
     migrate_from_chat_id: Optional[int] = None
     invoice: Optional[Invoice] = None
     successful_payment: Optional[SuccessfulPayment] = None
+    connected_website: Optional[str]
+    # passport_data: Optional[PassportData] --> to be implemented
+    # reply_markup: Optional[InlineKeyboardMarkup] --> to be implemented
 
 
 @dataclass(frozen=True)
-class Message:
+class Message(MessageBase):
     """Data for a Telegram message."""
 
-    message_id: MessageID
-    date: int
-    chat: Chat
-    from_: User = field(metadata={'rename': 'from'})
-    forward_from: Optional[User] = None
-    forward_from_chat: Optional[Chat] = None
-    forward_from_message_id: Optional[int] = None
-    forward_date: Optional[int] = None
     reply_to_message: Optional[MessageBase] = None
-    edit_date: Optional[int] = None
-    text: Optional[str] = None
-    entities: Optional[List[MessageEntity]] = None
-    audio: Optional[Audio] = None
-    document: Optional[Document] = None
-    game: Optional[Game] = None
-    photo: Optional[List[PhotoSize]] = None
-    sticker: Optional[Sticker] = None
-    video: Optional[Video] = None
-    voice: Optional[Voice] = None
-    video_note: Optional[VideoNote] = None
-    new_chat_members: Optional[List[User]] = None
-    caption: Optional[str] = None
-    contact: Optional[Contact] = None
-    location: Optional[Location] = None
-    venue: Optional[Venue] = None
-    new_chat_member: Optional[User] = None
-    left_chat_member: Optional[User] = None
-    new_chat_title: Optional[str] = None
-    new_chat_photo: Optional[List[PhotoSize]] = None
-    delete_chat_photo: Optional[bool] = None
-    group_chat_created: Optional[bool] = None
-    supergroup_chat_created: Optional[bool] = None
-    chat_channel_created: Optional[bool] = None
-    migrate_to_chat_id: Optional[int] = None
-    migrate_from_chat_id: Optional[int] = None
     pinned_message: Optional[MessageBase] = None
-    invoice: Optional[Invoice] = None
-    successful_payment: Optional[SuccessfulPayment] = None
 
 
 @dataclass(frozen=True)
