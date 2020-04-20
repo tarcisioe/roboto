@@ -1,16 +1,35 @@
 """Bot API request function."""
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from asks import Session
+from typing_extensions import Literal, Protocol
 
 from .datautil import from_json, to_json
 from .error import BotAPIError
 
 
+class APIResult(Protocol):
+    """API success response."""
+
+    ok: Literal[True]
+    result: Any = None
+
+
+class APIError(Protocol):
+    """API error response."""
+
+    ok: Literal[False]
+    error_code: int
+    description: str
+
+
+APIResponse = Union[APIResult, APIError]
+
+
 @dataclass(frozen=True)
-class APIResponse:
+class AnyAPIResponse:
     """API Response format."""
 
     ok: bool
@@ -39,13 +58,11 @@ def validate_response(response: APIResponse) -> Any:
     Raises:
         BotAPIError: If response.ok is false.
     """
-    if response.result is None:
-        assert response.error_code is not None and response.description is not None
+    if not response.ok:
         raise BotAPIError(
             response.error_code, response.description,
         )
 
-    assert response is not None
     return response.result
 
 
@@ -71,6 +88,8 @@ async def make_request(
 
     content = await session.request(method.value, path=api_method, json=body)
 
-    response = from_json(APIResponse, content.json())
+    # We know that the server ensures the object will follow either protocol,
+    # but mypy can't see that.
+    response: Any = from_json(AnyAPIResponse, content.json())
 
     return validate_response(response)
