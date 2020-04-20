@@ -5,20 +5,19 @@ from typing import List, Optional, Union
 
 from asks import Session
 
-from .datautil import from_json
-from .http_api import HTTPMethod, make_request
-from .types import (
+from .api_types import (
     BotUser,
     ChatID,
-    GetUpdatesRequest,
     Message,
     MessageID,
     ParseMode,
     ReplyMarkup,
-    SendMessageRequest,
     Token,
     Update,
 )
+from .datautil import from_json
+from .http_api import HTTPMethod, make_request
+from .request_types import GetUpdatesRequest, SendMessageRequest
 from .url import URL
 
 TELEGRAM_BOT_API_URL = URL.make('https://api.telegram.org')
@@ -109,6 +108,17 @@ class BotAPI:
         Args:
             chat_id: The ID of the chat to send a message to.
             text: The message text.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            disable_web_page_preview: Avoid showing previews for links.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for offering an interface for the user to
+                          reply to the bot.
+
+        Returns:
+            The Message object for the message that was sent.
         """
         request = SendMessageRequest(
             chat_id,

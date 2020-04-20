@@ -1,10 +1,10 @@
 # pylint: skip-file
 # flake8: noqa
 
+from .api_types import *
 from .bot import *
-from .types import *
 
 __all__ = [
-    *types.__all__,  # type: ignore
+    *api_types.__all__,  # type: ignore
     *bot.__all__,  # type: ignore
 ]

@@ -2,8 +2,7 @@
 import pytest
 
 from roboto.error import BotAPIError
-from roboto.http_api import validate_response
-from roboto.types import APIResponse
+from roboto.http_api import APIResponse, validate_response
 
 
 def test_validate_response() -> None:
