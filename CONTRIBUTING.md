@@ -18,7 +18,7 @@ $ python develop.py
 and then poetry will be used to:
 
 - Set up a virtual environment.
-- Install `invoke` on it to run our basic development tasks
+- Install `typer` on it to enable our basic development tasks script
 - Install `pre-commit` and set up pre-commit hooks
 
 You can then activate your enviroment by running `poetry shell` (or prefix all
@@ -51,9 +51,9 @@ Manually running checks
 -----------------------
 
 You can manually run:
-- `inv static-checks`: includes formatting checks, does not change files.
-- `inv lint`: same as before without format checks.
-- `inv format`: formats code.
+- `python -m tasks static-checks`: includes formatting checks, does not change files.
+- `python -m tasks lint`: same as before without format checks.
+- `python -m tasks format`: formats code.
 
 
 Running tests
@@ -66,13 +66,13 @@ code through absolute imports.
 To run tests use:
 
 ```bash
-$ inv test
+$ python -m tasks test
 ```
 
 To run tests with coverage:
 
 ```bash
-$ inv test --coverage
+$ python -m tasks test --coverage
 ```
 
 
@@ -82,13 +82,13 @@ Checking coverage
 To check the code coverage with details, you can run
 
 ```bash
-$ inv coverage-html
+$ python -m tasks coverage-html
 ```
 
 or run the tests like this:
 
 ```bash
-$ inv test --coverage --html
+$ python -m tasks test --coverage --html
 ```
 
 and open `htmlcov/index.html` in your browser.

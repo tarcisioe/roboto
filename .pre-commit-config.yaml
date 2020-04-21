@@ -9,13 +9,11 @@ repos:
   hooks:
   - id: linters
     name: Lint
-    entry: inv lint
-    language: python
-    files: ^(roboto|tests)/
-    pass_filenames: false
+    entry: poetry run python -m tasks lint --no-full-report
+    language: system
+    types: [python]
   - id: formatters
     name: Format
-    entry: inv format
-    language: python
-    files: ^(roboto|tests)/
-    pass_filenames: false
+    entry: poetry run python -m tasks format
+    language: system
+    types: [python]
