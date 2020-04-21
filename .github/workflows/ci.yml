@@ -30,7 +30,7 @@ jobs:
           python -m develop --ci --test-only
 
       - name: Run tests
-        run: poetry run inv test --coverage
+        run: poetry run python -m tasks test --coverage
 
       - name: Generate coverage.xml
         run: poetry run coverage xml
@@ -59,4 +59,4 @@ jobs:
           python -m develop --ci
 
       - name: Run all checks
-        run: poetry run inv static-checks
+        run: poetry run python -m tasks static-checks
