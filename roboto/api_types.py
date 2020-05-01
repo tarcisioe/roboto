@@ -48,20 +48,9 @@ class ChatPhoto:
     """Information for fetching the chat picture."""
 
     small_file_id: str
-    small_file_unique_id: str  #don't know if changed or made by design
+    small_file_unique_id: str
     big_file_id: str
-    big_file_unique_id: str  #don't know if changed or made by design
-
-
-# should this be private? (_ChatType)
-class ChatType(Enum):
-    """Chat type as atribute of the Chat class
-    There is currently no functionality associated to this"""
-
-    PRIVATE = 'private'
-    GROUP = 'group'
-    SUPERGROUP = 'supergroup'
-    CHANNEL = 'channel'
+    big_file_unique_id: str
 
 
 @dataclass(frozen=True)
@@ -83,7 +72,7 @@ class Chat:
     """Representation of a given chat."""
 
     id: ChatID
-    type: ChatType
+    type: str
     title: Optional[str] = None
     username: Optional[str] = None
     first_name: Optional[str] = None
@@ -231,7 +220,7 @@ class Contact:
     phone_number: str
     first_name: str
     last_name: Optional[str] = None
-    user_id: Optional[int] = None # maybe use UserID here?
+    user_id: Optional[UserID] = None
     vcard: Optional[str] = None
 
 
@@ -254,18 +243,10 @@ class Venue:
     foursquare_type: Optional[str] = None
 
 
-# should this be private? (_PollType)
-class PollType(Enum):
-    """Poll type as atribute of the Poll class.
-    There is currently no functionality associated to this."""
-
-    REGULAR = 'regular'
-    QUIZ = 'quiz'
-
-
 @dataclass(frozen=True)
 class PollOption:
     """Option/Answer for a Poll"""
+
     text: str
     voter_count: int
 
@@ -276,11 +257,11 @@ class Poll:
 
     id: str
     question: str
-    options: List[PollOption] = None
-    total_voter_count: int 
+    options: List[PollOption]
+    total_voter_count: int
     is_closed: bool
     is_anonymous: bool
-    type: PollType
+    type: str
     allows_multiple_answers: bool
     correct_option_id: Optional[int] = None
 
@@ -290,7 +271,6 @@ class Dice:
     """Representation of a Dice"""
 
     value: int
-
 
 
 @dataclass(frozen=True)
@@ -333,28 +313,21 @@ class SuccessfulPayment:
     currency: str
     total_amount: int
     invoice_payload: str
-    shipping_option_id: Optional[str] = None
-    order_info: Optional[OrderInfo] = None
     telegram_payment_charge_id: str
     provider_payment_charge_id: str
-
-
-# remember to reset previous 2 commits and then commit this one
+    shipping_option_id: Optional[str] = None
+    order_info: Optional[OrderInfo] = None
 
 
 @dataclass(frozen=True)
-class MessageBase:
+class _MessageBase:
     """Base data for a Telegram message.
-    this class exists to satisfy a particular specifity on reply_to_message and pinned_message
-    arguments on the Message class: 
-    Type Message: note that the Message object in this field will not contain further reply_to_message fields
-    even if it itself is a reply."""
+    This class is made this way to permit
+    MessageWithNoReply and Message to have no inheritance relationship"""
 
     message_id: MessageID
     date: int
     chat: Chat
-    # Optional. Sender, empty for messages sent to channels
-    # don't know if this should be ignored thou
     from_: Optional[User] = field(metadata={'rename': 'from'})
     forward_from: Optional[User] = None
     forward_from_chat: Optional[Chat] = None
@@ -395,17 +368,27 @@ class MessageBase:
     migrate_from_chat_id: Optional[int] = None
     invoice: Optional[Invoice] = None
     successful_payment: Optional[SuccessfulPayment] = None
-    connected_website: Optional[str]
+    connected_website: Optional[str] = None
     # passport_data: Optional[PassportData] --> to be implemented
     # reply_markup: Optional[InlineKeyboardMarkup] --> to be implemented
 
 
 @dataclass(frozen=True)
-class Message(MessageBase):
+class MessageWithNoReply(_MessageBase):
+    """This class exists to satisfy a particular specifity on
+    reply_to_message and pinned_message arguments on the Message class {
+        Type Message, note that the Message object in this field will not
+        contain further reply_to_message fields even if it itself is a reply.
+    }
+    """
+
+
+@dataclass(frozen=True)
+class Message(_MessageBase):
     """Data for a Telegram message."""
 
-    reply_to_message: Optional[MessageBase] = None
-    pinned_message: Optional[MessageBase] = None
+    reply_to_message: Optional[MessageWithNoReply] = None
+    pinned_message: Optional[MessageWithNoReply] = None
 
 
 @dataclass(frozen=True)
@@ -596,7 +579,7 @@ __all__ = [
     'Location',
     'MaskPosition',
     'Message',
-    'MessageBase',
+    'MessageWithNoReply',
     'MessageEntity',
     'MessageID',
     'OrderInfo',
