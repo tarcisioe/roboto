@@ -228,7 +228,7 @@ def to_json(obj: Any) -> JSONLike:
         return {k: to_json(v) for k, v in obj.items() if v is not None}
     if is_dataclass(obj):
         return {k: to_json(v) for k, v in asdict(obj).items() if v is not None}
-    if isinstance(obj, List):
+    if isinstance(obj, list):
         return [to_json(v) for v in obj]
     if isinstance(obj, Enum):
         return to_json(obj.value)
