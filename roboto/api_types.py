@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, List, NewType, Optional, Union
+from typing import List, NewType, Optional, Union
 
 Token = NewType('Token', str)
 UserID = NewType('UserID', int)
@@ -47,10 +47,35 @@ class BotUser(_UserOptionalCommon, _BotUserRequired):
 class ChatPhoto:
     """Information for fetching the chat picture."""
 
-    small_file_id: str
-    small_file_unique_id: str
-    big_file_id: str
-    big_file_unique_id: str
+    small_file_id: FileID
+    small_file_unique_id: FileID
+    big_file_id: FileID
+    big_file_unique_id: FileID
+
+
+@dataclass(frozen=True)
+class ChatMember:
+    """This object contains information about one member of a chat."""
+
+    user: User
+    status: str
+    custom_title: Optional[str] = None
+    until_date: Optional[int] = None
+    can_be_edited: Optional[bool] = None
+    can_post_messages: Optional[bool] = None
+    can_edit_messages: Optional[bool] = None
+    can_delete_messages: Optional[bool] = None
+    can_restrict_members: Optional[bool] = None
+    can_promote_members: Optional[bool] = None
+    can_change_info: Optional[bool] = None
+    can_invite_users: Optional[bool] = None
+    can_pin_messages: Optional[bool] = None
+    is_member: Optional[bool] = None
+    can_send_messages: Optional[bool] = None
+    can_send_media_messages: Optional[bool] = None
+    can_send_polls: Optional[bool] = None
+    can_send_other_messages: Optional[bool] = None
+    can_add_web_page_previews: Optional[bool] = None
 
 
 @dataclass(frozen=True)
@@ -97,6 +122,7 @@ class MessageEntity:
     length: int
     url: Optional[str] = None
     user: Optional[User] = None
+    language: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -104,6 +130,7 @@ class PhotoSize:
     """Data about an image size both in pixels and bytes."""
 
     file_id: FileID
+    file_unique_id: FileID
     width: int
     height: int
     file_size: Optional[int] = None
@@ -114,11 +141,13 @@ class Audio:
     """Metadata about an audio message."""
 
     file_id: FileID
+    file_unique_id: FileID
     duration: int
     performer: Optional[str] = None
     title: Optional[str] = None
     mime_type: Optional[str] = None
     file_size: Optional[int] = None
+    thumb: Optional[PhotoSize] = None
 
 
 @dataclass(frozen=True)
@@ -126,6 +155,7 @@ class Document:
     """Metadata about a generic file."""
 
     file_id: FileID
+    file_unique_id: FileID
     thumb: Optional[PhotoSize] = None
     file_name: Optional[str] = None
     mime_type: Optional[str] = None
@@ -137,6 +167,10 @@ class Animation:
     """Metadata about a message with an animation (gif, mp4)."""
 
     file_id: FileID
+    file_unique_id: FileID
+    width: int
+    height: int
+    duration: int
     thumb: Optional[PhotoSize] = None
     file_name: Optional[str] = None
     mime_type: Optional[str] = None
@@ -184,6 +218,7 @@ class Video:
     """Metadata about a video message."""
 
     file_id: FileID
+    file_unique_id: FileID
     width: int
     height: int
     duration: int
@@ -197,6 +232,7 @@ class Voice:
     """Metadata about a voice message."""
 
     file_id: FileID
+    file_unique_id: FileID
     duration: int
     mime_type: Optional[str] = None
     file_size: Optional[int] = None
@@ -207,6 +243,7 @@ class VideoNote:
     """Metadata on a video note."""
 
     file_id: FileID
+    file_unique_id: FileID
     length: int
     duration: int
     thumb: Optional[PhotoSize] = None
@@ -252,6 +289,15 @@ class PollOption:
 
 
 @dataclass(frozen=True)
+class PollAnswer:
+    """This object represents an answer of a user in a non-anonymous poll."""
+
+    poll_id: str
+    user: User
+    option_ids: List[int]
+
+
+@dataclass(frozen=True)
 class Poll:
     """Representation of a Poll."""
 
@@ -264,13 +310,36 @@ class Poll:
     type: str
     allows_multiple_answers: bool
     correct_option_id: Optional[int] = None
+    explanation: Optional[str] = None
+    explanation_entities: Optional[List[MessageEntity]] = None
+    open_period: Optional[int] = None
+    close_date: Optional[int] = None
 
 
 @dataclass(frozen=True)
 class Dice:
     """Representation of a Dice"""
 
+    emoji: str
     value: int
+
+
+@dataclass(frozen=True)
+class UserProfilePhotos:
+    """Representation of a Dice"""
+
+    total_count: int
+    photos: List[List[PhotoSize]]
+
+
+@dataclass(frozen=True)
+class File:
+    """Representation of a Dice"""
+
+    file_id: FileID
+    file_unique_id: FileID
+    file_size: Optional[int]
+    file_path: Optional[str]
 
 
 @dataclass(frozen=True)
@@ -317,6 +386,93 @@ class SuccessfulPayment:
     provider_payment_charge_id: str
     shipping_option_id: Optional[str] = None
     order_info: Optional[OrderInfo] = None
+
+
+@dataclass(frozen=True)
+class PassportData:
+    """Contains information about
+    Telegram Passport data shared with the bot by the user."""
+
+    data: List[EncryptedPassportElement]
+    credentials: EncryptedCredentials
+
+
+@dataclass(frozen=True)
+class PassportFile:
+    """This object represents a file uploaded to Telegram Passport.
+    Currently all Telegram Passport files are in JPEG format when decrypted
+    and don't exceed 10MB."""
+
+    file_id: str
+    file_unique_id: str
+    file_size: int
+    file_date: int
+
+
+@dataclass(frozen=True)
+class EncryptedPassportElement:
+    """Contains information about
+    documents or other Telegram Passport elements shared with the bot by the user."""
+
+    type: str
+    hash: str
+    data: Optional[str] = None
+    phone_number: Optional[str] = None
+    email: Optional[str] = None
+    files: Optional[List[PassportFile]] = None
+    front_side: Optional[PassportFile] = None
+    reverse_side: Optional[PassportFile] = None
+    selfie: Optional[PassportFile] = None
+    translation: Optional[List[PassportFile]] = None
+
+
+@dataclass(frozen=True)
+class EncryptedCredentials:
+    """Contains information about
+    documents or other Telegram Passport elements shared with the bot by the user."""
+
+    data: str
+    hash: str
+    secret: str
+
+
+@dataclass(frozen=True)
+class InlineKeyboardMarkup:
+    """This object represents an inline keyboard
+    that appears right next to the message it belongs to."""
+
+    inline_keyboard: List[List[InlineKeyboardButton]]
+
+
+@dataclass(frozen=True)
+class InlineKeyboardButton:
+    """This object represents one button of an inline keyboard.
+    You must use exactly one of the optional fields."""
+
+    text: str
+    url: Optional[str] = None
+    login_url: Optional[LoginUrl] = None
+    callback_data: Optional[str] = None
+    switch_inline_query: Optional[str] = None
+    switch_inline_query_current_chat: Optional[str] = None
+    callback_game: Optional[CallbackGame] = None
+    pay: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class LoginUrl:
+    """This object represents a parameter of the
+    inline keyboard button used to automatically authorize a user."""
+
+    url: str
+    forward_text: Optional[str] = None
+    bot_username: Optional[str] = None
+    request_write_access: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class CallbackGame:
+    """A placeholder, currently holds no information."""
 
 
 @dataclass(frozen=True)
@@ -369,8 +525,8 @@ class _MessageBase:
     invoice: Optional[Invoice] = None
     successful_payment: Optional[SuccessfulPayment] = None
     connected_website: Optional[str] = None
-    # passport_data: Optional[PassportData] --> to be implemented
-    # reply_markup: Optional[InlineKeyboardMarkup] --> to be implemented
+    passport_data: Optional[PassportData] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
 
 
 @dataclass(frozen=True)
@@ -468,6 +624,47 @@ class Update:
     pre_checkout_query: Optional[PreCheckoutQuery] = None
 
 
+@dataclass(frozen=True)
+class BotCommand:
+    """This object represents a bot command."""
+
+    command: str
+    description: str
+
+
+@dataclass(frozen=True)
+class ResponseParameters:
+    """Contains information about why a request was unsuccessful."""
+
+    migrate_to_chat_id: Optional[int]
+    retry_after: Optional[int]
+
+
+@dataclass(frozen=True)
+class InputFile:
+    """This object represents the contents of a file to be uploaded.
+    Must be posted using multipart/form-data in the usual way that files are
+    uploaded via the browser."""
+
+
+@dataclass(frozen=True)
+class InputMedia:
+    """This object represents the content of a media message to be sent.
+    Can be of type: Animation, Document, Audio, Photo, Video."""
+
+    type: str
+    media: FileID
+    thumb: Optional[Union[InputFile, str]]
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    width: Optional[int]
+    height: Optional[int]
+    duration: Optional[int]
+    supports_streaming: Optional[bool]
+    performer: Optional[str]
+    title: Optional[str]
+
+
 class ParseMode(Enum):
     """Parse mode for applying markup to text messages."""
 
@@ -477,8 +674,8 @@ class ParseMode(Enum):
 
 @dataclass(frozen=True)
 class LoginURL:
-    """A parameter of an inline keyboard button used to automatically authorize a user.
-    """
+    """A parameter of an inline keyboard button used to
+    automatically authorize a user."""
 
     url: str
     forward_text: Optional[str] = None
@@ -508,23 +705,6 @@ class KeyboardButton:
     request_contact: Optional[bool] = None
     request_location: Optional[bool] = None
     request_poll: Optional[KeyboardButtonPollType] = None
-
-
-@dataclass(frozen=True)
-class InlineKeyboardButton:
-    """One button of an inline keyboard.
-
-    At most one of the optional parameters can be present.
-    """
-
-    text: str
-    url: Optional[str] = None
-    login_url: Optional[LoginURL] = None
-    callback_data: Optional[str] = None
-    switch_inline_query: Optional[str] = None
-    switch_inline_query_current_chat: Optional[str] = None
-    callback_game: Optional[Any] = None
-    pay: Optional[bool] = None
 
 
 @dataclass(frozen=True)
