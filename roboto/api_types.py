@@ -35,12 +35,12 @@ class _UserOptionalCommon:
 
 @dataclass(frozen=True)
 class User(_UserOptionalCommon, _UserRequiredCommon):
-    """Representation of a user returned by the Bot API."""
+    """A user returned by the Bot API."""
 
 
 @dataclass(frozen=True)
 class BotUser(_UserOptionalCommon, _BotUserRequired):
-    """Representation of a Bot user returned by the Bot API through getMe."""
+    """A Bot user returned by the Bot API through getMe."""
 
 
 @dataclass(frozen=True)
@@ -55,7 +55,7 @@ class ChatPhoto:
 
 @dataclass(frozen=True)
 class ChatMember:
-    """This object contains information about one member of a chat."""
+    """Information about one member of a chat."""
 
     user: User
     status: str
@@ -80,7 +80,7 @@ class ChatMember:
 
 @dataclass(frozen=True)
 class ChatPermissions:
-    """Describes actions that a non-administrator user is allowed to take in a chat."""
+    """Actions that a non-administrator user is allowed to take in a chat."""
 
     can_send_messages: Optional[bool] = None
     can_send_media_messages: Optional[bool] = None
@@ -290,7 +290,7 @@ class PollOption:
 
 @dataclass(frozen=True)
 class PollAnswer:
-    """This object represents an answer of a user in a non-anonymous poll."""
+    """An answer of a user in a non-anonymous poll."""
 
     poll_id: str
     user: User
@@ -326,7 +326,7 @@ class Dice:
 
 @dataclass(frozen=True)
 class UserProfilePhotos:
-    """Representation of a Dice"""
+    """A user's profile pictures."""
 
     total_count: int
     photos: List[List[PhotoSize]]
@@ -334,7 +334,7 @@ class UserProfilePhotos:
 
 @dataclass(frozen=True)
 class File:
-    """Representation of a Dice"""
+    """A file ready to be downloaded."""
 
     file_id: FileID
     file_unique_id: FileID
@@ -390,8 +390,7 @@ class SuccessfulPayment:
 
 @dataclass(frozen=True)
 class PassportData:
-    """Contains information about
-    Telegram Passport data shared with the bot by the user."""
+    """Information about Telegram Passport data shared with the bot by the user."""
 
     data: List[EncryptedPassportElement]
     credentials: EncryptedCredentials
@@ -399,9 +398,11 @@ class PassportData:
 
 @dataclass(frozen=True)
 class PassportFile:
-    """This object represents a file uploaded to Telegram Passport.
+    """A file uploaded to Telegram Passport.
+
     Currently all Telegram Passport files are in JPEG format when decrypted
-    and don't exceed 10MB."""
+    and don't exceed 10MB.
+    """
 
     file_id: str
     file_unique_id: str
@@ -411,8 +412,7 @@ class PassportFile:
 
 @dataclass(frozen=True)
 class EncryptedPassportElement:
-    """Contains information about
-    documents or other Telegram Passport elements shared with the bot by the user."""
+    """Information about Telegram Passport elements shared with the bot by the user."""
 
     type: str
     hash: str
@@ -428,8 +428,11 @@ class EncryptedPassportElement:
 
 @dataclass(frozen=True)
 class EncryptedCredentials:
-    """Contains information about
-    documents or other Telegram Passport elements shared with the bot by the user."""
+    """Data required for decrypting and authenticating EncryptedPassportElement.
+
+    See the Telegram Passport Documentation for a complete description of the
+    data decryption and authentication processes.
+    """
 
     data: str
     hash: str
@@ -438,16 +441,17 @@ class EncryptedCredentials:
 
 @dataclass(frozen=True)
 class InlineKeyboardMarkup:
-    """This object represents an inline keyboard
-    that appears right next to the message it belongs to."""
+    """Represents an inline keyboard that appears next to the message it belongs to."""
 
     inline_keyboard: List[List[InlineKeyboardButton]]
 
 
 @dataclass(frozen=True)
 class InlineKeyboardButton:
-    """This object represents one button of an inline keyboard.
-    You must use exactly one of the optional fields."""
+    """One button of an inline keyboard.
+
+    You must use exactly one of the optional fields.
+    """
 
     text: str
     url: Optional[str] = None
@@ -460,26 +464,17 @@ class InlineKeyboardButton:
 
 
 @dataclass(frozen=True)
-class LoginUrl:
-    """This object represents a parameter of the
-    inline keyboard button used to automatically authorize a user."""
-
-    url: str
-    forward_text: Optional[str] = None
-    bot_username: Optional[str] = None
-    request_write_access: Optional[bool] = None
-
-
-@dataclass(frozen=True)
 class CallbackGame:
     """A placeholder, currently holds no information."""
 
 
 @dataclass(frozen=True)
 class _MessageBase:
-    """Base data for a Telegram message.
+    """Base data for a Telegram Message.
+
     This class is made this way to permit
-    MessageWithNoReply and Message to have no inheritance relationship"""
+    MessageWithNoReply and Message to have no inheritance relationship
+    """
 
     message_id: MessageID
     date: int
@@ -531,7 +526,9 @@ class _MessageBase:
 
 @dataclass(frozen=True)
 class MessageWithNoReply(_MessageBase):
-    """This class exists to satisfy a particular specifity on
+    """ A Message object without reply_to_message and pinned_message.
+
+    This class exists to satisfy a particular specifity on
     reply_to_message and pinned_message arguments on the Message class {
         Type Message, note that the Message object in this field will not
         contain further reply_to_message fields even if it itself is a reply.
@@ -584,7 +581,7 @@ class CallbackQuery:
 
 @dataclass(frozen=True)
 class ShippingQuery:
-    """information about an incoming shipping query."""
+    """An incoming shipping query."""
 
     id: str
     invoide_payload: str
@@ -594,7 +591,7 @@ class ShippingQuery:
 
 @dataclass(frozen=True)
 class PreCheckoutQuery:
-    """Information about an incoming pre-checkout query."""
+    """An incoming pre-checkout query."""
 
     id: str
     currency: str
@@ -634,7 +631,7 @@ class BotCommand:
 
 @dataclass(frozen=True)
 class ResponseParameters:
-    """Contains information about why a request was unsuccessful."""
+    """Information about why a request was unsuccessful."""
 
     migrate_to_chat_id: Optional[int]
     retry_after: Optional[int]
@@ -642,15 +639,19 @@ class ResponseParameters:
 
 @dataclass(frozen=True)
 class InputFile:
-    """This object represents the contents of a file to be uploaded.
+    """The contents of a file to be uploaded.
+
     Must be posted using multipart/form-data in the usual way that files are
-    uploaded via the browser."""
+    uploaded via the browser.
+    """
 
 
 @dataclass(frozen=True)
 class InputMedia:
-    """This object represents the content of a media message to be sent.
-    Can be of type: Animation, Document, Audio, Photo, Video."""
+    """The content of a media message to be sent.
+
+    Can be of type: Animation, Document, Audio, Photo and Video.
+    """
 
     type: str
     media: FileID
@@ -673,9 +674,11 @@ class ParseMode(Enum):
 
 
 @dataclass(frozen=True)
-class LoginURL:
-    """A parameter of an inline keyboard button used to
-    automatically authorize a user."""
+class LoginUrl:
+    """A parameter used to automatically authorize a user.
+
+    Used in inline keyboard buttons.
+    """
 
     url: str
     forward_text: Optional[str] = None
@@ -770,7 +773,7 @@ __all__ = [
     'KeyboardButton',
     'KeyboardButtonPollType',
     'Location',
-    'LoginURL',
+    'LoginUrl',
     'MaskPosition',
     'Message',
     'MessageWithNoReply',
