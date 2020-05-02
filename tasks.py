@@ -213,7 +213,7 @@ APP.command()(check_commands(format))
 def coverage_html():
     """Generate an html coverage report."""
     return [
-        execute(f'coverage html', raise_error=False),
+        execute('coverage html', raise_error=False),
     ]
 
 
