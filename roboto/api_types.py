@@ -5,6 +5,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, NewType, Optional, Union
 
+from .url import URL
+
 Token = NewType('Token', str)
 UserID = NewType('UserID', int)
 ChatID = NewType('ChatID', int)
@@ -638,15 +640,6 @@ class ResponseParameters:
 
 
 @dataclass(frozen=True)
-class InputFile:
-    """The contents of a file to be uploaded.
-
-    Must be posted using multipart/form-data in the usual way that files are
-    uploaded via the browser.
-    """
-
-
-@dataclass(frozen=True)
 class InputMedia:
     """The content of a media message to be sent.
 
@@ -655,7 +648,7 @@ class InputMedia:
 
     type: str
     media: FileID
-    thumb: Optional[Union[InputFile, str]]
+    thumb: Optional[Union[URL, FileID]]
     caption: Optional[str]
     parse_mode: Optional[str]
     width: Optional[int]
@@ -767,7 +760,6 @@ __all__ = [
     'Game',
     'InlineKeyboardButton',
     'InlineQuery',
-    'InputFile',
     'InputMedia',
     'Invoice',
     'KeyboardButton',
