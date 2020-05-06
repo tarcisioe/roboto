@@ -161,7 +161,7 @@ class Document:
     thumb: Optional[PhotoSize] = None
     file_name: Optional[str] = None
     mime_type: Optional[str] = None
-    file_size: Optional[str] = None
+    file_size: Optional[int] = None
 
 
 @dataclass(frozen=True)
