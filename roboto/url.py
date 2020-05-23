@@ -33,3 +33,8 @@ class URL(str):
             raise InvalidURL(f'"{url}" is not a valid URL.')
 
         return URL(url)
+
+
+__all__ = [
+    'URL',
+]
