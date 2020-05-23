@@ -3,7 +3,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, NewType, Optional, Union
+from io import BufferedIOBase
+from pathlib import Path
+from typing import BinaryIO, List, NamedTuple, NewType, Optional, Union
 
 from .url import URL
 
@@ -12,6 +14,31 @@ UserID = NewType('UserID', int)
 ChatID = NewType('ChatID', int)
 MessageID = NewType('MessageID', int)
 FileID = NewType('FileID', str)
+
+
+class FileDescription(NamedTuple):
+    """Describe an in-memory file to be sent through the API."""
+
+    binary_source: Union[BinaryIO, bytes]
+    basename: str
+    mime_type: str = 'application/octet-stream'
+
+
+# pylint: disable=invalid-triple-quote
+InputFile = Union[Path, BufferedIOBase, FileID, FileDescription, URL]
+"""An InputFile can be either:
+
+A Path object: This will be used to open the file and read it to send.
+A BufferedIOBase object: This supports sending an already open file.
+A FileID from Telegram's Bot API itself: This will just send a previously sent file.
+A FileDescription object: This is used to send binary data directly as a file, or to
+                          customize mimetype or filename.
+A URL: This instructs Telegram's server to download the file and send it. In
+       this case, file size is severely limited.
+
+Refer to https://core.telegram.org/bots/api#sending-files for more information.
+"""
+# pylint: enable=invalid-triple-quote
 
 
 @dataclass(frozen=True)
@@ -755,12 +782,14 @@ __all__ = [
     'Document',
     'EncryptedCredentials',
     'EncryptedPassportElement',
+    'FileDescription',
     'FileID',
     'ForceReply',
     'Game',
     'InlineKeyboardButton',
     'InlineQuery',
     'InputMedia',
+    'InputFile',
     'Invoice',
     'KeyboardButton',
     'KeyboardButtonPollType',
