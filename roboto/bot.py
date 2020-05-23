@@ -21,6 +21,7 @@ from .request_types import (
     InputFile,
     SendMessageRequest,
     SendPhotoRequest,
+    json_serialize,
 )
 from .url import URL
 
@@ -131,7 +132,7 @@ class BotAPI:
             disable_web_page_preview,
             disable_notification,
             reply_to_message_id,
-            reply_markup,
+            json_serialize(reply_markup),
         )
 
         return from_json(
@@ -147,6 +148,7 @@ class BotAPI:
         parse_mode: Optional[ParseMode] = None,
         disable_notification: Optional[bool] = None,
         reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
     ) -> Message:
         """sendPhoto API method.
 
@@ -171,6 +173,7 @@ class BotAPI:
             parse_mode,
             disable_notification,
             reply_to_message_id,
+            json_serialize(reply_markup),
         )
 
         return from_json(
