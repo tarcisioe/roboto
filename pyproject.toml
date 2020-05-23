@@ -14,7 +14,14 @@ python = "^3.7"
 typing-extensions = "^3.7.4"
 typing-inspect = "^0.5.0"
 validators = "^0.14.2"
+
+# We are vendoring asks for the time being. In this commit we want to leave it as is so this is uncommented.
 asks = "^2.3.7"
+
+# Dependencies of asks.
+anyio = "^1.3.0"
+async_generator = "^1.10"
+h11 = "^0.9.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -25,6 +32,7 @@ asynctest = "^0.13.0"
 
 [tool.black]
 skip_string_normalization = true
+exclude = "/roboto/asks"
 
 [tool.isort]
 multi_line_output = 3
@@ -32,6 +40,7 @@ include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
 line_length = 88
+skip_glob = "asks"
 
 [build-system]
 requires = ["poetry>=0.12"]

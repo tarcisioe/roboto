@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Optional, Union
 
-from asks import Session
 from typing_extensions import Literal, Protocol
 
+from .asks import Session
 from .datautil import from_json, to_json
 from .error import BotAPIError
 

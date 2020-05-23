@@ -3,8 +3,6 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import List, Optional, Union
 
-from asks import Session
-
 from .api_types import (
     BotUser,
     ChatID,
@@ -15,6 +13,7 @@ from .api_types import (
     Token,
     Update,
 )
+from .asks import Session
 from .datautil import from_json
 from .http_api import HTTPMethod, make_request
 from .request_types import GetUpdatesRequest, SendMessageRequest
