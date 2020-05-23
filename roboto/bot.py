@@ -15,8 +15,13 @@ from .api_types import (
 )
 from .asks import Session
 from .datautil import from_json
-from .http_api import HTTPMethod, make_request
-from .request_types import GetUpdatesRequest, SendMessageRequest
+from .http_api import HTTPMethod, make_multipart_request, make_request
+from .request_types import (
+    GetUpdatesRequest,
+    InputFile,
+    SendMessageRequest,
+    SendPhotoRequest,
+)
 from .url import URL
 
 TELEGRAM_BOT_API_URL = URL.make('https://api.telegram.org')
@@ -132,6 +137,44 @@ class BotAPI:
         return from_json(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendMessage', request),
+        )
+
+    async def send_photo(
+        self,
+        chat_id: Union[ChatID, str],
+        photo: InputFile,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+    ) -> Message:
+        """sendPhoto API method.
+
+        Args:
+            chat_id: The ID of the chat to send a message to.
+            photo: The path of the image file to send.
+            caption: A caption to add to the image.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendPhotoRequest(
+            chat_id,
+            photo,
+            caption,
+            parse_mode,
+            disable_notification,
+            reply_to_message_id,
+        )
+
+        return from_json(
+            Message, await make_multipart_request(self.session, '/sendPhoto', request),
         )
 
 
