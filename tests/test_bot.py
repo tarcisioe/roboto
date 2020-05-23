@@ -11,8 +11,10 @@ from roboto import (
     Chat,
     ChatID,
     FileDescription,
+    KeyboardButton,
     Message,
     MessageID,
+    ReplyKeyboardMarkup,
     Token,
     Update,
     User,
@@ -52,7 +54,9 @@ async def test_get_me(mocked_bot_api: MockedBotAPI):
 
     bot_user = await mocked_bot_api.api.get_me()
 
-    mocked_bot_api.request.assert_called_once()
+    mocked_bot_api.request.assert_called_with(
+        'get', path='/getMe', json=None,
+    )
 
     assert bot_user == BotUser(
         id=UserID(1),
@@ -74,7 +78,9 @@ async def test_get_updates_empty(mocked_bot_api: MockedBotAPI):
 
     updates = await mocked_bot_api.api.get_updates(0)
 
-    mocked_bot_api.request.assert_called_once()
+    mocked_bot_api.request.assert_called_with(
+        'get', path='/getUpdates', json={'offset': 0}
+    )
 
     assert updates == []
 
@@ -99,7 +105,9 @@ async def test_get_updates(mocked_bot_api: MockedBotAPI):
 
     updates = await mocked_bot_api.api.get_updates(0)
 
-    mocked_bot_api.request.assert_called_once()
+    mocked_bot_api.request.assert_called_with(
+        'get', path='/getUpdates', json={'offset': 0}
+    )
 
     assert updates == [
         Update(
@@ -116,7 +124,9 @@ async def test_get_updates(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_send_message(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_message properly reads back the sent message."""
+    """Test that BotAPI.send_message creates the correct payload and properly reads back
+    the sent message.
+    """
     mocked_bot_api.response.json.return_value = {
         'ok': True,
         'result': {
@@ -129,7 +139,48 @@ async def test_send_message(mocked_bot_api: MockedBotAPI):
 
     message = await mocked_bot_api.api.send_message(chat_id=ChatID(1), text='Hey.')
 
-    mocked_bot_api.request.assert_called_once()
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendMessage', json={'chat_id': 1, 'text': 'Hey.'}
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_message_with_reply_keyboard(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_message creates the correct payload with keyboard
+    markup.
+    """
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    message = await mocked_bot_api.api.send_message(
+        chat_id=ChatID(1),
+        text='Hey.',
+        reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton('Bla.')]]),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/sendMessage',
+        json={
+            'chat_id': 1,
+            'text': 'Hey.',
+            'reply_markup': '{"keyboard": [[{"text": "Bla."}]]}',
+        },
+    )
 
     assert message == Message(
         message_id=MessageID(1),

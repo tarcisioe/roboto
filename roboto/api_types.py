@@ -760,7 +760,7 @@ class ForceReply:
 
 
 ReplyMarkup = Union[
-    InlineKeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply
+    InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply
 ]
 
 
@@ -787,6 +787,7 @@ __all__ = [
     'ForceReply',
     'Game',
     'InlineKeyboardButton',
+    'InlineKeyboardMarkup',
     'InlineQuery',
     'InputMedia',
     'InputFile',
