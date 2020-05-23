@@ -75,7 +75,8 @@ async def _json_request(
     return await session.request(method.value, path=api_method, json=to_json(body))
 
 
-def _multipart_compatible(value: Any) -> Any:
+def _to_multipart_compatible(value: Any) -> Any:
+    """Transform values into multipart/form-data compatible versions."""
     if isinstance(value, FileDescription):
         if isinstance(value.binary_source, bytes):
             return BytesMultipartData(
@@ -91,7 +92,9 @@ async def _multipart_request(
     session: Session, method: HTTPMethod, api_method: str, body: Any = None
 ) -> Response:
     fields = {
-        k: _multipart_compatible(v) for k, v in body.__dict__.items() if v is not None
+        k: _to_multipart_compatible(v)
+        for k, v in body.__dict__.items()
+        if v is not None
     }
 
     return await session.request(method.value, path=api_method, multipart=fields)
