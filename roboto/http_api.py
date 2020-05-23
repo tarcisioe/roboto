@@ -1,11 +1,14 @@
 """Bot API request function."""
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Optional, Union
+from typing import Any, Awaitable, Callable, Optional, Union
 
-from asks import Session
 from typing_extensions import Literal, Protocol
 
+from .api_types import FileDescription
+from .asks import Session
+from .asks.multipart import BytesMultipartData, IOMultipartData
+from .asks.response_objects import Response
 from .datautil import from_json, to_json
 from .error import BotAPIError
 
@@ -66,6 +69,56 @@ def validate_response(response: APIResponse) -> Any:
     return response.result
 
 
+async def _json_request(
+    session: Session, method: HTTPMethod, api_method: str, body: Any = None
+) -> Response:
+    return await session.request(method.value, path=api_method, json=to_json(body))
+
+
+def _to_multipart_compatible(value: Any) -> Any:
+    """Transform values into multipart/form-data compatible versions."""
+    if isinstance(value, FileDescription):
+        if isinstance(value.binary_source, bytes):
+            return BytesMultipartData(
+                value.binary_source, value.mime_type, value.basename
+            )
+
+        return IOMultipartData(value.binary_source, value.mime_type, value.basename)
+
+    return value
+
+
+async def _multipart_request(
+    session: Session, method: HTTPMethod, api_method: str, body: Any = None
+) -> Response:
+    fields = {
+        k: _to_multipart_compatible(v)
+        for k, v in body.__dict__.items()
+        if v is not None
+    }
+
+    return await session.request(method.value, path=api_method, multipart=fields)
+
+
+APIRequester = Callable[[Session, HTTPMethod, str, Any], Awaitable[Response]]
+
+
+async def _make_request(
+    requester: APIRequester,
+    session: Session,
+    method: HTTPMethod,
+    api_method: str,
+    body: Any = None,
+) -> Any:
+    content = await requester(session, method, api_method, body)
+
+    # We know that the server ensures the object will follow either protocol,
+    # but mypy can't see that.
+    response: Any = from_json(AnyAPIResponse, content.json())
+
+    return validate_response(response)
+
+
 async def make_request(
     session: Session, method: HTTPMethod, api_method: str, body: Any = None
 ) -> Any:
@@ -75,6 +128,7 @@ async def make_request(
         session: An `asks.Session` object with the correct `base_location` and
                  `endpoint` set up.
         method: The HTTP method to use.
+        api_method: The Telegram API method to call.
         body: An object to send as JSON.
 
     Returns:
@@ -83,13 +137,26 @@ async def make_request(
     Raises:
         BotAPIError: If response.ok is false.
     """
-    if body is not None:
-        body = to_json(body)
+    return await _make_request(_json_request, session, method, api_method, body)
 
-    content = await session.request(method.value, path=api_method, json=body)
 
-    # We know that the server ensures the object will follow either protocol,
-    # but mypy can't see that.
-    response: Any = from_json(AnyAPIResponse, content.json())
+async def make_multipart_request(session: Session, api_method: str, body: Any) -> Any:
+    """Function for doing POST multipart/form-data requests.
 
-    return validate_response(response)
+    Useful for requests that send files.
+
+    Args:
+        session: An `asks.Session` object with the correct `base_location` and
+                 `endpoint` set up.
+        api_method: The HTTP method to use.
+        body: An object to send as JSON.
+
+    Returns:
+        The APIResponse contents if everything went right.
+
+    Raises:
+        BotAPIError: If response.ok is false.
+    """
+    return await _make_request(
+        _multipart_request, session, HTTPMethod.POST, api_method, body
+    )

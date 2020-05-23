@@ -82,3 +82,10 @@ Next milestones
 - [ ] High-level API (abstraction for command handlers, necessary internal
       state, etc.).
 
+
+Acknowledgements
+----------------
+
+This package currently contains the code for a modified version of
+[asks](https://github.com/theelous3/asks) v2.3.7, which is under the MIT License as
+well. Thanks @theelous3 for the great library!

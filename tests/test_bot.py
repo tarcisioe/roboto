@@ -1,4 +1,6 @@
 """Tests for the roboto.bot module."""
+from io import BytesIO
+from pathlib import Path
 from typing import Tuple
 from unittest.mock import MagicMock
 
@@ -8,6 +10,7 @@ from roboto import (
     BotUser,
     Chat,
     ChatID,
+    FileDescription,
     Message,
     MessageID,
     Token,
@@ -16,6 +19,7 @@ from roboto import (
     UserID,
 )
 from roboto.bot import BotAPI
+from roboto.http_api import BytesMultipartData, IOMultipartData
 
 from .common import MockedBotAPI
 
@@ -126,6 +130,111 @@ async def test_send_message(mocked_bot_api: MockedBotAPI):
     message = await mocked_bot_api.api.send_message(chat_id=ChatID(1), text='Hey.')
 
     mocked_bot_api.request.assert_called_once()
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_photo_with_path(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_message properly reads back the sent message."""
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    path = Path('dummy.jpg')
+
+    message = await mocked_bot_api.api.send_photo(chat_id=ChatID(1), photo=path)
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendPhoto', multipart={'chat_id': 1, 'photo': path}
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_photo_with_bytes(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_message properly reads back the sent message."""
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    message = await mocked_bot_api.api.send_photo(
+        chat_id=ChatID(1),
+        photo=FileDescription(b'dummy', mime_type='image/jpeg', basename='image.jpg'),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/sendPhoto',
+        multipart={
+            'chat_id': 1,
+            'photo': BytesMultipartData(
+                b'dummy', mime_type='image/jpeg', basename='image.jpg'
+            ),
+        },
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_photo_with_buffered_io(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_message properly reads back the sent message."""
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    bytes_io = BytesIO(b'dummy')
+
+    message = await mocked_bot_api.api.send_photo(
+        chat_id=ChatID(1),
+        photo=FileDescription(bytes_io, mime_type='image/jpeg', basename='image.jpg'),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/sendPhoto',
+        multipart={
+            'chat_id': 1,
+            'photo': IOMultipartData(
+                bytes_io, mime_type='image/jpeg', basename='image.jpg'
+            ),
+        },
+    )
 
     assert message == Message(
         message_id=MessageID(1),

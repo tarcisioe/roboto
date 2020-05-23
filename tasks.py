@@ -104,6 +104,17 @@ EVERYTHING = [
     'develop.py',
     'tasks.py',
 ]
+
+EXCLUDES = [
+    'asks',
+]
+
+
+def apply_excludes(files: List[str]):
+    """Apply exclusions to a list of files."""
+    return [f for f in files if not any(e in f for e in EXCLUDES)]
+
+
 APP = typer.Typer()
 
 
@@ -169,7 +180,10 @@ def lint(
     If files is omitted. everything is linted.
     """
 
-    subject = files if files else EVERYTHING
+    subject = apply_excludes(files if files else EVERYTHING)
+
+    if not subject:
+        return []
 
     pylint_reports = ['-r', 'y'] if full_report else ['-r', 'n']
 
@@ -197,7 +211,10 @@ def format(  # pylint: disable=redefined-builtin
     black_check_flag = ['--check'] if check else []
     isort_check_flag = ['-c'] if check else []
 
-    subject = files if files else EVERYTHING
+    subject = apply_excludes(files if files else EVERYTHING)
+
+    if not subject:
+        return []
 
     return [
         execute(['black', '-q', *black_check_flag, *subject], raise_error=False),

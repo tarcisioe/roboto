@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import List, Optional, Union
 
-from .api_types import ChatID, MessageID, ParseMode, ReplyMarkup
+from .api_types import ChatID, InputFile, MessageID, ParseMode, ReplyMarkup
 
 
 @dataclass(frozen=True)
@@ -13,6 +13,19 @@ class SendMessageRequest:
     text: str
     parse_mode: Optional[ParseMode] = None
     disable_web_page_preview: Optional[bool] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[ReplyMarkup] = None
+
+
+@dataclass(frozen=True)
+class SendPhotoRequest:
+    """Parameters for sending a photo."""
+
+    chat_id: Union[ChatID, str]
+    photo: InputFile
+    caption: Optional[str] = None
+    parse_mode: Optional[ParseMode] = None
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[ReplyMarkup] = None
