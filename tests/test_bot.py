@@ -192,7 +192,9 @@ async def test_send_message_with_reply_keyboard(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_forward_message(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.forward_message properly reads the forwarded message."""
+    """Test that BotAPI.forward_message creates the correct payload and properly reads
+    back the sent message.
+    """
     mocked_bot_api.response.json.return_value = {
         'ok': True,
         'result': {
@@ -265,7 +267,9 @@ async def test_forward_message(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_send_photo_with_path(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_message properly reads back the sent message."""
+    """Test that BotAPI.send_photo creates the correct payload and properly reads
+    back the returned message when using a Path object as input.
+    """
     mocked_bot_api.response.json.return_value = {
         'ok': True,
         'result': {
@@ -294,7 +298,9 @@ async def test_send_photo_with_path(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_send_photo_with_bytes(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_message properly reads back the sent message."""
+    """Test that BotAPI.send_photo creates the correct payload and properly reads
+    back the returned message when using bytes as input.
+    """
     mocked_bot_api.response.json.return_value = {
         'ok': True,
         'result': {
@@ -331,7 +337,9 @@ async def test_send_photo_with_bytes(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_send_photo_with_buffered_io(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_message properly reads back the sent message."""
+    """Test that BotAPI.send_photo creates the correct payload and properly reads
+    back the returned message when using a BufferedIO as input.
+    """
     mocked_bot_api.response.json.return_value = {
         'ok': True,
         'result': {
@@ -369,7 +377,7 @@ async def test_send_photo_with_buffered_io(mocked_bot_api: MockedBotAPI):
 
 
 @pytest.mark.trio
-async def test_send_audio_with_path(mocked_bot_api: MockedBotAPI):
+async def test_send_audio(mocked_bot_api: MockedBotAPI):
     """Test that BotAPI.send_audio creates the correct payload and properly reads
     back the returned message.
     """
@@ -400,7 +408,7 @@ async def test_send_audio_with_path(mocked_bot_api: MockedBotAPI):
 
 
 @pytest.mark.trio
-async def test_send_document_with_path(mocked_bot_api: MockedBotAPI):
+async def test_send_document(mocked_bot_api: MockedBotAPI):
     """Test that BotAPI.send_document creates the correct payload and properly reads
     back the returned message.
     """
@@ -431,7 +439,7 @@ async def test_send_document_with_path(mocked_bot_api: MockedBotAPI):
 
 
 @pytest.mark.trio
-async def test_send_video_with_path(mocked_bot_api: MockedBotAPI):
+async def test_send_video(mocked_bot_api: MockedBotAPI):
     """Test that BotAPI.send_video creates the correct payload and properly reads back
     the returned message.
     """
@@ -463,7 +471,7 @@ async def test_send_video_with_path(mocked_bot_api: MockedBotAPI):
 
 
 @pytest.mark.trio
-async def test_send_animation_with_path(mocked_bot_api: MockedBotAPI):
+async def test_send_animation(mocked_bot_api: MockedBotAPI):
     """Test that BotAPI.send_animation creates the correct payload and properly reads
     back the returned message.
     """
@@ -495,7 +503,7 @@ async def test_send_animation_with_path(mocked_bot_api: MockedBotAPI):
 
 
 @pytest.mark.trio
-async def test_send_voice_with_path(mocked_bot_api: MockedBotAPI):
+async def test_send_voice(mocked_bot_api: MockedBotAPI):
     """Test that BotAPI.send_voice creates the correct payload and properly reads back
     the returned message.
     """
@@ -527,7 +535,7 @@ async def test_send_voice_with_path(mocked_bot_api: MockedBotAPI):
 
 
 @pytest.mark.trio
-async def test_send_video_note_with_path(mocked_bot_api: MockedBotAPI):
+async def test_send_video_note(mocked_bot_api: MockedBotAPI):
     """Test that BotAPI.send_video_note creates the correct payload and properly reads
     back the returned message.
     """

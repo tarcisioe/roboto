@@ -190,7 +190,7 @@ class BotAPI:
         """sendPhoto API method.
 
         Args:
-            chat_id: The ID of the chat to send a message to.
+            chat_id: The ID of the chat to send a photo to.
             photo: The path of the image file to send.
             caption: A caption to add to the image.
             parse_mode: How to parse the text (see `ParseMode`). Parses as
