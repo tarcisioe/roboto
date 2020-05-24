@@ -21,6 +21,7 @@ from .request_types import (
     GetUpdatesRequest,
     InputFile,
     SendAudioRequest,
+    SendDocumentRequest,
     SendMessageRequest,
     SendPhotoRequest,
     json_serialize,
@@ -265,6 +266,53 @@ class BotAPI:
 
         return from_json(
             Message, await make_multipart_request(self.session, '/sendAudio', request),
+        )
+
+    async def send_document(
+        self,
+        chat_id: Union[ChatID, str],
+        document: InputFile,
+        thumb: Optional[InputFile] = None,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendDocument API method.
+
+        Args:
+            chat_id: The ID of the chat to send a document to.
+            document: An InputFile to use to send the document.
+                      See the documentation on InputFile.
+            thumb: An InputFile for the thumbnail to be used for the document.
+                   See the documentation on InputFile.
+            caption: A caption to add to the document.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendDocumentRequest(
+            chat_id,
+            document,
+            thumb,
+            caption,
+            parse_mode,
+            disable_notification,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_multipart_request(self.session, '/sendDocument', request),
         )
 
 

@@ -82,3 +82,17 @@ class SendAudioRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendDocumentRequest:
+    """Parameters for sending a document."""
+
+    chat_id: Union[ChatID, str]
+    document: InputFile
+    thumb: Optional[InputFile] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[ParseMode] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
