@@ -145,3 +145,17 @@ class SendVoiceRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendVideoNoteRequest:
+    """Parameters for sending a video note (rounded square mp4 videos)."""
+
+    chat_id: Union[ChatID, str]
+    video_note: InputFile
+    duration: Optional[int] = None
+    length: Optional[int] = None
+    thumb: Optional[InputFile] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None

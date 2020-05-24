@@ -25,6 +25,7 @@ from .request_types import (
     SendDocumentRequest,
     SendMessageRequest,
     SendPhotoRequest,
+    SendVideoNoteRequest,
     SendVideoRequest,
     SendVoiceRequest,
     json_serialize,
@@ -476,6 +477,52 @@ class BotAPI:
 
         return from_json(
             Message, await make_multipart_request(self.session, '/sendVoice', request),
+        )
+
+    async def send_video_note(
+        self,
+        chat_id: Union[ChatID, str],
+        video_note: InputFile,
+        duration: Optional[int] = None,
+        length: Optional[int] = None,
+        thumb: Optional[InputFile] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendVideoNote API method.
+
+        Args:
+            chat_id: The ID of the chat to send a video note to.
+            video_note: An InputFile to use to send the video note.
+                        See the documentation on InputFile. Must be a square mp4 video.
+            duration: The video note duration (optional).
+            length: The video note length (diameter) (optional).
+            thumb: An InputFile for the thumbnail to be used for the animation.
+                   See the documentation on InputFile.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendVideoNoteRequest(
+            chat_id,
+            video_note,
+            duration,
+            length,
+            thumb,
+            disable_notification,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_multipart_request(self.session, '/sendVideoNote', request),
         )
 
 

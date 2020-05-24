@@ -524,3 +524,37 @@ async def test_send_voice_with_path(mocked_bot_api: MockedBotAPI):
         chat=Chat(id=ChatID(1), type='private'),
         from_=User(id=UserID(1), is_bot=True, first_name='Test'),
     )
+
+
+@pytest.mark.trio
+async def test_send_video_note_with_path(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_video_note creates the correct payload and properly reads
+    back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    path = Path('dummy.mp4')
+
+    message = await mocked_bot_api.api.send_video_note(
+        chat_id=ChatID(1), video_note=path
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendVideoNote', multipart={'chat_id': 1, 'video_note': path}
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
