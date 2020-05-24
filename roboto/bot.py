@@ -20,6 +20,7 @@ from .request_types import (
     ForwardMessageRequest,
     GetUpdatesRequest,
     InputFile,
+    SendAudioRequest,
     SendMessageRequest,
     SendPhotoRequest,
     json_serialize,
@@ -209,6 +210,61 @@ class BotAPI:
 
         return from_json(
             Message, await make_multipart_request(self.session, '/sendPhoto', request),
+        )
+
+    async def send_audio(
+        self,
+        chat_id: Union[ChatID, str],
+        audio: InputFile,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        duration: Optional[int] = None,
+        performer: Optional[str] = None,
+        title: Optional[str] = None,
+        thumb: Optional[InputFile] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendAudio API method.
+
+        Args:
+            chat_id: The ID of the chat to send an audio to.
+            audio: An InputFile to use to send the audio.
+                   See the documentation on InputFile.
+            caption: A caption to add to the audio.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            duration: The audio duration (optional).
+            performer: The audio performer (optional).
+            title: The audio title (optional).
+            thumb: An InputFile for the thumbnail to be used for the audio.
+                   See the documentation on InputFile.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendAudioRequest(
+            chat_id,
+            audio,
+            caption,
+            parse_mode,
+            duration,
+            performer,
+            title,
+            thumb,
+            disable_notification,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message, await make_multipart_request(self.session, '/sendAudio', request),
         )
 
 

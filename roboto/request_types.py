@@ -65,3 +65,20 @@ class SendPhotoRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendAudioRequest:
+    """Parameters for sending an audio."""
+
+    chat_id: Union[ChatID, str]
+    audio: InputFile
+    caption: Optional[str] = None
+    parse_mode: Optional[ParseMode] = None
+    duration: Optional[int] = None
+    performer: Optional[str] = None
+    title: Optional[str] = None
+    thumb: Optional[InputFile] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
