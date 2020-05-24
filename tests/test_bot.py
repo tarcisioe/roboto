@@ -192,7 +192,9 @@ async def test_send_message_with_reply_keyboard(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_forward_message(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.forward_message properly reads the forwarded message."""
+    """Test that BotAPI.forward_message creates the correct payload and properly reads
+    back the sent message.
+    """
     mocked_bot_api.response.json.return_value = {
         'ok': True,
         'result': {
@@ -265,7 +267,9 @@ async def test_forward_message(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_send_photo_with_path(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_message properly reads back the sent message."""
+    """Test that BotAPI.send_photo creates the correct payload and properly reads
+    back the returned message when using a Path object as input.
+    """
     mocked_bot_api.response.json.return_value = {
         'ok': True,
         'result': {
@@ -294,7 +298,9 @@ async def test_send_photo_with_path(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_send_photo_with_bytes(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_message properly reads back the sent message."""
+    """Test that BotAPI.send_photo creates the correct payload and properly reads
+    back the returned message when using bytes as input.
+    """
     mocked_bot_api.response.json.return_value = {
         'ok': True,
         'result': {
@@ -331,7 +337,9 @@ async def test_send_photo_with_bytes(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_send_photo_with_buffered_io(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_message properly reads back the sent message."""
+    """Test that BotAPI.send_photo creates the correct payload and properly reads
+    back the returned message when using a BufferedIO as input.
+    """
     mocked_bot_api.response.json.return_value = {
         'ok': True,
         'result': {
@@ -358,6 +366,198 @@ async def test_send_photo_with_buffered_io(mocked_bot_api: MockedBotAPI):
                 bytes_io, mime_type='image/jpeg', basename='image.jpg'
             ),
         },
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_audio(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_audio creates the correct payload and properly reads
+    back the returned message.
+    """
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    path = Path('dummy.wav')
+
+    message = await mocked_bot_api.api.send_audio(chat_id=ChatID(1), audio=path)
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendAudio', multipart={'chat_id': 1, 'audio': path}
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_document(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_document creates the correct payload and properly reads
+    back the returned message.
+    """
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    path = Path('dummy.pdf')
+
+    message = await mocked_bot_api.api.send_document(chat_id=ChatID(1), document=path)
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendDocument', multipart={'chat_id': 1, 'document': path}
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_video(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_video creates the correct payload and properly reads back
+    the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    path = Path('dummy.mp4')
+
+    message = await mocked_bot_api.api.send_video(chat_id=ChatID(1), video=path)
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendVideo', multipart={'chat_id': 1, 'video': path}
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_animation(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_animation creates the correct payload and properly reads
+    back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    path = Path('dummy.mp4')
+
+    message = await mocked_bot_api.api.send_animation(chat_id=ChatID(1), animation=path)
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendAnimation', multipart={'chat_id': 1, 'animation': path}
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_voice(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_voice creates the correct payload and properly reads back
+    the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    path = Path('dummy.ogg')
+
+    message = await mocked_bot_api.api.send_voice(chat_id=ChatID(1), voice=path)
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendVoice', multipart={'chat_id': 1, 'voice': path}
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_video_note(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_video_note creates the correct payload and properly reads
+    back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    path = Path('dummy.mp4')
+
+    message = await mocked_bot_api.api.send_video_note(
+        chat_id=ChatID(1), video_note=path
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendVideoNote', multipart={'chat_id': 1, 'video_note': path}
     )
 
     assert message == Message(

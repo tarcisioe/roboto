@@ -20,8 +20,14 @@ from .request_types import (
     ForwardMessageRequest,
     GetUpdatesRequest,
     InputFile,
+    SendAnimationRequest,
+    SendAudioRequest,
+    SendDocumentRequest,
     SendMessageRequest,
     SendPhotoRequest,
+    SendVideoNoteRequest,
+    SendVideoRequest,
+    SendVoiceRequest,
     json_serialize,
 )
 from .url import URL
@@ -184,7 +190,7 @@ class BotAPI:
         """sendPhoto API method.
 
         Args:
-            chat_id: The ID of the chat to send a message to.
+            chat_id: The ID of the chat to send a photo to.
             photo: The path of the image file to send.
             caption: A caption to add to the image.
             parse_mode: How to parse the text (see `ParseMode`). Parses as
@@ -209,6 +215,314 @@ class BotAPI:
 
         return from_json(
             Message, await make_multipart_request(self.session, '/sendPhoto', request),
+        )
+
+    async def send_audio(
+        self,
+        chat_id: Union[ChatID, str],
+        audio: InputFile,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        duration: Optional[int] = None,
+        performer: Optional[str] = None,
+        title: Optional[str] = None,
+        thumb: Optional[InputFile] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendAudio API method.
+
+        Args:
+            chat_id: The ID of the chat to send an audio to.
+            audio: An InputFile to use to send the audio.
+                   See the documentation on InputFile.
+            caption: A caption to add to the audio.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            duration: The audio duration.
+            performer: The audio performer.
+            title: The audio title.
+            thumb: An InputFile for the thumbnail to be used for the audio.
+                   See the documentation on InputFile.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendAudioRequest(
+            chat_id,
+            audio,
+            caption,
+            parse_mode,
+            duration,
+            performer,
+            title,
+            thumb,
+            disable_notification,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message, await make_multipart_request(self.session, '/sendAudio', request),
+        )
+
+    async def send_document(
+        self,
+        chat_id: Union[ChatID, str],
+        document: InputFile,
+        thumb: Optional[InputFile] = None,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendDocument API method.
+
+        Args:
+            chat_id: The ID of the chat to send a document to.
+            document: An InputFile to use to send the document.
+                      See the documentation on InputFile.
+            thumb: An InputFile for the thumbnail to be used for the document.
+                   See the documentation on InputFile.
+            caption: A caption to add to the document.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendDocumentRequest(
+            chat_id,
+            document,
+            thumb,
+            caption,
+            parse_mode,
+            disable_notification,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_multipart_request(self.session, '/sendDocument', request),
+        )
+
+    async def send_video(
+        self,
+        chat_id: Union[ChatID, str],
+        video: InputFile,
+        duration: Optional[int] = None,
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        thumb: Optional[InputFile] = None,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        supports_streaming: Optional[bool] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendVideo API method.
+
+        Args:
+            chat_id: The ID of the chat to send a video to.
+            video: An InputFile to use to send the video.
+                   See the documentation on InputFile.
+            duration: The video duration.
+            width: The video width.
+            height: The video height.
+            thumb: An InputFile for the thumbnail to be used for the video.
+                   See the documentation on InputFile.
+            caption: A caption to add to the video.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            supports_streaming: Should be True if the video supports streaming.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendVideoRequest(
+            chat_id,
+            video,
+            duration,
+            width,
+            height,
+            thumb,
+            caption,
+            parse_mode,
+            disable_notification,
+            supports_streaming,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message, await make_multipart_request(self.session, '/sendVideo', request),
+        )
+
+    async def send_animation(
+        self,
+        chat_id: Union[ChatID, str],
+        animation: InputFile,
+        duration: Optional[int] = None,
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        thumb: Optional[InputFile] = None,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendAnimation API method.
+
+        Args:
+            chat_id: The ID of the chat to send an animation to.
+            animation: An InputFile to use to send the animation.
+                       See the documentation on InputFile.
+            duration: The animation duration.
+            width: The animation width.
+            height: The animation height.
+            thumb: An InputFile for the thumbnail to be used for the animation.
+                   See the documentation on InputFile.
+            caption: A caption to add to the animation.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendAnimationRequest(
+            chat_id,
+            animation,
+            duration,
+            width,
+            height,
+            thumb,
+            caption,
+            parse_mode,
+            disable_notification,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_multipart_request(self.session, '/sendAnimation', request),
+        )
+
+    async def send_voice(
+        self,
+        chat_id: Union[ChatID, str],
+        voice: InputFile,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        duration: Optional[int] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendVoice API method.
+
+        Args:
+            chat_id: The ID of the chat to send a voice note to.
+            voice: An InputFile to use to send the voice note.
+                   See the documentation on InputFile. Must be an OGG audio file
+                   encoded with OPUS.
+            caption: A caption to add to the voice note.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            duration: The voice note duration.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendVoiceRequest(
+            chat_id,
+            voice,
+            caption,
+            parse_mode,
+            duration,
+            disable_notification,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message, await make_multipart_request(self.session, '/sendVoice', request),
+        )
+
+    async def send_video_note(
+        self,
+        chat_id: Union[ChatID, str],
+        video_note: InputFile,
+        duration: Optional[int] = None,
+        length: Optional[int] = None,
+        thumb: Optional[InputFile] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendVideoNote API method.
+
+        Args:
+            chat_id: The ID of the chat to send a video note to.
+            video_note: An InputFile to use to send the video note.
+                        See the documentation on InputFile. Must be a square mp4 video.
+            duration: The video note duration.
+            length: The video note length (diameter).
+            thumb: An InputFile for the thumbnail to be used for the animation.
+                   See the documentation on InputFile.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendVideoNoteRequest(
+            chat_id,
+            video_note,
+            duration,
+            length,
+            thumb,
+            disable_notification,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_multipart_request(self.session, '/sendVideoNote', request),
         )
 
 
