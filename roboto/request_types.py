@@ -45,6 +45,16 @@ class SendMessageRequest:
 
 
 @dataclass(frozen=True)
+class ForwardMessageRequest:
+    """Parameters for forwarding a message."""
+
+    chat_id: Union[ChatID, str]
+    from_chat_id: Union[ChatID, str]
+    message_id: MessageID
+    disable_notification: Optional[bool] = None
+
+
+@dataclass(frozen=True)
 class SendPhotoRequest:
     """Parameters for sending a photo."""
 
@@ -55,13 +65,3 @@ class SendPhotoRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
-
-
-@dataclass(frozen=True)
-class ForwardMessageRequest:
-    """Parameters for forwarding a message."""
-
-    chat_id: Union[ChatID, str]
-    from_chat_id: Union[ChatID, str]
-    message_id: MessageID
-    disable_notification: Optional[bool] = None
