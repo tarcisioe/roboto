@@ -191,6 +191,79 @@ async def test_send_message_with_reply_keyboard(mocked_bot_api: MockedBotAPI):
 
 
 @pytest.mark.trio
+async def test_forward_message(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.forward_message properly reads the forwarded message."""
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 7,
+            'date': 0,
+            'chat': {
+                'id': 2,
+                'type': 'private',
+                'username': 'johnsmith',
+                'first_name': 'John',
+                'last_name': 'Smith',
+            },
+            'from': {
+                'id': 3,
+                'is_bot': True,
+                'first_name': 'Roboto Test Bot',
+                'username': 'robototestbot',
+            },
+            'forward_from': {
+                'id': 4,
+                'is_bot': False,
+                'first_name': 'John',
+                'last_name': 'Smith',
+                'username': 'johnsmith',
+                'language_code': 'en',
+            },
+            'forward_date': 1,
+            'text': 'test',
+        },
+    }
+
+    message = await mocked_bot_api.api.forward_message(
+        chat_id=ChatID(1), from_chat_id=ChatID(1), message_id=MessageID(1)
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/forwardMessage',
+        json={'chat_id': 1, 'from_chat_id': 1, 'message_id': 1},
+    )
+
+    assert message == Message(
+        message_id=MessageID(7),
+        date=0,
+        chat=Chat(
+            id=ChatID(2),
+            type='private',
+            username='johnsmith',
+            first_name='John',
+            last_name='Smith',
+        ),
+        from_=User(
+            id=UserID(3),
+            is_bot=True,
+            first_name='Roboto Test Bot',
+            username='robototestbot',
+        ),
+        forward_from=User(
+            id=UserID(4),
+            is_bot=False,
+            first_name='John',
+            last_name='Smith',
+            username='johnsmith',
+            language_code='en',
+        ),
+        forward_date=1,
+        text='test',
+    )
+
+
+@pytest.mark.trio
 async def test_send_photo_with_path(mocked_bot_api: MockedBotAPI):
     """Test that BotAPI.send_message properly reads back the sent message."""
     mocked_bot_api.response.json.return_value = {

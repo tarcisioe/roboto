@@ -22,6 +22,16 @@ def json_serialize(value: Optional[T]) -> Optional[JSONSerialized[T]]:
 
 
 @dataclass(frozen=True)
+class GetUpdatesRequest:
+    """Parameters for getting updates for a bot."""
+
+    offset: Optional[int] = None
+    limit: Optional[int] = None
+    timeout: Optional[int] = None
+    allowed_updates: Optional[List[str]] = None
+
+
+@dataclass(frozen=True)
 class SendMessageRequest:
     """Parameters for sending a message."""
 
@@ -48,10 +58,10 @@ class SendPhotoRequest:
 
 
 @dataclass(frozen=True)
-class GetUpdatesRequest:
-    """Parameters for getting updates for a bot."""
+class ForwardMessageRequest:
+    """Parameters for forwarding a message."""
 
-    offset: Optional[int] = None
-    limit: Optional[int] = None
-    timeout: Optional[int] = None
-    allowed_updates: Optional[List[str]] = None
+    chat_id: Union[ChatID, str]
+    from_chat_id: Union[ChatID, str]
+    message_id: MessageID
+    disable_notification: Optional[bool] = None

@@ -17,6 +17,7 @@ from .asks import Session
 from .datautil import from_json
 from .http_api import HTTPMethod, make_multipart_request, make_request
 from .request_types import (
+    ForwardMessageRequest,
     GetUpdatesRequest,
     InputFile,
     SendMessageRequest,
@@ -138,6 +139,36 @@ class BotAPI:
         return from_json(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendMessage', request),
+        )
+
+    async def forward_message(
+        self,
+        chat_id: Union[ChatID, str],
+        from_chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        *,
+        disable_notification: Optional[bool] = None,
+    ) -> Message:
+        """forwardMessage API method.
+
+        Args:
+            chat_id: The ID of the chat to forward the message to.
+            from_chat_id: The ID of the chat where the message is coming from.
+            message_id: The ID of the message to forward.
+            disable_notification: Do not notify users that the message was sent.
+
+        Returns:
+            The Message object for the message that was forwarded.
+        """
+        request = ForwardMessageRequest(
+            chat_id, from_chat_id, message_id, disable_notification,
+        )
+
+        return from_json(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/forwardMessage', request
+            ),
         )
 
     async def send_photo(
