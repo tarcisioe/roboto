@@ -24,6 +24,7 @@ from .request_types import (
     SendDocumentRequest,
     SendMessageRequest,
     SendPhotoRequest,
+    SendVideoRequest,
     json_serialize,
 )
 from .url import URL
@@ -313,6 +314,64 @@ class BotAPI:
         return from_json(
             Message,
             await make_multipart_request(self.session, '/sendDocument', request),
+        )
+
+    async def send_video(
+        self,
+        chat_id: Union[ChatID, str],
+        video: InputFile,
+        duration: Optional[int] = None,
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        thumb: Optional[InputFile] = None,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        supports_streaming: Optional[bool] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendVideo API method.
+
+        Args:
+            chat_id: The ID of the chat to send a video to.
+            video: An InputFile to use to send the video.
+                   See the documentation on InputFile.
+            duration: The video duration (optional).
+            width: The video width (optional).
+            height: The video height (optional).
+            thumb: An InputFile for the thumbnail to be used for the video.
+                   See the documentation on InputFile.
+            caption: A caption to add to the video.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            supports_streaming: Should be True if the video supports streaming.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendVideoRequest(
+            chat_id,
+            video,
+            duration,
+            width,
+            height,
+            thumb,
+            caption,
+            parse_mode,
+            disable_notification,
+            supports_streaming,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message, await make_multipart_request(self.session, '/sendVideo', request),
         )
 
 

@@ -96,3 +96,21 @@ class SendDocumentRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendVideoRequest:
+    """Parameters for sending a video."""
+
+    chat_id: Union[ChatID, str]
+    video: InputFile
+    duration: Optional[int] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    thumb: Optional[InputFile] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[ParseMode] = None
+    supports_streaming: Optional[bool] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
