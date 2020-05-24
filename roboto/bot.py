@@ -26,6 +26,7 @@ from .request_types import (
     SendMessageRequest,
     SendPhotoRequest,
     SendVideoRequest,
+    SendVoiceRequest,
     json_serialize,
 )
 from .url import URL
@@ -429,6 +430,52 @@ class BotAPI:
         return from_json(
             Message,
             await make_multipart_request(self.session, '/sendAnimation', request),
+        )
+
+    async def send_voice(
+        self,
+        chat_id: Union[ChatID, str],
+        voice: InputFile,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        duration: Optional[int] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendVoice API method.
+
+        Args:
+            chat_id: The ID of the chat to send a voice note to.
+            voice: An InputFile to use to send the voice note.
+                   See the documentation on InputFile. Must be an OGG audio file
+                   encoded with OPUS.
+            caption: A caption to add to the voice note.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            duration: The voice note duration (optional).
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendVoiceRequest(
+            chat_id,
+            voice,
+            caption,
+            parse_mode,
+            duration,
+            disable_notification,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message, await make_multipart_request(self.session, '/sendVoice', request),
         )
 
 

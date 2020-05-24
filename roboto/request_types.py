@@ -131,3 +131,17 @@ class SendAnimationRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendVoiceRequest:
+    """Parameters for sending a voice note (OGG/OPUS audio)."""
+
+    chat_id: Union[ChatID, str]
+    voice: InputFile
+    caption: Optional[str] = None
+    parse_mode: Optional[ParseMode] = None
+    duration: Optional[int] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
