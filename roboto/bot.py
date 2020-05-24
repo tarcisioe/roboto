@@ -240,9 +240,9 @@ class BotAPI:
             caption: A caption to add to the audio.
             parse_mode: How to parse the text (see `ParseMode`). Parses as
                         plain text if omitted.
-            duration: The audio duration (optional).
-            performer: The audio performer (optional).
-            title: The audio title (optional).
+            duration: The audio duration.
+            performer: The audio performer.
+            title: The audio title.
             thumb: An InputFile for the thumbnail to be used for the audio.
                    See the documentation on InputFile.
             disable_notification: Do not notify users that the message was sent.
@@ -340,9 +340,9 @@ class BotAPI:
             chat_id: The ID of the chat to send a video to.
             video: An InputFile to use to send the video.
                    See the documentation on InputFile.
-            duration: The video duration (optional).
-            width: The video width (optional).
-            height: The video height (optional).
+            duration: The video duration.
+            width: The video width.
+            height: The video height.
             thumb: An InputFile for the thumbnail to be used for the video.
                    See the documentation on InputFile.
             caption: A caption to add to the video.
@@ -397,9 +397,9 @@ class BotAPI:
             chat_id: The ID of the chat to send an animation to.
             animation: An InputFile to use to send the animation.
                        See the documentation on InputFile.
-            duration: The animation duration (optional).
-            width: The animation width (optional).
-            height: The animation height (optional).
+            duration: The animation duration.
+            width: The animation width.
+            height: The animation height.
             thumb: An InputFile for the thumbnail to be used for the animation.
                    See the documentation on InputFile.
             caption: A caption to add to the animation.
@@ -454,7 +454,7 @@ class BotAPI:
             caption: A caption to add to the voice note.
             parse_mode: How to parse the text (see `ParseMode`). Parses as
                         plain text if omitted.
-            duration: The voice note duration (optional).
+            duration: The voice note duration.
             disable_notification: Do not notify users that the message was sent.
             reply_to_message_id: ID of a message that the sent message should
                                  be a reply to.
@@ -496,8 +496,8 @@ class BotAPI:
             chat_id: The ID of the chat to send a video note to.
             video_note: An InputFile to use to send the video note.
                         See the documentation on InputFile. Must be a square mp4 video.
-            duration: The video note duration (optional).
-            length: The video note length (diameter) (optional).
+            duration: The video note duration.
+            length: The video note length (diameter).
             thumb: An InputFile for the thumbnail to be used for the animation.
                    See the documentation on InputFile.
             disable_notification: Do not notify users that the message was sent.
