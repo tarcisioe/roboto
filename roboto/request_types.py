@@ -114,3 +114,20 @@ class SendVideoRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendAnimationRequest:
+    """Parameters for sending an animation."""
+
+    chat_id: Union[ChatID, str]
+    animation: InputFile
+    duration: Optional[int] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    thumb: Optional[InputFile] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[ParseMode] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None

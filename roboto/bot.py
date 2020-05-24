@@ -20,6 +20,7 @@ from .request_types import (
     ForwardMessageRequest,
     GetUpdatesRequest,
     InputFile,
+    SendAnimationRequest,
     SendAudioRequest,
     SendDocumentRequest,
     SendMessageRequest,
@@ -372,6 +373,62 @@ class BotAPI:
 
         return from_json(
             Message, await make_multipart_request(self.session, '/sendVideo', request),
+        )
+
+    async def send_animation(
+        self,
+        chat_id: Union[ChatID, str],
+        animation: InputFile,
+        duration: Optional[int] = None,
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        thumb: Optional[InputFile] = None,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendAnimation API method.
+
+        Args:
+            chat_id: The ID of the chat to send an animation to.
+            animation: An InputFile to use to send the animation.
+                       See the documentation on InputFile.
+            duration: The animation duration (optional).
+            width: The animation width (optional).
+            height: The animation height (optional).
+            thumb: An InputFile for the thumbnail to be used for the animation.
+                   See the documentation on InputFile.
+            caption: A caption to add to the animation.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+
+        Returns:
+            The Message object for the message that was sent.
+        """
+
+        request = SendAnimationRequest(
+            chat_id,
+            animation,
+            duration,
+            width,
+            height,
+            thumb,
+            caption,
+            parse_mode,
+            disable_notification,
+            reply_to_message_id,
+            json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_multipart_request(self.session, '/sendAnimation', request),
         )
 
 
