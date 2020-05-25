@@ -525,6 +525,9 @@ class RequestProcessor:
         async for block in multipart_blocks(self.multipart, self.encoding, _BOUNDARY):
             multipart_bytes += block
 
+        with open('log', 'w') as log:
+            print(multipart_bytes, file=log)
+
         return multipart_bytes
 
     async def _file_manager(self, path):

@@ -3,9 +3,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from io import BufferedIOBase
 from pathlib import Path
-from typing import BinaryIO, List, NamedTuple, NewType, Optional, Union
+from typing import BinaryIO, List, NewType, Optional, Union
 
 from typing_extensions import Literal
 
@@ -18,16 +17,17 @@ MessageID = NewType('MessageID', int)
 FileID = NewType('FileID', str)
 
 
-class FileDescription(NamedTuple):
-    """Describe an in-memory file to be sent through the API."""
+@dataclass(frozen=True)
+class FileDescription:
+    """Describe a file to be sent through the API with customized metadata."""
 
-    binary_source: Union[BinaryIO, bytes]
+    binary_source: Union[Path, BinaryIO, bytes]
     basename: str
     mime_type: str = 'application/octet-stream'
 
 
 # pylint: disable=invalid-triple-quote
-InputFile = Union[Path, BufferedIOBase, FileID, FileDescription, URL]
+InputFile = Union[Path, BinaryIO, FileID, FileDescription, URL]
 """An InputFile can be either:
 
 A Path object: This will be used to open the file and read it to send.

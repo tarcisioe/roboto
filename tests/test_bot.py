@@ -11,6 +11,8 @@ from roboto import (
     Chat,
     ChatID,
     FileDescription,
+    InputMediaPhoto,
+    InputMediaVideo,
     KeyboardButton,
     Message,
     MessageID,
@@ -21,7 +23,7 @@ from roboto import (
     UserID,
 )
 from roboto.bot import BotAPI
-from roboto.http_api import BytesMultipartData, IOMultipartData
+from roboto.http_api import BytesMultipartData, IOMultipartData, PathMultipartData
 
 from .common import MockedBotAPI
 
@@ -566,3 +568,63 @@ async def test_send_video_note(mocked_bot_api: MockedBotAPI):
         chat=Chat(id=ChatID(1), type='private'),
         from_=User(id=UserID(1), is_bot=True, first_name='Test'),
     )
+
+
+@pytest.mark.trio
+async def test_send_media_group(mocker, mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_media_group creates the correct payload and properly reads
+    back the returned message list.
+    """
+
+    uuid_mock = mocker.MagicMock()
+    uuid_mock.side_effect = ['DUMMY-UUID-1', 'DUMMY-UUID-2']
+    mocker.patch('roboto.media.uuid4', uuid_mock)
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': [
+            {
+                'message_id': 1,
+                'date': 0,
+                'chat': {'id': 1, 'type': 'private'},
+                'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+            }
+        ],
+    }
+
+    photo_path = Path('dummy.jpg')
+    video_path = Path('dummy.mp4')
+
+    message = await mocked_bot_api.api.send_media_group(
+        chat_id=ChatID(1),
+        media=[InputMediaPhoto(photo_path), InputMediaVideo(video_path)],
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/sendMediaGroup',
+        multipart={
+            'attachedDUMMY-UUID-1': PathMultipartData(
+                path=photo_path,
+                mime_type='image/jpeg',
+                basename='attachedDUMMY-UUID-1',
+            ),
+            'attachedDUMMY-UUID-2': PathMultipartData(
+                path=video_path, mime_type='video/mp4', basename='attachedDUMMY-UUID-2',
+            ),
+            'chat_id': 1,
+            'media': (
+                '[{"media": "attach://attachedDUMMY-UUID-1", "type": "photo"}, '
+                '{"media": "attach://attachedDUMMY-UUID-2", "type": "video"}]'
+            ),
+        },
+    )
+
+    assert message == [
+        Message(
+            message_id=MessageID(1),
+            date=0,
+            chat=Chat(id=ChatID(1), type='private'),
+            from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+        )
+    ]

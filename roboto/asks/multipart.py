@@ -1,11 +1,21 @@
 import mimetypes
 
-from io import BufferedIOBase
-from typing import NamedTuple, BinaryIO, Optional
+from typing import BinaryIO, NamedTuple, Optional
 from pathlib import Path
-from random import randint
 
 from anyio import aopen
+
+
+class PathMultipartData(NamedTuple):
+    '''
+    Describes a file to be sent in a multipart/form-data request with a Path.
+
+    This should be used for sending a file by its Path with (optional)
+    manually-specified mimetype and basename.
+    '''
+    path: Path
+    mime_type: str = 'application/octet-stream'
+    basename: Optional[str] = None
 
 
 class BytesMultipartData(NamedTuple):
@@ -43,7 +53,7 @@ async def _file_like_to_multipart_data(value):
 
         return file_bytes, mime_type, file_basename
 
-    if isinstance(value, BufferedIOBase):
+    if hasattr(value, 'read'):
         file_bytes = value.read()
 
         if not isinstance(value.name, str):
@@ -52,6 +62,14 @@ async def _file_like_to_multipart_data(value):
         file_basename = Path(value.name).name if hasattr(value, 'name') and isinstance(value.name, str) else None
 
         mime_type, _ = mimetypes.guess_type(file_basename) if file_basename is not None else (None, None)
+
+        return file_bytes, mime_type, file_basename
+
+    if isinstance(value, PathMultipartData):
+        path, mime_type, file_basename = value
+
+        async with await aopen(path, 'rb') as f:
+            file_bytes = await f.read()
 
         return file_bytes, mime_type, file_basename
 
@@ -65,9 +83,12 @@ async def _file_like_to_multipart_data(value):
 
         return file_bytes, mime_type, file_basename
 
+    raise TypeError('value should be of type Path, PathMultipartData, '
+                    'BytesMultipartData, IOMultipartData, or provide a `read` method.')
+
 
 async def _to_multipart_form_data(value, encoding):
-    if isinstance(value, (Path, BufferedIOBase, BytesMultipartData, IOMultipartData)):
+    if isinstance(value, (Path, BytesMultipartData, IOMultipartData)) or hasattr(value, 'read'):
         file_bytes, mime_type, file_basename = await _file_like_to_multipart_data(value)
 
         mime_type = 'application/octet-stream' if mime_type is None else mime_type

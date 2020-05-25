@@ -1,13 +1,15 @@
 """Bot API request function."""
+from collections import ChainMap
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Awaitable, Callable, Optional, Union
+from pathlib import Path
+from typing import Any, Awaitable, Callable, Dict, Optional, Union
 
 from typing_extensions import Literal, Protocol
 
 from .api_types import FileDescription
 from .asks import Session
-from .asks.multipart import BytesMultipartData, IOMultipartData
+from .asks.multipart import BytesMultipartData, IOMultipartData, PathMultipartData
 from .asks.response_objects import Response
 from .datautil import from_json, to_json
 from .error import BotAPIError
@@ -78,6 +80,11 @@ async def _json_request(
 def _to_multipart_compatible(value: Any) -> Any:
     """Transform values into multipart/form-data compatible versions."""
     if isinstance(value, FileDescription):
+        if isinstance(value.binary_source, Path):
+            return PathMultipartData(
+                value.binary_source, value.mime_type, value.basename
+            )
+
         if isinstance(value.binary_source, bytes):
             return BytesMultipartData(
                 value.binary_source, value.mime_type, value.basename
@@ -88,16 +95,20 @@ def _to_multipart_compatible(value: Any) -> Any:
     return value
 
 
-async def _multipart_request(
-    session: Session, method: HTTPMethod, api_method: str, body: Any = None
+async def _multipart_request_from_dict(
+    session: Session, method: HTTPMethod, api_method: str, body: Dict[str, Any]
 ) -> Response:
-    fields = {
-        k: _to_multipart_compatible(v)
-        for k, v in body.__dict__.items()
-        if v is not None
-    }
+    fields = {k: _to_multipart_compatible(v) for k, v in body.items() if v is not None}
 
     return await session.request(method.value, path=api_method, multipart=fields)
+
+
+async def _multipart_request(
+    session: Session, method: HTTPMethod, api_method: str, body: Any
+) -> Response:
+    return await _multipart_request_from_dict(
+        session, method, api_method, body.__dict__
+    )
 
 
 APIRequester = Callable[[Session, HTTPMethod, str, Any], Awaitable[Response]]
@@ -160,3 +171,38 @@ async def make_multipart_request(session: Session, api_method: str, body: Any) -
     return await _make_request(
         _multipart_request, session, HTTPMethod.POST, api_method, body
     )
+
+
+async def make_multipart_request_with_attachments(
+    session: Session,
+    api_method: str,
+    body: Any,
+    attachments: Dict[str, FileDescription],
+) -> Any:
+    """Function for doing POST multipart/form-data requests with attachments.
+
+    Attachments are defined by Telegram API.
+
+    Useful for requests that send files.
+
+    Args:
+        session: An `asks.Session` object with the correct `base_location` and
+                 `endpoint` set up.
+        api_method: The HTTP method to use.
+        body: An object to send as JSON.
+
+    Returns:
+        The APIResponse contents if everything went right.
+
+    Raises:
+        BotAPIError: If response.ok is false.
+    """
+    fields = dict(ChainMap(body.__dict__, attachments))
+
+    content = await _multipart_request_from_dict(
+        session, HTTPMethod.POST, api_method, body=fields,
+    )
+
+    response: Any = from_json(AnyAPIResponse, content.json())
+
+    return validate_response(response)

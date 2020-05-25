@@ -6,6 +6,9 @@ from typing import List, Optional, Union
 from .api_types import (
     BotUser,
     ChatID,
+    InputFile,
+    InputMediaPhoto,
+    InputMediaVideo,
     Message,
     MessageID,
     ParseMode,
@@ -15,20 +18,27 @@ from .api_types import (
 )
 from .asks import Session
 from .datautil import from_json
-from .http_api import HTTPMethod, make_multipart_request, make_request
+from .http_api import (
+    HTTPMethod,
+    make_multipart_request,
+    make_multipart_request_with_attachments,
+    make_request,
+)
+from .media import extract_medias
 from .request_types import (
     ForwardMessageRequest,
     GetUpdatesRequest,
-    InputFile,
     SendAnimationRequest,
     SendAudioRequest,
     SendDocumentRequest,
+    SendMediaGroupRequest,
     SendMessageRequest,
     SendPhotoRequest,
     SendVideoNoteRequest,
     SendVideoRequest,
     SendVoiceRequest,
     json_serialize,
+    maybe_json_serialize,
 )
 from .url import URL
 
@@ -139,7 +149,7 @@ class BotAPI:
             disable_web_page_preview,
             disable_notification,
             reply_to_message_id,
-            json_serialize(reply_markup),
+            maybe_json_serialize(reply_markup),
         )
 
         return from_json(
@@ -210,7 +220,7 @@ class BotAPI:
             parse_mode,
             disable_notification,
             reply_to_message_id,
-            json_serialize(reply_markup),
+            maybe_json_serialize(reply_markup),
         )
 
         return from_json(
@@ -265,7 +275,7 @@ class BotAPI:
             thumb,
             disable_notification,
             reply_to_message_id,
-            json_serialize(reply_markup),
+            maybe_json_serialize(reply_markup),
         )
 
         return from_json(
@@ -311,7 +321,7 @@ class BotAPI:
             parse_mode,
             disable_notification,
             reply_to_message_id,
-            json_serialize(reply_markup),
+            maybe_json_serialize(reply_markup),
         )
 
         return from_json(
@@ -370,7 +380,7 @@ class BotAPI:
             disable_notification,
             supports_streaming,
             reply_to_message_id,
-            json_serialize(reply_markup),
+            maybe_json_serialize(reply_markup),
         )
 
         return from_json(
@@ -425,7 +435,7 @@ class BotAPI:
             parse_mode,
             disable_notification,
             reply_to_message_id,
-            json_serialize(reply_markup),
+            maybe_json_serialize(reply_markup),
         )
 
         return from_json(
@@ -472,7 +482,7 @@ class BotAPI:
             duration,
             disable_notification,
             reply_to_message_id,
-            json_serialize(reply_markup),
+            maybe_json_serialize(reply_markup),
         )
 
         return from_json(
@@ -517,12 +527,43 @@ class BotAPI:
             thumb,
             disable_notification,
             reply_to_message_id,
-            json_serialize(reply_markup),
+            maybe_json_serialize(reply_markup),
         )
 
         return from_json(
             Message,
             await make_multipart_request(self.session, '/sendVideoNote', request),
+        )
+
+    async def send_media_group(
+        self,
+        chat_id: Union[ChatID, str],
+        media: List[Union[InputMediaPhoto, InputMediaVideo]],
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+    ) -> List[Message]:
+        """sendMediaGroup API method.
+
+        Args:
+            chat_id: The ID of the chat to send a video note to.
+            media: An array of InputMediaPhoto and InputMediaVideo to send as a
+                   media group.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+        """
+
+        media, attachments = extract_medias(media)
+
+        request = SendMediaGroupRequest(
+            chat_id, json_serialize(media), disable_notification, reply_to_message_id,
+        )
+
+        return from_json(
+            List[Message],
+            await make_multipart_request_with_attachments(
+                self.session, '/sendMediaGroup', request, attachments
+            ),
         )
 
 
