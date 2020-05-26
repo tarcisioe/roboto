@@ -31,6 +31,7 @@ from .request_types import (
     SendAnimationRequest,
     SendAudioRequest,
     SendDocumentRequest,
+    SendLocationRequest,
     SendMediaGroupRequest,
     SendMessageRequest,
     SendPhotoRequest,
@@ -564,6 +565,44 @@ class BotAPI:
             await make_multipart_request_with_attachments(
                 self.session, '/sendMediaGroup', request, attachments
             ),
+        )
+
+    async def send_location(
+        self,
+        chat_id: Union[ChatID, str],
+        latitude: float,
+        longitude: float,
+        live_period: Optional[int] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendLocation API method.
+
+        Args:
+            chat_id: The ID of the chat to send a location or live location to.
+            latitude: Latitude of the location.
+            longitude: Longitude of the location.
+            live_period: Period in seconds for which the location will be updated.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+        """
+
+        request = SendLocationRequest(
+            chat_id,
+            latitude,
+            longitude,
+            live_period,
+            disable_notification,
+            reply_to_message_id,
+            maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(self.session, HTTPMethod.POST, '/sendLocation', request),
         )
 
 

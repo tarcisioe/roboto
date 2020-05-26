@@ -182,3 +182,16 @@ class SendMediaGroupRequest:
     media: JSONSerialized[List[Union[InputMediaPhoto, InputMediaVideo]]]
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
+
+
+@dataclass(frozen=True)
+class SendLocationRequest:
+    """Parameters for sending a point on the map."""
+
+    chat_id: Union[ChatID, str]
+    latitude: float
+    longitude: float
+    live_period: Optional[int] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
