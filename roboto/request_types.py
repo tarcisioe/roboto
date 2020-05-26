@@ -5,6 +5,8 @@ from typing import Generic, List, Optional, TypeVar, Union, cast
 
 from .api_types import (
     ChatID,
+    InlineKeyboardMarkup,
+    InlineMessageID,
     InputFile,
     InputMediaPhoto,
     InputMediaVideo,
@@ -182,3 +184,54 @@ class SendMediaGroupRequest:
     media: JSONSerialized[List[Union[InputMediaPhoto, InputMediaVideo]]]
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
+
+
+@dataclass(frozen=True)
+class SendLocationRequest:
+    """Parameters for sending a point on the map."""
+
+    chat_id: Union[ChatID, str]
+    latitude: float
+    longitude: float
+    live_period: Optional[int] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class EditMessageLiveLocationRequest:
+    """Parameters for editing a live location normal message."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    latitude: float
+    longitude: float
+    reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None
+
+
+@dataclass(frozen=True)
+class EditInlineMessageLiveLocationRequest:
+    """Parameters for editing a live location inline message."""
+
+    inline_message_id: InlineMessageID
+    latitude: float
+    longitude: float
+    reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None
+
+
+@dataclass(frozen=True)
+class StopMessageLiveLocationRequest:
+    """Parameters for stopping a live location normal message."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None
+
+
+@dataclass(frozen=True)
+class StopInlineMessageLiveLocationRequest:
+    """Parameters for stopping a live location inline message."""
+
+    inline_message_id: InlineMessageID
+    reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None

@@ -6,6 +6,8 @@ from typing import List, Optional, Union
 from .api_types import (
     BotUser,
     ChatID,
+    InlineKeyboardMarkup,
+    InlineMessageID,
     InputFile,
     InputMediaPhoto,
     InputMediaVideo,
@@ -26,17 +28,22 @@ from .http_api import (
 )
 from .media import extract_medias
 from .request_types import (
+    EditInlineMessageLiveLocationRequest,
+    EditMessageLiveLocationRequest,
     ForwardMessageRequest,
     GetUpdatesRequest,
     SendAnimationRequest,
     SendAudioRequest,
     SendDocumentRequest,
+    SendLocationRequest,
     SendMediaGroupRequest,
     SendMessageRequest,
     SendPhotoRequest,
     SendVideoNoteRequest,
     SendVideoRequest,
     SendVoiceRequest,
+    StopInlineMessageLiveLocationRequest,
+    StopMessageLiveLocationRequest,
     json_serialize,
     maybe_json_serialize,
 )
@@ -545,7 +552,7 @@ class BotAPI:
         """sendMediaGroup API method.
 
         Args:
-            chat_id: The ID of the chat to send a video note to.
+            chat_id: The ID of the chat to send a media group to.
             media: An array of InputMediaPhoto and InputMediaVideo to send as a
                    media group.
             disable_notification: Do not notify users that the message was sent.
@@ -563,6 +570,168 @@ class BotAPI:
             List[Message],
             await make_multipart_request_with_attachments(
                 self.session, '/sendMediaGroup', request, attachments
+            ),
+        )
+
+    async def send_location(
+        self,
+        chat_id: Union[ChatID, str],
+        latitude: float,
+        longitude: float,
+        live_period: Optional[int] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendLocation API method.
+
+        Args:
+            chat_id: The ID of the chat to send a location or live location to.
+            latitude: Latitude of the location.
+            longitude: Longitude of the location.
+            live_period: Period in seconds for which the location will be updated.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+        """
+
+        request = SendLocationRequest(
+            chat_id,
+            latitude,
+            longitude,
+            live_period,
+            disable_notification,
+            reply_to_message_id,
+            maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(self.session, HTTPMethod.POST, '/sendLocation', request),
+        )
+
+    async def edit_message_live_location(
+        self,
+        chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        latitude: float,
+        longitude: float,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """editMessageLiveLocation API method (for normal messages).
+
+        Even though the REST API method for inline messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `edit_inline_message_live_location`.
+
+        Args:
+            chat_id: The ID of the chat where the message to be edited is.
+            message_id: The id of the message to edit.
+            latitude: The new latitude for editing the location.
+            longitude: The new longitude for editing the location.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = EditMessageLiveLocationRequest(
+            chat_id,
+            message_id,
+            latitude,
+            longitude,
+            maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/editMessageLiveLocation', request
+            ),
+        )
+
+    async def edit_inline_message_live_location(
+        self,
+        inline_message_id: InlineMessageID,
+        latitude: float,
+        longitude: float,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """editMessageLiveLocation API method (for inline messages).
+
+        Even though the REST API method for normal messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `edit_message_live_location`.
+
+        Args:
+            inline_message_id: The id of the inline message to edit.
+            latitude: The new latitude for editing the location.
+            longitude: The new longitude for editing the location.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = EditInlineMessageLiveLocationRequest(
+            inline_message_id, latitude, longitude, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/editMessageLiveLocation', request
+            ),
+        )
+
+    async def stop_message_live_location(
+        self,
+        chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """stopMessageLiveLocation API method (for normal messages).
+
+        Even though the REST API method for inline messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `stop_inline_message_live_location`.
+
+        Args:
+            chat_id: The ID of the chat where the message to be stopped is.
+            message_id: The id of the message to stop.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = StopMessageLiveLocationRequest(
+            chat_id, message_id, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/stopMessageLiveLocation', request
+            ),
+        )
+
+    async def stop_inline_message_live_location(
+        self,
+        inline_message_id: InlineMessageID,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """stopMessageLiveLocation API method (for inline messages).
+
+        Even though the REST API method for normal messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `stop_message_live_location`.
+
+        Args:
+            inline_message_id: The id of the inline message to stop.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = StopInlineMessageLiveLocationRequest(
+            inline_message_id, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/stopMessageLiveLocation', request
             ),
         )
 
