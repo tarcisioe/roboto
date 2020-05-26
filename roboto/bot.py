@@ -42,6 +42,8 @@ from .request_types import (
     SendVideoNoteRequest,
     SendVideoRequest,
     SendVoiceRequest,
+    StopInlineMessageLiveLocationRequest,
+    StopMessageLiveLocationRequest,
     json_serialize,
     maybe_json_serialize,
 )
@@ -674,6 +676,62 @@ class BotAPI:
             Message,
             await make_request(
                 self.session, HTTPMethod.POST, '/editMessageLiveLocation', request
+            ),
+        )
+
+    async def stop_message_live_location(
+        self,
+        chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """stopMessageLiveLocation API method (for normal messages).
+
+        Even though the REST API method for inline messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `stop_inline_message_live_location`.
+
+        Args:
+            chat_id: The ID of the chat where the message to be stopped is.
+            message_id: The id of the message to stop.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = StopMessageLiveLocationRequest(
+            chat_id, message_id, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/stopMessageLiveLocation', request
+            ),
+        )
+
+    async def stop_inline_message_live_location(
+        self,
+        inline_message_id: InlineMessageID,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """stopMessageLiveLocation API method (for inline messages).
+
+        Even though the REST API method for normal messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `stop_message_live_location`.
+
+        Args:
+            inline_message_id: The id of the inline message to stop.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = StopInlineMessageLiveLocationRequest(
+            inline_message_id, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/stopMessageLiveLocation', request
             ),
         )
 

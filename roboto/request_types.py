@@ -218,3 +218,20 @@ class EditInlineMessageLiveLocationRequest:
     latitude: float
     longitude: float
     reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None
+
+
+@dataclass(frozen=True)
+class StopMessageLiveLocationRequest:
+    """Parameters for stopping a live location normal message."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None
+
+
+@dataclass(frozen=True)
+class StopInlineMessageLiveLocationRequest:
+    """Parameters for stopping a live location inline message."""
+
+    inline_message_id: InlineMessageID
+    reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None
