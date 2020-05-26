@@ -3,7 +3,15 @@ import json
 from dataclasses import dataclass
 from typing import Generic, List, Optional, TypeVar, Union, cast
 
-from .api_types import ChatID, InputFile, MessageID, ParseMode, ReplyMarkup
+from .api_types import (
+    ChatID,
+    InputFile,
+    InputMediaPhoto,
+    InputMediaVideo,
+    MessageID,
+    ParseMode,
+    ReplyMarkup,
+)
 from .datautil import to_json
 
 T = TypeVar('T')
@@ -13,12 +21,17 @@ class JSONSerialized(str, Generic[T]):
     """Strong type for the JSON serialized version of a type."""
 
 
-def json_serialize(value: Optional[T]) -> Optional[JSONSerialized[T]]:
+def json_serialize(value: T) -> JSONSerialized[T]:
+    """Serialize value to its strong-typed JSON string type."""
+    return cast(JSONSerialized[T], json.dumps(to_json(value)))
+
+
+def maybe_json_serialize(value: Optional[T]) -> Optional[JSONSerialized[T]]:
     """Serialize value to its strong-typed JSON string type."""
     if value is None:
         return None
 
-    return cast(JSONSerialized[T], json.dumps(to_json(value)))
+    return json_serialize(value)
 
 
 @dataclass(frozen=True)
@@ -159,3 +172,13 @@ class SendVideoNoteRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendMediaGroupRequest:
+    """Parameters for sending a group of photos or videos as an album."""
+
+    chat_id: Union[ChatID, str]
+    media: JSONSerialized[List[Union[InputMediaPhoto, InputMediaVideo]]]
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None

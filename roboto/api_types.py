@@ -3,9 +3,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from io import BufferedIOBase
 from pathlib import Path
-from typing import BinaryIO, List, NamedTuple, NewType, Optional, Union
+from typing import BinaryIO, List, NewType, Optional, Union
+
+from typing_extensions import Literal
 
 from .url import URL
 
@@ -16,16 +17,17 @@ MessageID = NewType('MessageID', int)
 FileID = NewType('FileID', str)
 
 
-class FileDescription(NamedTuple):
-    """Describe an in-memory file to be sent through the API."""
+@dataclass(frozen=True)
+class FileDescription:
+    """Describe a file to be sent through the API with customized metadata."""
 
-    binary_source: Union[BinaryIO, bytes]
+    binary_source: Union[Path, BinaryIO, bytes]
     basename: str
     mime_type: str = 'application/octet-stream'
 
 
 # pylint: disable=invalid-triple-quote
-InputFile = Union[Path, BufferedIOBase, FileID, FileDescription, URL]
+InputFile = Union[Path, BinaryIO, FileID, FileDescription, URL]
 """An InputFile can be either:
 
 A Path object: This will be used to open the file and read it to send.
@@ -667,23 +669,86 @@ class ResponseParameters:
 
 
 @dataclass(frozen=True)
-class InputMedia:
+class InputMediaPhoto:
+    """A photo to be sent."""
+
+    media: InputFile
+    caption: Optional[str] = None
+    parse_mode: Optional[str] = None
+    type: Literal['photo'] = field(default='photo', init=False)
+
+
+@dataclass(frozen=True)
+class InputMediaVideo:
     """The content of a media message to be sent.
 
     Can be of type: Animation, Document, Audio, Photo and Video.
     """
 
-    type: str
-    media: FileID
-    thumb: Optional[Union[URL, FileID]]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    width: Optional[int]
-    height: Optional[int]
-    duration: Optional[int]
-    supports_streaming: Optional[bool]
-    performer: Optional[str]
-    title: Optional[str]
+    media: InputFile
+    thumb: Optional[Union[URL, FileID]] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[str] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    duration: Optional[int] = None
+    supports_streaming: Optional[bool] = None
+    type: Literal['video'] = field(default='video', init=False)
+
+
+@dataclass(frozen=True)
+class InputMediaAnimation:
+    """The content of a media message to be sent.
+
+    Can be of type: Animation, Document, Audio, Photo and Video.
+    """
+
+    media: InputFile
+    thumb: Optional[Union[URL, FileID]] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[str] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    duration: Optional[int] = None
+    performer: Optional[str] = None
+    type: Literal['animation'] = field(default='animation', init=False)
+
+
+@dataclass(frozen=True)
+class InputMediaAudio:
+    """The content of a media message to be sent.
+
+    Can be of type: Animation, Document, Audio, Photo and Video.
+    """
+
+    media: InputFile
+    thumb: Optional[Union[URL, FileID]] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[str] = None
+    duration: Optional[int] = None
+    performer: Optional[str] = None
+    title: Optional[str] = None
+    type: Literal['animation'] = field(default='animation', init=False)
+
+
+@dataclass(frozen=True)
+class InputMediaDocument:
+    """A photo to be sent."""
+
+    media: InputFile
+    caption: Optional[str] = None
+    parse_mode: Optional[str] = None
+    thumb: Optional[Union[URL, FileID]] = None
+    type: Literal['document'] = field(default='document', init=False)
+
+
+InputMedia = Union[
+    InputMediaAnimation,
+    InputMediaAudio,
+    InputMediaDocument,
+    InputMediaPhoto,
+    InputMediaVideo,
+]
 
 
 class ParseMode(Enum):
@@ -790,6 +855,11 @@ __all__ = [
     'InlineKeyboardMarkup',
     'InlineQuery',
     'InputMedia',
+    'InputMediaAnimation',
+    'InputMediaAudio',
+    'InputMediaDocument',
+    'InputMediaPhoto',
+    'InputMediaVideo',
     'InputFile',
     'Invoice',
     'KeyboardButton',
