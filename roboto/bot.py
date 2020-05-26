@@ -552,7 +552,7 @@ class BotAPI:
         """sendMediaGroup API method.
 
         Args:
-            chat_id: The ID of the chat to send a video note to.
+            chat_id: The ID of the chat to send a media group to.
             media: An array of InputMediaPhoto and InputMediaVideo to send as a
                    media group.
             disable_notification: Do not notify users that the message was sent.
