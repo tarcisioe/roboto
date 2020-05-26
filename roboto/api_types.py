@@ -14,6 +14,7 @@ Token = NewType('Token', str)
 UserID = NewType('UserID', int)
 ChatID = NewType('ChatID', int)
 MessageID = NewType('MessageID', int)
+InlineMessageID = NewType('InlineMessageID', str)
 FileID = NewType('FileID', str)
 
 
@@ -853,6 +854,7 @@ __all__ = [
     'Game',
     'InlineKeyboardButton',
     'InlineKeyboardMarkup',
+    'InlineMessageID',
     'InlineQuery',
     'InputMedia',
     'InputMediaAnimation',

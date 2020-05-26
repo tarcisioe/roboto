@@ -6,6 +6,8 @@ from typing import List, Optional, Union
 from .api_types import (
     BotUser,
     ChatID,
+    InlineKeyboardMarkup,
+    InlineMessageID,
     InputFile,
     InputMediaPhoto,
     InputMediaVideo,
@@ -26,6 +28,8 @@ from .http_api import (
 )
 from .media import extract_medias
 from .request_types import (
+    EditInlineMessageLiveLocationRequest,
+    EditMessageLiveLocationRequest,
     ForwardMessageRequest,
     GetUpdatesRequest,
     SendAnimationRequest,
@@ -603,6 +607,74 @@ class BotAPI:
         return from_json(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendLocation', request),
+        )
+
+    async def edit_message_live_location(
+        self,
+        chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        latitude: float,
+        longitude: float,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """editMessageLiveLocation API method (for normal messages).
+
+        Even though the REST API method for inline messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `edit_inline_message_live_location`.
+
+        Args:
+            chat_id: The ID of the chat where the message to be edited is.
+            message_id: The id of the message to edit.
+            latitude: The new latitude for editing the location.
+            longitude: The new longitude for editing the location.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = EditMessageLiveLocationRequest(
+            chat_id,
+            message_id,
+            latitude,
+            longitude,
+            maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/editMessageLiveLocation', request
+            ),
+        )
+
+    async def edit_inline_message_live_location(
+        self,
+        inline_message_id: InlineMessageID,
+        latitude: float,
+        longitude: float,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """editMessageLiveLocation API method (for inline messages).
+
+        Even though the REST API method for normal messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `edit_message_live_location`.
+
+        Args:
+            inline_message_id: The id of the inline message to edit.
+            latitude: The new latitude for editing the location.
+            longitude: The new longitude for editing the location.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = EditInlineMessageLiveLocationRequest(
+            inline_message_id, latitude, longitude, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/editMessageLiveLocation', request
+            ),
         )
 
 
