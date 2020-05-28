@@ -235,3 +235,19 @@ class StopInlineMessageLiveLocationRequest:
 
     inline_message_id: InlineMessageID
     reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendVenueRequest:
+    """Parameters for sending information about a venue."""
+
+    chat_id: Union[ChatID, str]
+    latitude: float
+    longitude: float
+    title: str
+    address: str
+    foursquare_id: Optional[str] = None
+    foursquare_type: Optional[str] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None

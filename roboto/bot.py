@@ -39,6 +39,7 @@ from .request_types import (
     SendMediaGroupRequest,
     SendMessageRequest,
     SendPhotoRequest,
+    SendVenueRequest,
     SendVideoNoteRequest,
     SendVideoRequest,
     SendVoiceRequest,
@@ -733,6 +734,53 @@ class BotAPI:
             await make_request(
                 self.session, HTTPMethod.POST, '/stopMessageLiveLocation', request
             ),
+        )
+
+    async def send_venue(
+        self,
+        chat_id: Union[ChatID, str],
+        latitude: float,
+        longitude: float,
+        title: str,
+        address: str,
+        foursquare_id: Optional[str] = None,
+        foursquare_type: Optional[str] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendVenue API method.
+
+        Args:
+            chat_id: The ID of the chat to send a venue to.
+            latitude: Latitude of the venue.
+            longitude: Longitude of the venue.
+            title: Name of the venue.
+            address: Address of the venue.
+            foursquare_id: Foursquare identifier of the venue.
+            foursquare_type: Foursquare type of the venue, if known.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+        """
+
+        request = SendVenueRequest(
+            chat_id,
+            latitude,
+            longitude,
+            title,
+            address,
+            foursquare_id,
+            foursquare_type,
+            disable_notification,
+            reply_to_message_id,
+            maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(self.session, HTTPMethod.POST, '/sendVenue', request),
         )
 
 
