@@ -646,13 +646,13 @@ async def test_send_location(mocked_bot_api: MockedBotAPI):
     }
 
     message = await mocked_bot_api.api.send_location(
-        chat_id=ChatID(1), latitude=35.3642156, longitude=141.6525518,
+        chat_id=ChatID(1), latitude=35.716692, longitude=139.785962,
     )
 
     mocked_bot_api.request.assert_called_with(
         'post',
         path='/sendLocation',
-        json={'chat_id': 1, 'latitude': 35.3642156, 'longitude': 141.6525518},
+        json={'chat_id': 1, 'latitude': 35.716692, 'longitude': 139.785962},
     )
 
     assert message == Message(
@@ -682,8 +682,8 @@ async def test_edit_message_live_location(mocked_bot_api: MockedBotAPI):
     message = await mocked_bot_api.api.edit_message_live_location(
         chat_id=ChatID(1),
         message_id=MessageID(1),
-        latitude=35.3642156,
-        longitude=141.6525518,
+        latitude=35.716692,
+        longitude=139.785962,
     )
 
     mocked_bot_api.request.assert_called_with(
@@ -692,8 +692,8 @@ async def test_edit_message_live_location(mocked_bot_api: MockedBotAPI):
         json={
             'chat_id': 1,
             'message_id': 1,
-            'latitude': 35.3642156,
-            'longitude': 141.6525518,
+            'latitude': 35.716692,
+            'longitude': 139.785962,
         },
     )
 
@@ -723,8 +723,8 @@ async def test_edit_inline_message_live_location(mocked_bot_api: MockedBotAPI):
 
     message = await mocked_bot_api.api.edit_inline_message_live_location(
         inline_message_id=InlineMessageID('abc'),
-        latitude=35.3642156,
-        longitude=141.6525518,
+        latitude=35.716692,
+        longitude=139.785962,
     )
 
     mocked_bot_api.request.assert_called_with(
@@ -732,8 +732,8 @@ async def test_edit_inline_message_live_location(mocked_bot_api: MockedBotAPI):
         path='/editMessageLiveLocation',
         json={
             'inline_message_id': 'abc',
-            'latitude': 35.3642156,
-            'longitude': 141.6525518,
+            'latitude': 35.716692,
+            'longitude': 139.785962,
         },
     )
 
@@ -799,6 +799,50 @@ async def test_stop_inline_message_live_location(mocked_bot_api: MockedBotAPI):
 
     mocked_bot_api.request.assert_called_with(
         'post', path='/stopMessageLiveLocation', json={'inline_message_id': 'abc'}
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_send_venue(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_venue creates the correct payload and properly reads
+    back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    message = await mocked_bot_api.api.send_venue(
+        chat_id=ChatID(1),
+        latitude=35.716692,
+        longitude=139.785962,
+        title='Yanagibayashi Shrine',
+        address='3 Chome-10-7 Matsugaya',
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/sendVenue',
+        json={
+            'chat_id': 1,
+            'latitude': 35.716692,
+            'longitude': 139.785962,
+            'title': 'Yanagibayashi Shrine',
+            'address': '3 Chome-10-7 Matsugaya',
+        },
     )
 
     assert message == Message(
