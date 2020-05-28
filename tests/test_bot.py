@@ -24,7 +24,7 @@ from roboto import (
     UserID,
 )
 from roboto.bot import BotAPI
-from roboto.http_api import BytesMultipartData, IOMultipartData, PathMultipartData
+from roboto.http_api import MultipartData
 
 from .common import MockedBotAPI
 
@@ -324,7 +324,7 @@ async def test_send_photo_with_bytes(mocked_bot_api: MockedBotAPI):
         path='/sendPhoto',
         multipart={
             'chat_id': 1,
-            'photo': BytesMultipartData(
+            'photo': MultipartData(
                 b'dummy', mime_type='image/jpeg', basename='image.jpg'
             ),
         },
@@ -365,7 +365,7 @@ async def test_send_photo_with_buffered_io(mocked_bot_api: MockedBotAPI):
         path='/sendPhoto',
         multipart={
             'chat_id': 1,
-            'photo': IOMultipartData(
+            'photo': MultipartData(
                 bytes_io, mime_type='image/jpeg', basename='image.jpg'
             ),
         },
@@ -605,13 +605,11 @@ async def test_send_media_group(mocker, mocked_bot_api: MockedBotAPI):
         'post',
         path='/sendMediaGroup',
         multipart={
-            'attachedDUMMY-UUID-1': PathMultipartData(
-                path=photo_path,
-                mime_type='image/jpeg',
-                basename='attachedDUMMY-UUID-1',
+            'attachedDUMMY-UUID-1': MultipartData(
+                photo_path, mime_type='image/jpeg', basename='attachedDUMMY-UUID-1',
             ),
-            'attachedDUMMY-UUID-2': PathMultipartData(
-                path=video_path, mime_type='video/mp4', basename='attachedDUMMY-UUID-2',
+            'attachedDUMMY-UUID-2': MultipartData(
+                video_path, mime_type='video/mp4', basename='attachedDUMMY-UUID-2',
             ),
             'chat_id': 1,
             'media': (

@@ -6,6 +6,7 @@ from abc import ABCMeta, abstractmethod
 from copy import copy
 from functools import partialmethod
 from urllib.parse import urlparse, urlunparse
+import ssl
 
 from h11 import RemoteProtocolError
 from anyio import connect_tcp, create_semaphore
@@ -130,7 +131,8 @@ class BaseSession(metaclass=ABCMeta):
                             the request body.
                         files (dict): A dict of `filename:filepath`s to be sent
                             as multipart.
-                        multipart (dict): Info to be sent as a multipart form.
+                        multipart (dict): Data (files or form data) to be sent as a
+                            multipart form.
                         cookies (dict): A dict of `name:value` cookies to be
                             passed in request.
                         callback (func): A callback function to be called on

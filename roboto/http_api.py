@@ -2,14 +2,13 @@
 from collections import ChainMap
 from dataclasses import dataclass
 from enum import Enum
-from pathlib import Path
 from typing import Any, Awaitable, Callable, Dict, Optional, Union
 
 from typing_extensions import Literal, Protocol
 
 from .api_types import FileDescription
 from .asks import Session
-from .asks.multipart import BytesMultipartData, IOMultipartData, PathMultipartData
+from .asks.multipart import MultipartData
 from .asks.response_objects import Response
 from .datautil import from_json, to_json
 from .error import BotAPIError
@@ -80,17 +79,7 @@ async def _json_request(
 def _to_multipart_compatible(value: Any) -> Any:
     """Transform values into multipart/form-data compatible versions."""
     if isinstance(value, FileDescription):
-        if isinstance(value.binary_source, Path):
-            return PathMultipartData(
-                value.binary_source, value.mime_type, value.basename
-            )
-
-        if isinstance(value.binary_source, bytes):
-            return BytesMultipartData(
-                value.binary_source, value.mime_type, value.basename
-            )
-
-        return IOMultipartData(value.binary_source, value.mime_type, value.basename)
+        return MultipartData(value.binary_source, value.mime_type, value.basename)
 
     return value
 

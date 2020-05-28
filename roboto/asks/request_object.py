@@ -25,7 +25,7 @@ from .auth import PreResponseAuth, PostResponseAuth
 from .req_structs import CaseInsensitiveDict as c_i_dict
 from .response_objects import Response, StreamResponse, StreamBody
 from .errors import TooManyRedirects
-from .multipart import multipart_blocks
+from .multipart import build_multipart_body
 
 
 _BOUNDARY = "8banana133744910kmmr13a56!102!" + str(randint(1e3, 9e3))
@@ -422,7 +422,7 @@ class RequestProcessor:
                 raise TypeError('multipart arg cannot be used in conjunction with'
                                 'data, json or files arg.')
             c_type = multipart_ctype
-            body = await self._generic_multipart()
+            body = await build_multipart_body(self.multipart, self.encoding, _BOUNDARY)
 
         return c_type, str(len(body)), body
 
@@ -509,26 +509,8 @@ class RequestProcessor:
 
             if index == num_of_parts:
                 multip_pkg += b'--' + boundary + b'--\r\n'
+
         return multip_pkg
-
-    async def _generic_multipart(self):
-        '''
-        Forms multipart requests from a self.multipart, a dict of strings to
-        either Path, FileIO, BytesMultipartData or IOMultipartData.
-
-        Returns:
-            multip_pkg (str): The strings representation of the content body,
-            multipart formatted.
-        '''
-        multipart_bytes = b''
-
-        async for block in multipart_blocks(self.multipart, self.encoding, _BOUNDARY):
-            multipart_bytes += block
-
-        with open('log', 'w') as log:
-            print(multipart_bytes, file=log)
-
-        return multipart_bytes
 
     async def _file_manager(self, path):
         async with await aopen(path, 'rb') as f:
