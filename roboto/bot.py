@@ -34,6 +34,7 @@ from .request_types import (
     GetUpdatesRequest,
     SendAnimationRequest,
     SendAudioRequest,
+    SendContactRequest,
     SendDocumentRequest,
     SendLocationRequest,
     SendMediaGroupRequest,
@@ -781,6 +782,47 @@ class BotAPI:
         return from_json(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendVenue', request),
+        )
+
+    async def send_contact(
+        self,
+        chat_id: Union[ChatID, str],
+        phone_number: str,
+        first_name: str,
+        last_name: Optional[str],
+        vcard: Optional[str] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendContact API method.
+
+        Args:
+            chat_id: The ID of the chat to send a phone contact to.
+            phone_number: The contact's phone number.
+            first_name: The contacts's first name.
+            last_name: The contacts's last name.
+            vcard: Additional data about the contact in the format of a vCard.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+        """
+
+        request = SendContactRequest(
+            chat_id,
+            phone_number,
+            first_name,
+            last_name,
+            vcard,
+            disable_notification,
+            reply_to_message_id,
+            maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(self.session, HTTPMethod.POST, '/sendContact', request),
         )
 
 
