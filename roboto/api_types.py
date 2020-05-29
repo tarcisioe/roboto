@@ -329,6 +329,13 @@ class PollAnswer:
     option_ids: List[int]
 
 
+class PollType(Enum):
+    """The type of a poll."""
+
+    QUIZ = 'quiz'
+    REGULAR = 'regular'
+
+
 @dataclass(frozen=True)
 class Poll:
     """Representation of a Poll."""
@@ -880,6 +887,7 @@ __all__ = [
     'PhotoSize',
     'PollAnswer',
     'PollOption',
+    'PollType',
     'PreCheckoutQuery',
     'ReplyMarkup',
     'ReplyKeyboardMarkup',
