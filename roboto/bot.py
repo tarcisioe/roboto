@@ -14,6 +14,7 @@ from .api_types import (
     Message,
     MessageID,
     ParseMode,
+    Poll,
     PollType,
     ReplyMarkup,
     Token,
@@ -48,6 +49,7 @@ from .request_types import (
     SendVoiceRequest,
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
+    StopPollRequest,
     json_serialize,
     maybe_json_serialize,
 )
@@ -893,6 +895,29 @@ class BotAPI:
         return from_json(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendPoll', request),
+        )
+
+    async def stop_poll(
+        self,
+        chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Poll:
+        """stopPoll API method.
+
+        Args:
+            chat_id: The ID of the chat where the poll to be stopped is.
+            message_id: The id of the message with the poll to stop.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = StopPollRequest(
+            chat_id, message_id, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Poll,
+            await make_request(self.session, HTTPMethod.POST, '/stopPoll', request),
         )
 
 

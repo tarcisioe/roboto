@@ -16,6 +16,7 @@ ChatID = NewType('ChatID', int)
 MessageID = NewType('MessageID', int)
 InlineMessageID = NewType('InlineMessageID', str)
 FileID = NewType('FileID', str)
+PollID = NewType('PollID', str)
 
 
 @dataclass(frozen=True)
@@ -340,7 +341,7 @@ class PollType(Enum):
 class Poll:
     """Representation of a Poll."""
 
-    id: str
+    id: PollID
     question: str
     options: List[PollOption]
     total_voter_count: int
@@ -885,7 +886,9 @@ __all__ = [
     'PassportData',
     'PassportFile',
     'PhotoSize',
+    'Poll',
     'PollAnswer',
+    'PollID',
     'PollOption',
     'PollType',
     'PreCheckoutQuery',

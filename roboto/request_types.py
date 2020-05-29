@@ -287,3 +287,12 @@ class SendPollRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class StopPollRequest:
+    """Parameters for stopping a poll sent by the bot."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None

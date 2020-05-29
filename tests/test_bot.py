@@ -17,6 +17,9 @@ from roboto import (
     KeyboardButton,
     Message,
     MessageID,
+    Poll,
+    PollID,
+    PollOption,
     PollType,
     ReplyKeyboardMarkup,
     Token,
@@ -918,6 +921,7 @@ async def test_send_poll(mocked_bot_api: MockedBotAPI):
         options=['01189998819991197253', '42', 'Before you can call him a man?'],
         poll_type=PollType.QUIZ,
         correct_option_id=1,
+        is_anonymous=False,
     )
 
     mocked_bot_api.request.assert_called_with(
@@ -929,6 +933,7 @@ async def test_send_poll(mocked_bot_api: MockedBotAPI):
             'options': (
                 '["01189998819991197253", "42", "Before you can call him a man?"]'
             ),
+            'is_anonymous': False,
             'type': 'quiz',
             'correct_option_id': 1,
         },
@@ -939,4 +944,58 @@ async def test_send_poll(mocked_bot_api: MockedBotAPI):
         date=0,
         chat=Chat(id=ChatID(1), type='private'),
         from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_stop_poll(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.stop_poll creates the correct payload and properly reads
+    back the returned poll.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'id': '1',
+            'question': 'How many roads must a man walk down?',
+            'options': [
+                {'text': '01189998819991197253', 'voter_count': 0},
+                {'text': '42', 'voter_count': 1},
+                {'text': 'Before you can call him a man?', 'voter_count': 0},
+            ],
+            'total_voter_count': 0,
+            'is_closed': True,
+            'is_anonymous': False,
+            'type': 'quiz',
+            'allows_multiple_answers': False,
+            'correct_option_id': 1,
+        },
+    }
+
+    poll = await mocked_bot_api.api.stop_poll(
+        chat_id=ChatID(1), message_id=MessageID(1),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/stopPoll', json={'chat_id': 1, 'message_id': 1},
+    )
+
+    assert poll == Poll(
+        id=PollID('1'),
+        question='How many roads must a man walk down?',
+        options=[
+            PollOption(text='01189998819991197253', voter_count=0),
+            PollOption(text='42', voter_count=1),
+            PollOption(text='Before you can call him a man?', voter_count=0),
+        ],
+        total_voter_count=0,
+        is_closed=True,
+        is_anonymous=False,
+        type='quiz',
+        allows_multiple_answers=False,
+        correct_option_id=1,
+        explanation=None,
+        explanation_entities=None,
+        open_period=None,
+        close_date=None,
     )
