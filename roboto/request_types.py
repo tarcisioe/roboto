@@ -251,3 +251,17 @@ class SendVenueRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendContactRequest:
+    """Parameters for sending a phone contact."""
+
+    chat_id: Union[ChatID, str]
+    phone_number: str
+    first_name: str
+    last_name: Optional[str] = None
+    vcard: Optional[str] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
