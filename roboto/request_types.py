@@ -12,6 +12,7 @@ from .api_types import (
     InputMediaVideo,
     MessageID,
     ParseMode,
+    PollType,
     ReplyMarkup,
 )
 from .datautil import to_json
@@ -265,3 +266,33 @@ class SendContactRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendPollRequest:
+    """Parameters for sending a native poll."""
+
+    chat_id: Union[ChatID, str]
+    question: str
+    options: JSONSerialized[List[str]]
+    is_anonymous: Optional[bool] = None
+    type: Optional[PollType] = None
+    allows_multiple_answers: Optional[bool] = None
+    correct_option_id: Optional[int] = None
+    explanation: Optional[str] = None
+    explanation_parse_mode: Optional[ParseMode] = None
+    open_period: Optional[int] = None
+    close_date: Optional[int] = None
+    is_closed: Optional[bool] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class StopPollRequest:
+    """Parameters for stopping a poll sent by the bot."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None

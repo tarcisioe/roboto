@@ -14,6 +14,8 @@ from .api_types import (
     Message,
     MessageID,
     ParseMode,
+    Poll,
+    PollType,
     ReplyMarkup,
     Token,
     Update,
@@ -40,12 +42,14 @@ from .request_types import (
     SendMediaGroupRequest,
     SendMessageRequest,
     SendPhotoRequest,
+    SendPollRequest,
     SendVenueRequest,
     SendVideoNoteRequest,
     SendVideoRequest,
     SendVoiceRequest,
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
+    StopPollRequest,
     json_serialize,
     maybe_json_serialize,
 )
@@ -823,6 +827,97 @@ class BotAPI:
         return from_json(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendContact', request),
+        )
+
+    async def send_poll(
+        self,
+        chat_id: Union[ChatID, str],
+        question: str,
+        options: List[str],
+        is_anonymous: Optional[bool] = None,
+        poll_type: Optional[PollType] = None,
+        allows_multiple_answers: Optional[bool] = None,
+        correct_option_id: Optional[int] = None,
+        explanation: Optional[str] = None,
+        explanation_parse_mode: Optional[ParseMode] = None,
+        open_period: Optional[int] = None,
+        close_date: Optional[int] = None,
+        is_closed: Optional[bool] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendPoll API method.
+
+        Args:
+            chat_id: The ID of the chat to send a phone contact to.
+            question: The poll question.
+            options: A list of answer options.
+            is_anonymous: Whether the poll should be anonymous. Default is anonymous.
+            poll_type: Either "quiz" to create a quiz or "regular" for a regular poll.
+            allows_multiple_answers: Whether the poll allows multiple answers by the
+                                     same user.
+            correct_option_id: (0-based) index of the correct answer if this is a quiz.
+            explanation: Text to show if the user chooses an incorrect answer or taps
+                         the lamp icon on a quiz.
+            explanation_parse_mode: How to parse the text in the explanation (see
+                                    `ParseMode`). Parses as plain text if omitted.
+            open_period: Amout of time (in seconds) the poll will be active  after
+                         creation. Can't be used together with `close_date`.
+            close_date: Point in time (Unix timestamp) when the poll will be
+                        automatically closed. Can't be used together with `open_period`.
+            is_closed: Whether to automatically close the poll. Useful for previewing a
+                       poll.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+        """
+
+        request = SendPollRequest(
+            chat_id,
+            question,
+            json_serialize(options),
+            is_anonymous,
+            poll_type,
+            allows_multiple_answers,
+            correct_option_id,
+            explanation,
+            explanation_parse_mode,
+            open_period,
+            close_date,
+            is_closed,
+            disable_notification,
+            reply_to_message_id,
+            maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(self.session, HTTPMethod.POST, '/sendPoll', request),
+        )
+
+    async def stop_poll(
+        self,
+        chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Poll:
+        """stopPoll API method.
+
+        Args:
+            chat_id: The ID of the chat where the poll to be stopped is.
+            message_id: The id of the message with the poll to stop.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = StopPollRequest(
+            chat_id, message_id, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Poll,
+            await make_request(self.session, HTTPMethod.POST, '/stopPoll', request),
         )
 
 
