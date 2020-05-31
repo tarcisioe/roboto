@@ -356,6 +356,13 @@ class Poll:
     close_date: Optional[int] = None
 
 
+class DiceEmoji(Enum):
+    """Supported emojis for sending Dice messages."""
+
+    DICE = '🎲'
+    DART = '🎯'
+
+
 @dataclass(frozen=True)
 class Dice:
     """Representation of a Dice"""
@@ -853,6 +860,7 @@ __all__ = [
     'ChosenInlineResult',
     'Contact',
     'Dice',
+    'DiceEmoji',
     'Document',
     'EncryptedCredentials',
     'EncryptedPassportElement',

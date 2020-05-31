@@ -6,6 +6,7 @@ from typing import List, Optional, Union
 from .api_types import (
     BotUser,
     ChatID,
+    DiceEmoji,
     InlineKeyboardMarkup,
     InlineMessageID,
     InputFile,
@@ -37,6 +38,7 @@ from .request_types import (
     SendAnimationRequest,
     SendAudioRequest,
     SendContactRequest,
+    SendDiceRequest,
     SendDocumentRequest,
     SendLocationRequest,
     SendMediaGroupRequest,
@@ -918,6 +920,38 @@ class BotAPI:
         return from_json(
             Poll,
             await make_request(self.session, HTTPMethod.POST, '/stopPoll', request),
+        )
+
+    async def send_dice(
+        self,
+        chat_id: Union[ChatID, str],
+        emoji: Optional[DiceEmoji] = None,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendDice API method.
+
+        Args:
+            chat_id: The ID of the chat to send a phone contact to.
+            emoji: The emoji to use in the Dice message. See `DiceEmoji`.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for additional interface options for replying.
+        """
+
+        request = SendDiceRequest(
+            chat_id,
+            emoji,
+            disable_notification,
+            reply_to_message_id,
+            maybe_json_serialize(reply_markup),
+        )
+
+        return from_json(
+            Message,
+            await make_request(self.session, HTTPMethod.POST, '/sendDice', request),
         )
 
 

@@ -5,6 +5,7 @@ from typing import Generic, List, Optional, TypeVar, Union, cast
 
 from .api_types import (
     ChatID,
+    DiceEmoji,
     InlineKeyboardMarkup,
     InlineMessageID,
     InputFile,
@@ -296,3 +297,14 @@ class StopPollRequest:
     chat_id: Union[ChatID, str]
     message_id: MessageID
     reply_markup: Optional[JSONSerialized[InlineKeyboardMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendDiceRequest:
+    """Parameters for requesting a Dice."""
+
+    chat_id: Union[ChatID, str]
+    emoji: Optional[DiceEmoji] = None
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
