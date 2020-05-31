@@ -245,9 +245,10 @@ def test_to_json_dataclass_type() -> None:
         x: int
         y: _Serializable
 
-    print(_Nested(1, _Serializable(1, 'bla')).y)
-
-    assert to_json(_Nested(1, _Serializable(1, 'bla')))  # == {'x': 1, 'y': 'bla'}
+    assert to_json(_Nested(1, _Serializable(1, 'bla'))) == {
+        'x': 1,
+        'y': {'x': 1, 'y': 'bla'},
+    }
 
 
 def test_to_json_list_type() -> None:
