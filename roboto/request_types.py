@@ -301,7 +301,7 @@ class StopPollRequest:
 
 @dataclass(frozen=True)
 class SendDiceRequest:
-    """Parameters for requesting a Dice."""
+    """Parameters for sending a Dice."""
 
     chat_id: Union[ChatID, str]
     emoji: Optional[DiceEmoji] = None
