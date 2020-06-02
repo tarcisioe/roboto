@@ -10,6 +10,8 @@ from roboto import (
     BotUser,
     Chat,
     ChatID,
+    Dice,
+    DiceEmoji,
     FileDescription,
     InlineMessageID,
     InputMediaPhoto,
@@ -998,4 +1000,38 @@ async def test_stop_poll(mocked_bot_api: MockedBotAPI):
         explanation_entities=None,
         open_period=None,
         close_date=None,
+    )
+
+
+@pytest.mark.trio
+async def test_send_dice(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_poll creates the correct payload and properly reads
+    back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+            'dice': {'emoji': '🎯', 'value': 6},
+        },
+    }
+
+    message = await mocked_bot_api.api.send_dice(
+        chat_id=ChatID(1), emoji=DiceEmoji.DART
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendDice', json={'chat_id': 1, 'emoji': '🎯'}
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+        dice=Dice(emoji='🎯', value=6),
     )
