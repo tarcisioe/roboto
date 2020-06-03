@@ -1,20 +1,24 @@
 """Utilities from deserializing values as dataclasses."""
-import sys
 from dataclasses import Field, asdict, fields, is_dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+    get_type_hints,
+    overload,
+)
 
 from typing_extensions import Protocol
 from typing_inspect import get_args, get_origin, is_optional_type
 
 from .error import RobotoError
-from .typing_util import (
-    evaluate_type,
-    is_new_type,
-    is_none_type,
-    original_type,
-    type_name,
-)
+from .typing_util import is_new_type, is_none_type, original_type, type_name
 
 T = TypeVar('T')
 
@@ -60,10 +64,8 @@ def field_type(cls: Type[T], field_name: str) -> type:
     Returns:
         The type of the requested field.
     """
-    as_dataclass = cast(Dataclass, cls)
 
-    tp = as_dataclass.__dataclass_fields__[field_name].type
-    return evaluate_type(tp, vars(sys.modules[cls.__module__]))
+    return get_type_hints(cls)[field_name]
 
 
 def from_list(list_type: Type[List[T]], v: List[JSONLike]) -> List[T]:
