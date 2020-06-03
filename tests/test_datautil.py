@@ -96,14 +96,14 @@ def test_from_json_optional_any() -> None:
     """Ensure `from_json` understands Optional[Any]."""
     value = {'a': 1, 'b': 'text'}
 
-    assert from_json(Optional[Any], value) is value
-    assert from_json(Optional[Any], None) is None
+    assert from_json(Optional[Any], value) is value  # type: ignore
+    assert from_json(Optional[Any], None) is None  # type: ignore
 
 
 def test_from_json_with_optional() -> None:
     """Ensure `from_json` accepts None with Optional and rejects otherwise."""
-    assert from_json(Optional[int], None) is None
-    assert from_json(Optional[int], 1) == 1
+    assert from_json(Optional[int], None) is None  # type: ignore
+    assert from_json(Optional[int], 1) == 1  # type: ignore
 
     with raises(JSONConversionError):
         from_json(int, None)
@@ -209,8 +209,8 @@ def test_from_json_with_list() -> None:
 def test_from_json_with_optional_list() -> None:
     """Ensure `from_json` can read an optional list of values."""
 
-    assert from_json(Optional[List[int]], None) is None
-    assert from_json(Optional[List[int]], [1, 2, 3]) == [1, 2, 3]
+    assert from_json(Optional[List[int]], None) is None  # type: ignore
+    assert from_json(Optional[List[int]], [1, 2, 3]) == [1, 2, 3]  # type: ignore
 
 
 def test_from_json_incompatible_type() -> None:
