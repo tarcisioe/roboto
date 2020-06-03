@@ -16,6 +16,7 @@ from .api_types import (
     ParseMode,
     PollType,
     ReplyMarkup,
+    UserID,
 )
 from .datautil import to_json
 
@@ -317,3 +318,12 @@ class SendChatActionRequest:
 
     chat_id: Union[ChatID, str]
     action: ChatAction
+
+
+@dataclass(frozen=True)
+class GetUserProfilePhotosRequest:
+    """Parameters for getting a list of user profile pictures."""
+
+    user_id: UserID
+    offset: Optional[int] = None
+    limit: Optional[int] = None
