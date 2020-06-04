@@ -25,7 +25,7 @@ from .api_types import (
     UserProfilePhotos,
 )
 from .asks import Session
-from .datautil import from_json
+from .datautil import from_json_like
 from .http_api import (
     HTTPMethod,
     make_multipart_request,
@@ -106,7 +106,7 @@ class BotAPI:
         Returns:
             User: the user object representing the bot itself.
         """
-        return from_json(
+        return from_json_like(
             BotUser, await make_request(self.session, HTTPMethod.GET, '/getMe')
         )
 
@@ -130,7 +130,7 @@ class BotAPI:
         """
         request = GetUpdatesRequest(offset, limit, timeout, allowed_updates)
 
-        return from_json(
+        return from_json_like(
             List[Update],
             await make_request(self.session, HTTPMethod.GET, '/getUpdates', request),
         )
@@ -172,7 +172,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendMessage', request),
         )
@@ -200,7 +200,7 @@ class BotAPI:
             chat_id, from_chat_id, message_id, disable_notification,
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(
                 self.session, HTTPMethod.POST, '/forwardMessage', request
@@ -243,7 +243,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message, await make_multipart_request(self.session, '/sendPhoto', request),
         )
 
@@ -298,7 +298,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message, await make_multipart_request(self.session, '/sendAudio', request),
         )
 
@@ -344,7 +344,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_multipart_request(self.session, '/sendDocument', request),
         )
@@ -403,7 +403,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message, await make_multipart_request(self.session, '/sendVideo', request),
         )
 
@@ -458,7 +458,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_multipart_request(self.session, '/sendAnimation', request),
         )
@@ -505,7 +505,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message, await make_multipart_request(self.session, '/sendVoice', request),
         )
 
@@ -550,7 +550,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_multipart_request(self.session, '/sendVideoNote', request),
         )
@@ -579,7 +579,7 @@ class BotAPI:
             chat_id, json_serialize(media), disable_notification, reply_to_message_id,
         )
 
-        return from_json(
+        return from_json_like(
             List[Message],
             await make_multipart_request_with_attachments(
                 self.session, '/sendMediaGroup', request, attachments
@@ -619,7 +619,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendLocation', request),
         )
@@ -654,7 +654,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(
                 self.session, HTTPMethod.POST, '/editMessageLiveLocation', request
@@ -685,7 +685,7 @@ class BotAPI:
             inline_message_id, latitude, longitude, maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(
                 self.session, HTTPMethod.POST, '/editMessageLiveLocation', request
@@ -714,7 +714,7 @@ class BotAPI:
             chat_id, message_id, maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(
                 self.session, HTTPMethod.POST, '/stopMessageLiveLocation', request
@@ -741,7 +741,7 @@ class BotAPI:
             inline_message_id, maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(
                 self.session, HTTPMethod.POST, '/stopMessageLiveLocation', request
@@ -790,7 +790,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendVenue', request),
         )
@@ -831,7 +831,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendContact', request),
         )
@@ -899,7 +899,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendPoll', request),
         )
@@ -922,7 +922,7 @@ class BotAPI:
             chat_id, message_id, maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Poll,
             await make_request(self.session, HTTPMethod.POST, '/stopPoll', request),
         )
@@ -954,7 +954,7 @@ class BotAPI:
             maybe_json_serialize(reply_markup),
         )
 
-        return from_json(
+        return from_json_like(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendDice', request),
         )
@@ -971,7 +971,7 @@ class BotAPI:
 
         request = SendChatActionRequest(chat_id, action)
 
-        return from_json(
+        return from_json_like(
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/sendChatAction', request
@@ -995,7 +995,7 @@ class BotAPI:
 
         request = GetUserProfilePhotosRequest(user_id, offset, limit)
 
-        return from_json(
+        return from_json_like(
             UserProfilePhotos,
             await make_request(
                 self.session, HTTPMethod.POST, '/getUserProfilePhotos', request

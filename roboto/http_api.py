@@ -10,7 +10,7 @@ from .api_types import FileDescription
 from .asks import Session
 from .asks.multipart import MultipartData
 from .asks.response_objects import Response
-from .datautil import from_json, to_json
+from .datautil import from_json_like, to_json_like
 from .error import BotAPIError
 
 
@@ -73,7 +73,7 @@ def validate_response(response: APIResponse) -> Any:
 async def _json_request(
     session: Session, method: HTTPMethod, api_method: str, body: Any = None
 ) -> Response:
-    return await session.request(method.value, path=api_method, json=to_json(body))
+    return await session.request(method.value, path=api_method, json=to_json_like(body))
 
 
 def _to_multipart_compatible(value: Any) -> Any:
@@ -114,7 +114,7 @@ async def _make_request(
 
     # We know that the server ensures the object will follow either protocol,
     # but mypy can't see that.
-    response: Any = from_json(AnyAPIResponse, content.json())
+    response: Any = from_json_like(AnyAPIResponse, content.json())
 
     return validate_response(response)
 
@@ -192,6 +192,6 @@ async def make_multipart_request_with_attachments(
         session, HTTPMethod.POST, api_method, body=fields,
     )
 
-    response: Any = from_json(AnyAPIResponse, content.json())
+    response: Any = from_json_like(AnyAPIResponse, content.json())
 
     return validate_response(response)
