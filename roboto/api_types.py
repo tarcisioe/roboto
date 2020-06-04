@@ -73,7 +73,7 @@ class User(_UserOptionalCommon, _UserRequiredCommon):
 
 @dataclass(frozen=True)
 class BotUser(_UserOptionalCommon, _BotUserRequired):
-    """A Bot user returned by the Bot API through getMe."""
+    """A Bot user returned by the Bot API (only through getMe)."""
 
 
 @dataclass(frozen=True)
@@ -361,6 +361,7 @@ class DiceEmoji(Enum):
 
     DICE = '🎲'
     DART = '🎯'
+    BASKETBALL = '🏀'
 
 
 @dataclass(frozen=True)
@@ -533,6 +534,7 @@ class _MessageBase:
     forward_signature: Optional[str] = None
     forward_sender_name: Optional[str] = None
     forward_date: Optional[int] = None
+    via_bot: Optional[User] = None
     edit_date: Optional[int] = None
     media_group_id: Optional[str] = None
     author_signature: Optional[str] = None
