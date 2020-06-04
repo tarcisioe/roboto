@@ -29,6 +29,7 @@ from roboto import (
     Update,
     User,
     UserID,
+    UserProfilePhotos,
 )
 from roboto.bot import BotAPI
 from roboto.http_api import MultipartData
@@ -1055,3 +1056,23 @@ async def test_send_chat_action(mocked_bot_api: MockedBotAPI):
     )
 
     assert result
+
+
+@pytest.mark.trio
+async def test_get_user_profile_photos(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_poll creates the correct payload and properly reads
+    back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {'total_count': 0, 'photos': []},
+    }
+
+    result = await mocked_bot_api.api.get_user_profile_photos(user_id=UserID(1))
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/getUserProfilePhotos', json={'user_id': 1},
+    )
+
+    assert result == UserProfilePhotos(total_count=0, photos=[])

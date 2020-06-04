@@ -21,6 +21,8 @@ from .api_types import (
     ReplyMarkup,
     Token,
     Update,
+    UserID,
+    UserProfilePhotos,
 )
 from .asks import Session
 from .datautil import from_json
@@ -36,6 +38,7 @@ from .request_types import (
     EditMessageLiveLocationRequest,
     ForwardMessageRequest,
     GetUpdatesRequest,
+    GetUserProfilePhotosRequest,
     SendAnimationRequest,
     SendAudioRequest,
     SendChatActionRequest,
@@ -972,6 +975,30 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/sendChatAction', request
+            ),
+        )
+
+    async def get_user_profile_photos(
+        self,
+        user_id: UserID,
+        offset: Optional[int] = None,
+        limit: Optional[int] = None,
+    ) -> UserProfilePhotos:
+        """getUserProfilePhotos API method.
+
+        Args:
+            user_id: The ID of the user to get the profile photos.
+            offset: Sequential number of the first photo to be returned.
+                    By default, all photos are returned.
+            limit: Limits the number of photos to be retrieved. Defaults to 100.
+        """
+
+        request = GetUserProfilePhotosRequest(user_id, offset, limit)
+
+        return from_json(
+            UserProfilePhotos,
+            await make_request(
+                self.session, HTTPMethod.POST, '/getUserProfilePhotos', request
             ),
         )
 

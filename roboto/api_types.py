@@ -928,6 +928,7 @@ __all__ = [
     'Update',
     'User',
     'UserID',
+    'UserProfilePhotos',
     'Venue',
     'Video',
     'VideoNote',
