@@ -9,6 +9,7 @@ import pytest
 from roboto import (
     BotUser,
     Chat,
+    ChatAction,
     ChatID,
     Dice,
     DiceEmoji,
@@ -1035,3 +1036,22 @@ async def test_send_dice(mocked_bot_api: MockedBotAPI):
         from_=User(id=UserID(1), is_bot=True, first_name='Test'),
         dice=Dice(emoji='🎯', value=6),
     )
+
+
+@pytest.mark.trio
+async def test_send_chat_action(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_poll creates the correct payload and properly reads
+    back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.send_chat_action(
+        chat_id=ChatID(1), action=ChatAction.UPLOAD_AUDIO,
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendChatAction', json={'chat_id': 1, 'action': 'upload_audio'},
+    )
+
+    assert result

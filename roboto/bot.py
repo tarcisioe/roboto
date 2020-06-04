@@ -5,6 +5,7 @@ from typing import List, Optional, Union
 
 from .api_types import (
     BotUser,
+    ChatAction,
     ChatID,
     DiceEmoji,
     InlineKeyboardMarkup,
@@ -37,6 +38,7 @@ from .request_types import (
     GetUpdatesRequest,
     SendAnimationRequest,
     SendAudioRequest,
+    SendChatActionRequest,
     SendContactRequest,
     SendDiceRequest,
     SendDocumentRequest,
@@ -952,6 +954,25 @@ class BotAPI:
         return from_json(
             Message,
             await make_request(self.session, HTTPMethod.POST, '/sendDice', request),
+        )
+
+    async def send_chat_action(
+        self, chat_id: Union[ChatID, str], action: ChatAction,
+    ) -> bool:
+        """sendChatAction API method.
+
+        Args:
+            chat_id: The ID of the chat to send the chat action to.
+            action: The action to show to the user.
+        """
+
+        request = SendChatActionRequest(chat_id, action)
+
+        return from_json(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/sendChatAction', request
+            ),
         )
 
 

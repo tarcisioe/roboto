@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Generic, List, Optional, TypeVar, Union, cast
 
 from .api_types import (
+    ChatAction,
     ChatID,
     DiceEmoji,
     InlineKeyboardMarkup,
@@ -308,3 +309,11 @@ class SendDiceRequest:
     disable_notification: Optional[bool] = None
     reply_to_message_id: Optional[MessageID] = None
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class SendChatActionRequest:
+    """Parameters for sending a chat action."""
+
+    chat_id: Union[ChatID, str]
+    action: ChatAction
