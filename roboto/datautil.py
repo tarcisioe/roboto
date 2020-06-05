@@ -122,7 +122,7 @@ def _from_json_like(type_hint, value):
 
 @overload
 def from_json_like(
-    tp: Type[List[T]], value: List[Any], optional: Literal[True],
+    tp: Type[List[T]], value: List[JSONLike], optional: Literal[True],
 ) -> Optional[List[T]]:  # pragma: no cover
     """Overload for from_json_like, refer to implementation."""
     ...
@@ -130,7 +130,7 @@ def from_json_like(
 
 @overload
 def from_json_like(
-    tp: Type[T], value: Any, optional: Literal[True],
+    tp: Type[T], value: JSONLike, optional: Literal[True],
 ) -> Optional[T]:  # pragma: no cover
     """Overload for from_json_like, refer to implementation."""
     ...
@@ -138,7 +138,7 @@ def from_json_like(
 
 @overload
 def from_json_like(
-    tp: Type[List[T]], value: List[Any], optional: Literal[False] = False,
+    tp: Type[List[T]], value: List[JSONLike], optional: Literal[False] = False,
 ) -> List[T]:  # pragma: no cover
     """Overload for from_json_like, refer to implementation."""
     ...
@@ -146,7 +146,7 @@ def from_json_like(
 
 @overload
 def from_json_like(
-    tp: Type[T], value: Any, optional: Literal[False] = False,
+    tp: Type[T], value: JSONLike, optional: Literal[False] = False,
 ) -> T:  # pragma: no cover
     """Overload for from_json_like, refer to implementation."""
     ...

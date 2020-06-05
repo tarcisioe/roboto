@@ -209,7 +209,8 @@ def test_from_json_like_with_optional_list() -> None:
 def test_from_json_like_incompatible_type() -> None:
     """Ensure from_json_like fails in an expected way if value is unsupported."""
     with raises(JSONConversionError):
-        assert from_json_like(List[int], {1, 2, 3})
+        # mypy wouldn't let this happen though
+        assert from_json_like(List[int], {1, 2, 3})  # type: ignore
 
     @dataclass
     class _SmallDummyType:
