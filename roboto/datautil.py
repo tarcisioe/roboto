@@ -1,32 +1,29 @@
 """Utilities from deserializing values as dataclasses."""
-import sys
-from dataclasses import Field, asdict, fields, is_dataclass
+from dataclasses import asdict, fields, is_dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+    get_type_hints,
+    overload,
+)
 
-from typing_extensions import Protocol
+from typing_extensions import Literal
 from typing_inspect import get_args, get_origin, is_optional_type
 
 from .error import RobotoError
-from .typing_util import (
-    evaluate_type,
-    is_new_type,
-    is_none_type,
-    original_type,
-    type_name,
-)
+from .typing_util import is_new_type, is_none_type, original_type, type_name
 
 T = TypeVar('T')
 
-Number = Union[int, float]
-JSONPrimitives = Optional[Union[Number, str, bool]]
+JSONPrimitives = Optional[Union[int, float, str, bool]]
 JSONLike = Union[JSONPrimitives, Dict[str, Any], List[Any]]
-
-
-class Dataclass(Protocol):
-    """Protocol for a dataclass instance or type."""
-
-    __dataclass_fields__: Dict[str, Field]
 
 
 def renames(cls: Type[T]) -> Dict[str, str]:
@@ -48,45 +45,27 @@ def renames(cls: Type[T]) -> Dict[str, str]:
     }
 
 
-def field_type(cls: Type[T], field_name: str) -> type:
-    """Get the type of a field from a dataclass.
-
-    `cls` is expected to be a dataclass type.
-
-    Args:
-        cls: A dataclass type.
-        field_name: The name of the field to query the type of.
-
-    Returns:
-        The type of the requested field.
-    """
-    as_dataclass = cast(Dataclass, cls)
-
-    tp = as_dataclass.__dataclass_fields__[field_name].type
-    return evaluate_type(tp, vars(sys.modules[cls.__module__]))
-
-
-def from_list(list_type: Type[List[T]], v: List[JSONLike]) -> List[T]:
+def from_list(tp: Type[List[T]], v: List[Any]) -> List[T]:
     """Transform a list of JSON-like structures into JSON-compatible objects."""
-    (inner_type,) = get_args(list_type)
-    return [from_json(inner_type, value) for value in v]
+    (inner_type,) = get_args(tp)
+    return [_from_json_like(inner_type, value) for value in v]
 
 
-def from_dict(cls: Type[T], d: Dict[str, JSONLike]):
+def from_dict(tp: Type[T], v: Dict[str, Any]) -> T:
     """Transform a JSON-like structure into a JSON-compatible dataclass."""
-    field_renames = renames(cls)
+    field_renames = renames(tp)
 
-    as_dataclass = cast(Dataclass, cls)
+    type_hints = get_type_hints(tp)
 
     for k in field_renames:
-        if k in d:
-            d[field_renames[k]] = d.pop(k)
+        if k in v:
+            v[field_renames[k]] = v.pop(k)
 
-    return cls(  # type: ignore
+    return tp(  # type: ignore
         **{
-            k: from_json(field_type(cls, k), v)
-            for k, v in d.items()
-            if k in as_dataclass.__dataclass_fields__
+            field_name: _from_json_like(type_hints[field_name], value)
+            for field_name, value in v.items()
+            if field_name in type_hints
         }
     )
 
@@ -100,115 +79,115 @@ class JSONConversionError(RobotoError):
         self.value = value
 
 
-@overload
-def from_json(schema_class: Type[List[T]], j: JSONLike) -> List[T]:
-    """Overload declaration of from_json."""
-    ...  # pragma: no cover
+def convert_single(tp: Type[T], v: Any) -> T:
+    """Convert a value into a single (non-list) type."""
+    if tp in (int, float):
+        if not isinstance(v, (int, float)):
+            raise JSONConversionError(f'Cannot read value {v} as a number.', tp, v)
+
+        return tp(v)  # type: ignore
+
+    if is_dataclass(tp):
+        if not isinstance(v, dict):
+            raise JSONConversionError(
+                f'Cannot read non-dict {v} as dataclass type {tp}.', tp, v,
+            )
+
+        return from_dict(tp, v)
+
+    real_type = tp if not is_new_type(tp) else original_type(tp)
+
+    if not isinstance(v, real_type):
+        raise JSONConversionError(
+            f'Cannot find any way to read value {v} as {tp}.', tp, v
+        )
+
+    return cast(T, v)
+
+
+def _from_json_like(type_hint, value):
+    optional = is_optional_type(type_hint)
+
+    (real_type,) = (
+        (t for t in get_args(type_hint) if not is_none_type(t))
+        if optional
+        else (type_hint,)
+    )
+
+    if real_type is Any:
+        return value
+
+    return from_json_like(real_type, value, optional)
 
 
 @overload
-def from_json(schema_class: Type[T], j: JSONLike) -> T:
-    """Overload declaration of from_json."""
-    ...  # pragma: no cover
+def from_json_like(
+    tp: Type[List[T]], value: List[JSONLike], optional: Literal[True],
+) -> Optional[List[T]]:  # pragma: no cover
+    """Overload for from_json_like, refer to implementation."""
+    ...
 
 
 @overload
-def from_json(schema_class: None, j: JSONLike) -> None:
-    """Overload declaration of from_json."""
-    ...  # pragma: no cover
+def from_json_like(
+    tp: Type[T], value: JSONLike, optional: Literal[True],
+) -> Optional[T]:  # pragma: no cover
+    """Overload for from_json_like, refer to implementation."""
+    ...
 
 
-def from_json(schema_class, j):
+@overload
+def from_json_like(
+    tp: Type[List[T]], value: List[JSONLike], optional: Literal[False] = False,
+) -> List[T]:  # pragma: no cover
+    """Overload for from_json_like, refer to implementation."""
+    ...
+
+
+@overload
+def from_json_like(
+    tp: Type[T], value: JSONLike, optional: Literal[False] = False,
+) -> T:  # pragma: no cover
+    """Overload for from_json_like, refer to implementation."""
+    ...
+
+
+def from_json_like(tp: Type[T], value: Any, optional: bool = False) -> Optional[T]:
     """Read a JSON-like object into a given schema type.
 
-    `schema_class` must be:
+    `tp` must be:
         - a JSON primitive type (int, float, str, bool or NoneType),
         - a List[T] of a JSON-compatible type, or
-        - a dataclass where every field is of a JSON-compatible type, or
-        - an Optional of a JSON-compatible type.
+        - a dataclass where every field is of a JSON-compatible type
 
     Args:
-        schema_class: A JSON-compatible type.
-        j: A JSON-compatible value to read.
+        tp: A JSON-compatible type.
+        value: A JSON-compatible value to read.
+        optional: Whether None should be accepted.
 
     Returns:
-        An object of the type given by `schema_class`.
+        An object of the type given by `tp`, or maybe None if `optional` is `True`.
     """
-    optional = is_optional_type(schema_class)
 
-    def resolve_type(schema_class):
-        (strict_type,) = (
-            [t for t in get_args(schema_class) if not is_none_type(t)]
-            if optional
-            else (schema_class,)
-        )
+    if value is None:
+        if not optional:
+            raise JSONConversionError(
+                'Cannot read None as a non optional value.', tp, value
+            )
 
-        if is_new_type(strict_type):
-            return original_type(strict_type)
+        return None
 
-        return strict_type
+    if get_origin(tp) is list:
+        if not isinstance(value, list):
+            raise JSONConversionError(
+                'Cannot read non-list value to a list type.', tp, value
+            )
+        return from_list(tp, value)  # type: ignore
 
-    strict_type = resolve_type(schema_class)
-
-    if strict_type is Any:
-        return j
-
-    strict_type_name = type_name(strict_type)
-    schema_class_name = (
-        strict_type_name if not optional else f'Optional[{strict_type_name}]'
-    )
-
-    if j is None:
-        if optional:
-            return None
-
-        raise JSONConversionError(
-            f'Cannot read None into non-optional type {schema_class_name}.',
-            schema_class,
-            j,
-        )
-
-    if isinstance(j, get_args(JSONPrimitives)):  # type: ignore
-        if isinstance(j, strict_type):
-            return j
-
-        if isinstance(j, get_args(Number)):  # type: ignore
-            if strict_type in get_args(Number):  # type: ignore
-                return schema_class(j)
-
-        raise JSONConversionError(
-            'Cannot read primitive value {j} into non-primitive type '
-            f'{schema_class_name}.',
-            schema_class,
-            j,
-        )
-
-    if isinstance(j, dict):
-        if is_dataclass(strict_type):
-            return from_dict(strict_type, j)
-
-        raise JSONConversionError(
-            f'Cannot read dictionary into non-dataclass type {schema_class_name}.',
-            schema_class,
-            j,
-        )
-
-    if isinstance(j, list):
-        if get_origin(strict_type) is list:
-            return from_list(strict_type, j)
-
-        raise JSONConversionError(
-            f'Failed to read list of types into non-list type {schema_class_name}.',
-            schema_class,
-            j,
-        )
-
-    raise JSONConversionError(
-        f'Failed to read value into type {schema_class_name}.', schema_class, j,
-    )
+    return convert_single(tp, value)
 
 
-def to_json(obj: Any) -> JSONLike:
+def to_json_like(obj: Any) -> JSONLike:
     """Serialize an object to a JSON-compatible representation.
 
     `obj` must be:
@@ -225,13 +204,13 @@ def to_json(obj: Any) -> JSONLike:
     if isinstance(obj, get_args(JSONPrimitives)):  # type: ignore
         return obj
     if isinstance(obj, dict):
-        return {k: to_json(v) for k, v in obj.items() if v is not None}
+        return {k: to_json_like(v) for k, v in obj.items() if v is not None}
     if is_dataclass(obj):
-        return {k: to_json(v) for k, v in asdict(obj).items() if v is not None}
+        return {k: to_json_like(v) for k, v in asdict(obj).items() if v is not None}
     if isinstance(obj, list):
-        return [to_json(v) for v in obj]
+        return [to_json_like(v) for v in obj]
     if isinstance(obj, Enum):
-        return to_json(obj.value)
+        return to_json_like(obj.value)
 
     obj_type = type(obj)
 

@@ -18,7 +18,7 @@ from .api_types import (
     ReplyMarkup,
     UserID,
 )
-from .datautil import to_json
+from .datautil import to_json_like
 
 T = TypeVar('T')
 
@@ -29,7 +29,7 @@ class JSONSerialized(str, Generic[T]):
 
 def json_serialize(value: T) -> JSONSerialized[T]:
     """Serialize value to its strong-typed JSON string type."""
-    return cast(JSONSerialized[T], json.dumps(to_json(value)))
+    return cast(JSONSerialized[T], json.dumps(to_json_like(value)))
 
 
 def maybe_json_serialize(value: Optional[T]) -> Optional[JSONSerialized[T]]:

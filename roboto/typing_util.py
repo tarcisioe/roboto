@@ -1,6 +1,6 @@
 """Utilities for use with the `typing` module."""
 
-from typing import Any, Dict, Type, TypeVar, Union
+from typing import Type, TypeVar
 
 T = TypeVar('T')
 
@@ -39,16 +39,3 @@ def type_name(tp: Type[T]) -> str:
     if isinstance(tp, type):
         return tp.__name__
     return str(tp)
-
-
-TypeHint = Union[str, Type[T]]
-
-
-def evaluate_type(type_hint: TypeHint[T], context: Dict[str, Any]) -> Type[T]:
-    """Evaluate a type hint even if it is given as a string.
-
-    """
-    if not isinstance(type_hint, str):
-        return type_hint
-
-    return eval(type_hint, context)  # pylint: disable=eval-used
