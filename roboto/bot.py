@@ -44,6 +44,7 @@ from .request_types import (
     GetUpdatesRequest,
     GetUserProfilePhotosRequest,
     KickChatMemberRequest,
+    PromoteChatMemberRequest,
     RestrictChatMemberRequest,
     SendAnimationRequest,
     SendAudioRequest,
@@ -1096,6 +1097,65 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/restrictChatMember', request,
+            ),
+        )
+
+    async def promote_chat_member(
+        self,
+        chat_id: Union[ChatID, str],
+        user_id: UserID,
+        can_change_info: Optional[bool] = None,
+        can_post_messages: Optional[bool] = None,
+        can_edit_messages: Optional[bool] = None,
+        can_delete_messages: Optional[bool] = None,
+        can_invite_users: Optional[bool] = None,
+        can_restrict_members: Optional[bool] = None,
+        can_pin_messages: Optional[bool] = None,
+        can_promote_members: Optional[bool] = None,
+    ) -> bool:
+        """promoteChatMember API method.
+
+        If all permissions are `False`, the user is demoted.
+
+        Args:
+            chat_id: The ID of the group or channel where the user should be promoted to
+                     administrator.
+            user_id: The ID of the user to promote to administrator.
+            can_change_info: Whether the user should change chat title, photo and other
+                             settings.
+            can_post_messages: Whether the user should create channel posts, channels
+                               only.
+            can_edit_messages: Whether the user should edit messages of other users and
+                               can pin messages, channels only.
+            can_delete_messages: Whether the user should delete messages of other users.
+            can_invite_users: Whether the user should invite new users to the chat.
+            can_restrict_members: Whether the user should restrict, ban or unban chat
+                                  members.
+            can_pin_messages: Whether the user should pin messages, supergroups only.
+            can_promote_members: Whether the user should add new administrators with a
+                                 subset of their own privileges or demote administrators
+                                 that he has promoted, directly or indirectly (promoted
+                                 by administrators that were appointed by him).
+
+        """
+
+        request = PromoteChatMemberRequest(
+            chat_id,
+            user_id,
+            can_change_info,
+            can_post_messages,
+            can_edit_messages,
+            can_delete_messages,
+            can_invite_users,
+            can_restrict_members,
+            can_pin_messages,
+            can_promote_members,
+        )
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/promoteChatMember', request,
             ),
         )
 

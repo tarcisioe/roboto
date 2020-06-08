@@ -363,3 +363,19 @@ class RestrictChatMemberRequest:
     user_id: UserID
     permissions: JSONSerialized[ChatPermissions]
     until_date: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class PromoteChatMemberRequest:
+    """Parameters for promoting a chat member to administrator."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID
+    can_change_info: Optional[bool] = None
+    can_post_messages: Optional[bool] = None
+    can_edit_messages: Optional[bool] = None
+    can_delete_messages: Optional[bool] = None
+    can_invite_users: Optional[bool] = None
+    can_restrict_members: Optional[bool] = None
+    can_pin_messages: Optional[bool] = None
+    can_promote_members: Optional[bool] = None
