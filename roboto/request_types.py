@@ -396,3 +396,10 @@ class SetChatPermissionsRequest:
 
     chat_id: Union[ChatID, str]
     permissions: JSONSerialized[ChatPermissions]
+
+
+@dataclass(frozen=True)
+class ExportChatInviteLinkRequest:
+    """Parameters for exporting a chat's invite link."""
+
+    chat_id: Union[ChatID, str]

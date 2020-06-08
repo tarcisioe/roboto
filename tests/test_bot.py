@@ -1251,3 +1251,23 @@ async def test_set_chat_permissions(mocked_bot_api: MockedBotAPI):
     )
 
     assert result
+
+
+@pytest.mark.trio
+async def test_export_chat_invite_link(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.export_chat_invite_link creates the correct payload and
+    properly reads back the returned str.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': 'https://t.me/notarealgroup',
+    }
+
+    result = await mocked_bot_api.api.export_chat_invite_link(chat_id=ChatID(1))
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/exportChatInviteLink', json={'chat_id': 1},
+    )
+
+    assert result == 'https://t.me/notarealgroup'

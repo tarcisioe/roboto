@@ -39,6 +39,7 @@ from .media import extract_medias
 from .request_types import (
     EditInlineMessageLiveLocationRequest,
     EditMessageLiveLocationRequest,
+    ExportChatInviteLinkRequest,
     ForwardMessageRequest,
     GetFileRequest,
     GetUpdatesRequest,
@@ -1201,6 +1202,22 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/setChatPermissions', request,
+            ),
+        )
+
+    async def export_chat_invite_link(self, chat_id: Union[ChatID, str]) -> str:
+        """exportChatInviteLink API method.
+
+        Args:
+            chat_id: The ID of the group or channel to get the invite link to.
+        """
+
+        request = ExportChatInviteLinkRequest(chat_id)
+
+        return from_json_like(
+            str,
+            await make_request(
+                self.session, HTTPMethod.POST, '/exportChatInviteLink', request,
             ),
         )
 
