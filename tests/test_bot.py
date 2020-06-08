@@ -1082,7 +1082,7 @@ async def test_get_user_profile_photos(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_get_file(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_file creates the correct payload and properly reads
+    """Test that BotAPI.get_file creates the correct payload and properly reads
     back the returned file.
     """
 
