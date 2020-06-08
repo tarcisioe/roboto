@@ -8,6 +8,8 @@ from .api_types import (
     ChatAction,
     ChatID,
     DiceEmoji,
+    File,
+    FileID,
     InlineKeyboardMarkup,
     InlineMessageID,
     InputFile,
@@ -37,6 +39,7 @@ from .request_types import (
     EditInlineMessageLiveLocationRequest,
     EditMessageLiveLocationRequest,
     ForwardMessageRequest,
+    GetFileRequest,
     GetUpdatesRequest,
     GetUserProfilePhotosRequest,
     SendAnimationRequest,
@@ -1000,6 +1003,20 @@ class BotAPI:
             await make_request(
                 self.session, HTTPMethod.POST, '/getUserProfilePhotos', request
             ),
+        )
+
+    async def get_file(self, file_id: FileID) -> File:
+        """getFile API method.
+
+        Args:
+            file_id: The ID of the file information to fetch.
+        """
+
+        request = GetFileRequest(file_id)
+
+        return from_json_like(
+            File,
+            await make_request(self.session, HTTPMethod.POST, '/getFile', request),
         )
 
 

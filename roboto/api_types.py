@@ -882,6 +882,7 @@ __all__ = [
     'Document',
     'EncryptedCredentials',
     'EncryptedPassportElement',
+    'File',
     'FileDescription',
     'FileID',
     'ForceReply',
