@@ -7,6 +7,7 @@ from .api_types import (
     BotUser,
     ChatAction,
     ChatID,
+    ChatPermissions,
     DiceEmoji,
     File,
     FileID,
@@ -43,6 +44,7 @@ from .request_types import (
     GetUpdatesRequest,
     GetUserProfilePhotosRequest,
     KickChatMemberRequest,
+    RestrictChatMemberRequest,
     SendAnimationRequest,
     SendAudioRequest,
     SendChatActionRequest,
@@ -1032,9 +1034,10 @@ class BotAPI:
         Args:
             chat_id: The ID of the group or channel from where to remove the user.
             user_id: The ID of the user to kick.
-            until_date: Date when the user will be unbanned, unix time.
-                        Must be from 30 seconds to 366 days. If outside of these bounds,
-                        the user is considered to be banned forever.
+            until_date: Date when the user will be unbanned, Unix time.
+                        Must be from 30 seconds to 366 days from the current time.
+                        If outside of these bounds, the user is considered to be banned
+                        forever.
         """
 
         request = KickChatMemberRequest(chat_id, user_id, until_date)
@@ -1062,6 +1065,37 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/unbanChatMember', request,
+            ),
+        )
+
+    async def restrict_chat_member(
+        self,
+        chat_id: Union[ChatID, str],
+        user_id: UserID,
+        permissions: ChatPermissions,
+        until_date: Optional[int] = None,
+    ) -> bool:
+        """restrictChatMember API method.
+
+        Args:
+            chat_id: The ID of the group or channel where the user should be restricted.
+            user_id: The ID of the user to restrict.
+            permissions: The new user permissions. Pass False to a permission to
+                         restrict it, or True to a permission to lift a restriction.
+            until_date: Date when the user will have the restrictions lifted, Unix time.
+                        Must be from 30 seconds to 366 days from the current time.
+                        If outside of these bounds, the user is considered to be banned
+                        forever.
+        """
+
+        request = RestrictChatMemberRequest(
+            chat_id, user_id, json_serialize(permissions), until_date,
+        )
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/restrictChatMember', request,
             ),
         )
 

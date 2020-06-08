@@ -6,6 +6,7 @@ from typing import Generic, List, Optional, TypeVar, Union, cast
 from .api_types import (
     ChatAction,
     ChatID,
+    ChatPermissions,
     DiceEmoji,
     FileID,
     InlineKeyboardMarkup,
@@ -352,3 +353,13 @@ class UnbanChatMemberRequest:
 
     chat_id: Union[ChatID, str]
     user_id: UserID
+
+
+@dataclass(frozen=True)
+class RestrictChatMemberRequest:
+    """Parameters for restricting permissions of a chat member."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID
+    permissions: JSONSerialized[ChatPermissions]
+    until_date: Optional[int] = None
