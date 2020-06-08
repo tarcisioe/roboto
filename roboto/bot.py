@@ -37,6 +37,7 @@ from .http_api import (
 )
 from .media import extract_medias
 from .request_types import (
+    DeleteChatPhotoRequest,
     EditInlineMessageLiveLocationRequest,
     EditMessageLiveLocationRequest,
     ExportChatInviteLinkRequest,
@@ -1236,6 +1237,22 @@ class BotAPI:
 
         return from_json_like(
             bool, await make_multipart_request(self.session, '/setChatPhoto', request),
+        )
+
+    async def delete_chat_photo(self, chat_id: Union[ChatID, str]) -> bool:
+        """deleteChatPhoto API method.
+
+        Args:
+            chat_id: The ID of the group or channel to delete the photo of.
+        """
+
+        request = DeleteChatPhotoRequest(chat_id)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/deleteChatPhoto', request
+            ),
         )
 
 

@@ -411,3 +411,10 @@ class SetChatPhotoRequest:
 
     chat_id: Union[ChatID, str]
     photo: InputFile
+
+
+@dataclass(frozen=True)
+class DeleteChatPhotoRequest:
+    """Parameters for deleting a chat's photo."""
+
+    chat_id: Union[ChatID, str]
