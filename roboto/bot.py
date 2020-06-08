@@ -66,6 +66,7 @@ from .request_types import (
     SetChatAdministratorCustomTitleRequest,
     SetChatPermissionsRequest,
     SetChatPhotoRequest,
+    SetChatTitleRequest,
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
     StopPollRequest,
@@ -1253,6 +1254,21 @@ class BotAPI:
             await make_request(
                 self.session, HTTPMethod.POST, '/deleteChatPhoto', request
             ),
+        )
+
+    async def set_chat_title(self, chat_id: Union[ChatID, str], title: str) -> bool:
+        """setChatTitle API method.
+
+        Args:
+            chat_id: The ID of the group or channel to set the title of.
+            title: The new chat title.
+        """
+
+        request = SetChatTitleRequest(chat_id, title)
+
+        return from_json_like(
+            bool,
+            await make_request(self.session, HTTPMethod.POST, '/setChatTitle', request),
         )
 
 

@@ -418,3 +418,11 @@ class DeleteChatPhotoRequest:
     """Parameters for deleting a chat's photo."""
 
     chat_id: Union[ChatID, str]
+
+
+@dataclass(frozen=True)
+class SetChatTitleRequest:
+    """Parameters for setting a chat's title."""
+
+    chat_id: Union[ChatID, str]
+    title: str
