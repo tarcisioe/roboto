@@ -42,6 +42,7 @@ from .request_types import (
     GetFileRequest,
     GetUpdatesRequest,
     GetUserProfilePhotosRequest,
+    KickChatMemberRequest,
     SendAnimationRequest,
     SendAudioRequest,
     SendChatActionRequest,
@@ -1017,6 +1018,31 @@ class BotAPI:
         return from_json_like(
             File,
             await make_request(self.session, HTTPMethod.POST, '/getFile', request),
+        )
+
+    async def kick_chat_member(
+        self,
+        chat_id: Union[ChatID, str],
+        user_id: UserID,
+        until_date: Optional[int] = None,
+    ) -> bool:
+        """kickChatMember API method.
+
+        Args:
+            chat_id: The ID of the group or channel from where to remove the user.
+            user_id: The ID of the user to kick.
+            until_date: Date when the user will be unbanned, unix time.
+                        Must be from 30 seconds to 366 days. If outside of these bounds,
+                        the user is considered to be banned forever.
+        """
+
+        request = KickChatMemberRequest(chat_id, user_id, until_date)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/kickChatMember', request,
+            ),
         )
 
 

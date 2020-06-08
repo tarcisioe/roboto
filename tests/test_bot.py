@@ -1126,3 +1126,22 @@ async def test_get_file(mocked_bot_api: MockedBotAPI):
         file_size=1018,
         file_path='photos/file_0.jpg',
     )
+
+
+@pytest.mark.trio
+async def test_kick_chat_member(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.kick_chat_member creates the correct payload and properly reads
+    back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.kick_chat_member(
+        chat_id=ChatID(1), user_id=UserID(1),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/kickChatMember', json={'chat_id': 1, 'user_id': 1},
+    )
+
+    assert result

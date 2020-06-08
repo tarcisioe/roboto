@@ -335,3 +335,12 @@ class GetFileRequest:
     """Parameters for getting information to download a file."""
 
     file_id: FileID
+
+
+@dataclass(frozen=True)
+class KickChatMemberRequest:
+    """Parameters for kicking a chat member."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID
+    until_date: Optional[int] = None
