@@ -62,6 +62,7 @@ from .request_types import (
     SendVideoRequest,
     SendVoiceRequest,
     SetChatAdministratorCustomTitleRequest,
+    SetChatPermissionsRequest,
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
     StopPollRequest,
@@ -1180,6 +1181,26 @@ class BotAPI:
                 HTTPMethod.POST,
                 '/setChatAdministratorCustomTitle',
                 request,
+            ),
+        )
+
+    async def set_chat_permissions(
+        self, chat_id: Union[ChatID, str], permissions: ChatPermissions,
+    ) -> bool:
+        """restrictChatMember API method.
+
+        Args:
+            chat_id: The ID of the group or channel where the user should be restricted.
+            permissions: The new user permissions. Pass False to a permission to
+                         restrict it, or True to a permission to lift a restriction.
+        """
+
+        request = SetChatPermissionsRequest(chat_id, json_serialize(permissions))
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/setChatPermissions', request,
             ),
         )
 

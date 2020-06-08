@@ -388,3 +388,11 @@ class SetChatAdministratorCustomTitleRequest:
     chat_id: Union[ChatID, str]
     user_id: UserID
     custom_title: str
+
+
+@dataclass(frozen=True)
+class SetChatPermissionsRequest:
+    """Parameters for setting the default chat permissions."""
+
+    chat_id: Union[ChatID, str]
+    permissions: JSONSerialized[ChatPermissions]

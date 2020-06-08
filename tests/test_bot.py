@@ -1230,3 +1230,24 @@ async def test_set_chat_administrator_custom_title(mocked_bot_api: MockedBotAPI)
     )
 
     assert result
+
+
+@pytest.mark.trio
+async def test_set_chat_permissions(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.set_chat_permissions creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.set_chat_permissions(
+        chat_id=ChatID(1), permissions=ChatPermissions(can_change_info=False),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/setChatPermissions',
+        json={'chat_id': 1, 'permissions': '{"can_change_info": false}'},
+    )
+
+    assert result
