@@ -403,3 +403,11 @@ class ExportChatInviteLinkRequest:
     """Parameters for exporting a chat's invite link."""
 
     chat_id: Union[ChatID, str]
+
+
+@dataclass(frozen=True)
+class SetChatPhotoRequest:
+    """Parameters for setting a chat's photo."""
+
+    chat_id: Union[ChatID, str]
+    photo: InputFile

@@ -1271,3 +1271,22 @@ async def test_export_chat_invite_link(mocked_bot_api: MockedBotAPI):
     )
 
     assert result == 'https://t.me/notarealgroup'
+
+
+@pytest.mark.trio
+async def test_set_chat_photo(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.set_chat_photo creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    path = Path('dummy.jpg')
+
+    result = await mocked_bot_api.api.set_chat_photo(chat_id=ChatID(1), photo=path)
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/setChatPhoto', multipart={'chat_id': 1, 'photo': path},
+    )
+
+    assert result

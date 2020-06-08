@@ -64,6 +64,7 @@ from .request_types import (
     SendVoiceRequest,
     SetChatAdministratorCustomTitleRequest,
     SetChatPermissionsRequest,
+    SetChatPhotoRequest,
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
     StopPollRequest,
@@ -1219,6 +1220,22 @@ class BotAPI:
             await make_request(
                 self.session, HTTPMethod.POST, '/exportChatInviteLink', request,
             ),
+        )
+
+    async def set_chat_photo(
+        self, chat_id: Union[ChatID, str], photo: InputFile,
+    ) -> bool:
+        """setChatPhoto API method.
+
+        Args:
+            chat_id: The ID of the group or channel to change the photo of.
+            photo: The photo to use as an `InputFile`.
+        """
+
+        request = SetChatPhotoRequest(chat_id, photo)
+
+        return from_json_like(
+            bool, await make_multipart_request(self.session, '/setChatPhoto', request),
         )
 
 
