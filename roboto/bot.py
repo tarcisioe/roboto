@@ -61,6 +61,7 @@ from .request_types import (
     SendVideoNoteRequest,
     SendVideoRequest,
     SendVoiceRequest,
+    SetChatAdministratorCustomTitleRequest,
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
     StopPollRequest,
@@ -1156,6 +1157,29 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/promoteChatMember', request,
+            ),
+        )
+
+    async def set_chat_administrator_custom_title(
+        self, chat_id: Union[ChatID, str], user_id: UserID, custom_title: str,
+    ) -> bool:
+        """setChatAdministratorCustomTitle API method.
+
+        Args:
+            chat_id: The ID of the group or channel where the administrator is.
+            user_id: The ID of the administration whose custom title shoulde be set.
+            custom_title: New custom title for the administrator.
+        """
+
+        request = SetChatAdministratorCustomTitleRequest(chat_id, user_id, custom_title)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session,
+                HTTPMethod.POST,
+                '/setChatAdministratorCustomTitle',
+                request,
             ),
         )
 

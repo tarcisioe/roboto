@@ -1209,3 +1209,24 @@ async def test_promote_chat_member(mocked_bot_api: MockedBotAPI):
     )
 
     assert result
+
+
+@pytest.mark.trio
+async def test_set_chat_administrator_custom_title(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.set_chat_administrator_custom_title creates the correct payload
+    and properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.set_chat_administrator_custom_title(
+        chat_id=ChatID(1), user_id=UserID(1), custom_title='ademir',
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/setChatAdministratorCustomTitle',
+        json={'chat_id': 1, 'user_id': 1, 'custom_title': 'ademir'},
+    )
+
+    assert result

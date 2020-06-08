@@ -379,3 +379,12 @@ class PromoteChatMemberRequest:
     can_restrict_members: Optional[bool] = None
     can_pin_messages: Optional[bool] = None
     can_promote_members: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class SetChatAdministratorCustomTitleRequest:
+    """Parameters for setting an administrator's custom title."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID
+    custom_title: str
