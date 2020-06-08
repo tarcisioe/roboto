@@ -344,3 +344,11 @@ class KickChatMemberRequest:
     chat_id: Union[ChatID, str]
     user_id: UserID
     until_date: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class UnbanChatMemberRequest:
+    """Parameters for unbanning a chat member."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID

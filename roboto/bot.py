@@ -61,6 +61,7 @@ from .request_types import (
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
     StopPollRequest,
+    UnbanChatMemberRequest,
     json_serialize,
     maybe_json_serialize,
 )
@@ -1042,6 +1043,25 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/kickChatMember', request,
+            ),
+        )
+
+    async def unban_chat_member(
+        self, chat_id: Union[ChatID, str], user_id: UserID,
+    ) -> bool:
+        """kickChatMember API method.
+
+        Args:
+            chat_id: The ID of the group or channel from where to unban the user.
+            user_id: The ID of the user to unban.
+        """
+
+        request = UnbanChatMemberRequest(chat_id, user_id)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/unbanChatMember', request,
             ),
         )
 
