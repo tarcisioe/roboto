@@ -13,7 +13,9 @@ from roboto import (
     ChatID,
     Dice,
     DiceEmoji,
+    File,
     FileDescription,
+    FileID,
     InlineMessageID,
     InputMediaPhoto,
     InputMediaVideo,
@@ -1007,7 +1009,7 @@ async def test_stop_poll(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_send_dice(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_poll creates the correct payload and properly reads
+    """Test that BotAPI.send_dice creates the correct payload and properly reads
     back the returned message.
     """
 
@@ -1041,8 +1043,8 @@ async def test_send_dice(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_send_chat_action(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_poll creates the correct payload and properly reads
-    back the returned message.
+    """Test that BotAPI.send_chat_action creates the correct payload and properly reads
+    back the returned boolean.
     """
 
     mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
@@ -1060,8 +1062,8 @@ async def test_send_chat_action(mocked_bot_api: MockedBotAPI):
 
 @pytest.mark.trio
 async def test_get_user_profile_photos(mocked_bot_api: MockedBotAPI):
-    """Test that BotAPI.send_poll creates the correct payload and properly reads
-    back the returned message.
+    """Test that BotAPI.get_user_profile_photos creates the correct payload and properly
+    reads back the returned user profile photos.
     """
 
     mocked_bot_api.response.json.return_value = {
@@ -1076,3 +1078,51 @@ async def test_get_user_profile_photos(mocked_bot_api: MockedBotAPI):
     )
 
     assert result == UserProfilePhotos(total_count=0, photos=[])
+
+
+@pytest.mark.trio
+async def test_get_file(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.get_file creates the correct payload and properly reads
+    back the returned file.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'file_id': (
+                'AgACAgQAAxkDAAPIXt2uWLhlNVKKIJVNlb0bFrnPCNMAAla'
+                'oMRsGCZxQ96KmYduqAAE-QmygGgAEAQADAgADcwADrcoFAAEaBA'
+            ),
+            'file_unique_id': 'AQADQmygGgAErcoFAAE',
+            'file_size': 1018,
+            'file_path': 'photos/file_0.jpg',
+        },
+    }
+
+    result = await mocked_bot_api.api.get_file(
+        file_id=FileID(
+            'AgACAgQAAxkDAAPIXt2uWLhlNVKKIJVNlb0bFrnPCNMAAla'
+            'oMRsGCZxQ96KmYduqAAE-QmygGgAEAQADAgADcwADrcoFAAEaBA'
+        ),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/getFile',
+        json={
+            'file_id': (
+                'AgACAgQAAxkDAAPIXt2uWLhlNVKKIJVNlb0bFrnPCNMAAla'
+                'oMRsGCZxQ96KmYduqAAE-QmygGgAEAQADAgADcwADrcoFAAEaBA'
+            ),
+        },
+    )
+
+    assert result == File(
+        file_id=FileID(
+            'AgACAgQAAxkDAAPIXt2uWLhlNVKKIJVNlb0bFrnPCNMAAla'
+            'oMRsGCZxQ96KmYduqAAE-QmygGgAEAQADAgADcwADrcoFAAEaBA'
+        ),
+        file_unique_id=FileID('AQADQmygGgAErcoFAAE'),
+        file_size=1018,
+        file_path='photos/file_0.jpg',
+    )

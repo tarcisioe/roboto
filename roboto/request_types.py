@@ -7,6 +7,7 @@ from .api_types import (
     ChatAction,
     ChatID,
     DiceEmoji,
+    FileID,
     InlineKeyboardMarkup,
     InlineMessageID,
     InputFile,
@@ -327,3 +328,10 @@ class GetUserProfilePhotosRequest:
     user_id: UserID
     offset: Optional[int] = None
     limit: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class GetFileRequest:
+    """Parameters for getting information to download a file."""
+
+    file_id: FileID
