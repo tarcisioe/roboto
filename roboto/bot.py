@@ -64,6 +64,7 @@ from .request_types import (
     SendVideoRequest,
     SendVoiceRequest,
     SetChatAdministratorCustomTitleRequest,
+    SetChatDescriptionRequest,
     SetChatPermissionsRequest,
     SetChatPhotoRequest,
     SetChatTitleRequest,
@@ -1269,6 +1270,25 @@ class BotAPI:
         return from_json_like(
             bool,
             await make_request(self.session, HTTPMethod.POST, '/setChatTitle', request),
+        )
+
+    async def set_chat_description(
+        self, chat_id: Union[ChatID, str], description: str,
+    ) -> bool:
+        """setChatDescription API method.
+
+        Args:
+            chat_id: The ID of the group or channel to set the description of.
+            description: The new chat description.
+        """
+
+        request = SetChatDescriptionRequest(chat_id, description)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/setChatDescription', request,
+            ),
         )
 
 

@@ -426,3 +426,11 @@ class SetChatTitleRequest:
 
     chat_id: Union[ChatID, str]
     title: str
+
+
+@dataclass(frozen=True)
+class SetChatDescriptionRequest:
+    """Parameters for setting a chat's description."""
+
+    chat_id: Union[ChatID, str]
+    description: str

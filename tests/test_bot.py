@@ -1324,3 +1324,24 @@ async def test_set_chat_title(mocked_bot_api: MockedBotAPI):
     )
 
     assert result
+
+
+@pytest.mark.trio
+async def test_set_chat_description(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.set_chat_description creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.set_chat_description(
+        chat_id=ChatID(1), description='A nice chat.',
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/setChatDescription',
+        json={'chat_id': 1, 'description': 'A nice chat.'},
+    )
+
+    assert result
