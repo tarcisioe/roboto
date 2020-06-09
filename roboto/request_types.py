@@ -457,3 +457,10 @@ class LeaveChatRequest:
     """Parameters for leaving a chat."""
 
     chat_id: Union[ChatID, str]
+
+
+@dataclass(frozen=True)
+class GetChatRequest:
+    """Parameters for getting information about a chat."""
+
+    chat_id: Union[ChatID, str]

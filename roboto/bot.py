@@ -5,6 +5,7 @@ from typing import List, Optional, Union
 
 from .api_types import (
     BotUser,
+    Chat,
     ChatAction,
     ChatID,
     ChatPermissions,
@@ -42,6 +43,7 @@ from .request_types import (
     EditMessageLiveLocationRequest,
     ExportChatInviteLinkRequest,
     ForwardMessageRequest,
+    GetChatRequest,
     GetFileRequest,
     GetUpdatesRequest,
     GetUserProfilePhotosRequest,
@@ -1345,6 +1347,20 @@ class BotAPI:
         return from_json_like(
             bool,
             await make_request(self.session, HTTPMethod.POST, '/leaveChat', request),
+        )
+
+    async def get_chat(self, chat_id: Union[ChatID, str]) -> Chat:
+        """getChat API method.
+
+        Args:
+            chat_id: The ID of the chat to get information about.
+        """
+
+        request = GetChatRequest(chat_id)
+
+        return from_json_like(
+            Chat,
+            await make_request(self.session, HTTPMethod.POST, '/getChat', request),
         )
 
 
