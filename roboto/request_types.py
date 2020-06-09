@@ -471,3 +471,10 @@ class GetChatAdministratorsRequest:
     """Parameters for getting the administrators of a chat."""
 
     chat_id: Union[ChatID, str]
+
+
+@dataclass(frozen=True)
+class GetChatMembersCountRequest:
+    """Parameters for getting the number of members in a chat."""
+
+    chat_id: Union[ChatID, str]

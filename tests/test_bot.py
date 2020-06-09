@@ -1448,3 +1448,20 @@ async def test_get_chat_administrators(mocked_bot_api: MockedBotAPI):
             User(UserID(1), is_bot=False, first_name='John'), status='administrator',
         )
     ]
+
+
+@pytest.mark.trio
+async def test_get_chat_members_count(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.get_chat_members_count creates the correct payload
+    and properly reads back the returned int.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': 3}
+
+    result = await mocked_bot_api.api.get_chat_members_count(chat_id=ChatID(1))
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/getChatMembersCount', json={'chat_id': 1},
+    )
+
+    assert result == 3
