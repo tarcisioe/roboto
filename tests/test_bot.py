@@ -11,6 +11,7 @@ from roboto import (
     Chat,
     ChatAction,
     ChatID,
+    ChatMember,
     ChatPermissions,
     Dice,
     DiceEmoji,
@@ -1418,3 +1419,32 @@ async def test_get_chat(mocked_bot_api: MockedBotAPI):
     )
 
     assert result == Chat(ChatID(1), 'group', 'Title')
+
+
+@pytest.mark.trio
+async def test_get_chat_administrators(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.get_chat_administrators creates the correct payload
+    and properly reads back the returned list of chat members.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': [
+            {
+                'user': {'id': 1, 'is_bot': False, 'first_name': 'John'},
+                'status': 'administrator',
+            }
+        ],
+    }
+
+    result = await mocked_bot_api.api.get_chat_administrators(chat_id=ChatID(1))
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/getChatAdministrators', json={'chat_id': 1},
+    )
+
+    assert result == [
+        ChatMember(
+            User(UserID(1), is_bot=False, first_name='John'), status='administrator',
+        )
+    ]

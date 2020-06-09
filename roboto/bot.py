@@ -8,6 +8,7 @@ from .api_types import (
     Chat,
     ChatAction,
     ChatID,
+    ChatMember,
     ChatPermissions,
     DiceEmoji,
     File,
@@ -43,6 +44,7 @@ from .request_types import (
     EditMessageLiveLocationRequest,
     ExportChatInviteLinkRequest,
     ForwardMessageRequest,
+    GetChatAdministratorsRequest,
     GetChatRequest,
     GetFileRequest,
     GetUpdatesRequest,
@@ -1361,6 +1363,24 @@ class BotAPI:
         return from_json_like(
             Chat,
             await make_request(self.session, HTTPMethod.POST, '/getChat', request),
+        )
+
+    async def get_chat_administrators(
+        self, chat_id: Union[ChatID, str],
+    ) -> List[ChatMember]:
+        """getChatAdministrators API method.
+
+        Args:
+            chat_id: The ID of the group or channel to get the the administrators of.
+        """
+
+        request = GetChatAdministratorsRequest(chat_id)
+
+        return from_json_like(
+            List[ChatMember],
+            await make_request(
+                self.session, HTTPMethod.POST, '/getChatAdministrators', request,
+            ),
         )
 
 
