@@ -5,8 +5,10 @@ from typing import List, Optional, Union
 
 from .api_types import (
     BotUser,
+    Chat,
     ChatAction,
     ChatID,
+    ChatMember,
     ChatPermissions,
     DiceEmoji,
     File,
@@ -42,10 +44,15 @@ from .request_types import (
     EditMessageLiveLocationRequest,
     ExportChatInviteLinkRequest,
     ForwardMessageRequest,
+    GetChatAdministratorsRequest,
+    GetChatMemberRequest,
+    GetChatMembersCountRequest,
+    GetChatRequest,
     GetFileRequest,
     GetUpdatesRequest,
     GetUserProfilePhotosRequest,
     KickChatMemberRequest,
+    LeaveChatRequest,
     PinChatMessageRequest,
     PromoteChatMemberRequest,
     RestrictChatMemberRequest,
@@ -1329,6 +1336,87 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/unpinChatMessage', request,
+            ),
+        )
+
+    async def leave_chat(self, chat_id: Union[ChatID, str]) -> bool:
+        """leaveChat API method.
+
+        Args:
+            chat_id: The ID of the group or channel to leave.
+        """
+
+        request = LeaveChatRequest(chat_id)
+
+        return from_json_like(
+            bool,
+            await make_request(self.session, HTTPMethod.POST, '/leaveChat', request),
+        )
+
+    async def get_chat(self, chat_id: Union[ChatID, str]) -> Chat:
+        """getChat API method.
+
+        Args:
+            chat_id: The ID of the chat to get information about.
+        """
+
+        request = GetChatRequest(chat_id)
+
+        return from_json_like(
+            Chat,
+            await make_request(self.session, HTTPMethod.POST, '/getChat', request),
+        )
+
+    async def get_chat_administrators(
+        self, chat_id: Union[ChatID, str],
+    ) -> List[ChatMember]:
+        """getChatAdministrators API method.
+
+        Args:
+            chat_id: The ID of the group or channel to get the the administrators of.
+        """
+
+        request = GetChatAdministratorsRequest(chat_id)
+
+        return from_json_like(
+            List[ChatMember],
+            await make_request(
+                self.session, HTTPMethod.POST, '/getChatAdministrators', request,
+            ),
+        )
+
+    async def get_chat_members_count(self, chat_id: Union[ChatID, str]) -> int:
+        """getChatMembersCount API method.
+
+        Args:
+            chat_id: The ID of the group or channel to get the number of members of.
+        """
+
+        request = GetChatMembersCountRequest(chat_id)
+
+        return from_json_like(
+            int,
+            await make_request(
+                self.session, HTTPMethod.POST, '/getChatMembersCount', request,
+            ),
+        )
+
+    async def get_chat_member(
+        self, chat_id: Union[ChatID, str], user_id: UserID,
+    ) -> ChatMember:
+        """getChatMember API method.
+
+        Args:
+            chat_id: The ID of the group or channel to get information on the member.
+            user_id: The ID of the user to get information about.
+        """
+
+        request = GetChatMemberRequest(chat_id, user_id)
+
+        return from_json_like(
+            ChatMember,
+            await make_request(
+                self.session, HTTPMethod.POST, '/getChatMember', request,
             ),
         )
 
