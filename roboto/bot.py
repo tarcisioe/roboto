@@ -1062,7 +1062,7 @@ class BotAPI:
     async def unban_chat_member(
         self, chat_id: Union[ChatID, str], user_id: UserID,
     ) -> bool:
-        """kickChatMember API method.
+        """unbanChatMember API method.
 
         Args:
             chat_id: The ID of the group or channel from where to unban the user.
@@ -1194,7 +1194,7 @@ class BotAPI:
     async def set_chat_permissions(
         self, chat_id: Union[ChatID, str], permissions: ChatPermissions,
     ) -> bool:
-        """restrictChatMember API method.
+        """setChatPermissions API method.
 
         Args:
             chat_id: The ID of the group or channel where the user should be restricted.
