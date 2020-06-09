@@ -450,3 +450,10 @@ class UnpinChatMessageRequest:
     """Parameters for unpinning the message from a chat."""
 
     chat_id: Union[ChatID, str]
+
+
+@dataclass(frozen=True)
+class LeaveChatRequest:
+    """Parameters for leaving a chat."""
+
+    chat_id: Union[ChatID, str]

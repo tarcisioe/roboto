@@ -46,6 +46,7 @@ from .request_types import (
     GetUpdatesRequest,
     GetUserProfilePhotosRequest,
     KickChatMemberRequest,
+    LeaveChatRequest,
     PinChatMessageRequest,
     PromoteChatMemberRequest,
     RestrictChatMemberRequest,
@@ -1330,6 +1331,20 @@ class BotAPI:
             await make_request(
                 self.session, HTTPMethod.POST, '/unpinChatMessage', request,
             ),
+        )
+
+    async def leave_chat(self, chat_id: Union[ChatID, str]) -> bool:
+        """leaveChat API method.
+
+        Args:
+            chat_id: The ID of the group or channel to leave.
+        """
+
+        request = LeaveChatRequest(chat_id)
+
+        return from_json_like(
+            bool,
+            await make_request(self.session, HTTPMethod.POST, '/leaveChat', request),
         )
 
 
