@@ -434,3 +434,19 @@ class SetChatDescriptionRequest:
 
     chat_id: Union[ChatID, str]
     description: str
+
+
+@dataclass(frozen=True)
+class PinChatMessageRequest:
+    """Parameters for pinning a message in a chat."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    disable_notification: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class UnpinChatMessageRequest:
+    """Parameters for unpinning the message from a chat."""
+
+    chat_id: Union[ChatID, str]

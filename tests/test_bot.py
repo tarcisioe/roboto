@@ -1345,3 +1345,39 @@ async def test_set_chat_description(mocked_bot_api: MockedBotAPI):
     )
 
     assert result
+
+
+@pytest.mark.trio
+async def test_pin_chat_message(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.pin_chat_message creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.pin_chat_message(
+        chat_id=ChatID(1), message_id=MessageID(1),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/pinChatMessage', json={'chat_id': 1, 'message_id': 1},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_unpin_chat_message(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.unpin_chat_message creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.unpin_chat_message(chat_id=ChatID(1))
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/unpinChatMessage', json={'chat_id': 1},
+    )
+
+    assert result

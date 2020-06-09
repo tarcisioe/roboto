@@ -46,6 +46,7 @@ from .request_types import (
     GetUpdatesRequest,
     GetUserProfilePhotosRequest,
     KickChatMemberRequest,
+    PinChatMessageRequest,
     PromoteChatMemberRequest,
     RestrictChatMemberRequest,
     SendAnimationRequest,
@@ -72,6 +73,7 @@ from .request_types import (
     StopMessageLiveLocationRequest,
     StopPollRequest,
     UnbanChatMemberRequest,
+    UnpinChatMessageRequest,
     json_serialize,
     maybe_json_serialize,
 )
@@ -1288,6 +1290,45 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/setChatDescription', request,
+            ),
+        )
+
+    async def pin_chat_message(
+        self,
+        chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        disable_notification: Optional[bool] = None,
+    ) -> bool:
+        """pinChatMessage API method.
+
+        Args:
+            chat_id: The ID of the group or channel where to pin the message.
+            message_id: The ID of the message to pin.
+            disable_notification: Do not notify users that the message was pinned.
+        """
+
+        request = PinChatMessageRequest(chat_id, message_id, disable_notification)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/pinChatMessage', request,
+            ),
+        )
+
+    async def unpin_chat_message(self, chat_id: Union[ChatID, str]) -> bool:
+        """unpinChatMessage API method.
+
+        Args:
+            chat_id: The ID of the group or channel to unpin the pinned message from.
+        """
+
+        request = UnpinChatMessageRequest(chat_id)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/unpinChatMessage', request,
             ),
         )
 
