@@ -6,6 +6,7 @@ from typing import Generic, List, Optional, TypeVar, Union, cast
 from .api_types import (
     ChatAction,
     ChatID,
+    ChatPermissions,
     DiceEmoji,
     FileID,
     InlineKeyboardMarkup,
@@ -335,3 +336,117 @@ class GetFileRequest:
     """Parameters for getting information to download a file."""
 
     file_id: FileID
+
+
+@dataclass(frozen=True)
+class KickChatMemberRequest:
+    """Parameters for kicking a chat member."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID
+    until_date: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class UnbanChatMemberRequest:
+    """Parameters for unbanning a chat member."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID
+
+
+@dataclass(frozen=True)
+class RestrictChatMemberRequest:
+    """Parameters for restricting permissions of a chat member."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID
+    permissions: JSONSerialized[ChatPermissions]
+    until_date: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class PromoteChatMemberRequest:
+    """Parameters for promoting a chat member to administrator."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID
+    can_change_info: Optional[bool] = None
+    can_post_messages: Optional[bool] = None
+    can_edit_messages: Optional[bool] = None
+    can_delete_messages: Optional[bool] = None
+    can_invite_users: Optional[bool] = None
+    can_restrict_members: Optional[bool] = None
+    can_pin_messages: Optional[bool] = None
+    can_promote_members: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class SetChatAdministratorCustomTitleRequest:
+    """Parameters for setting an administrator's custom title."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID
+    custom_title: str
+
+
+@dataclass(frozen=True)
+class SetChatPermissionsRequest:
+    """Parameters for setting the default chat permissions."""
+
+    chat_id: Union[ChatID, str]
+    permissions: JSONSerialized[ChatPermissions]
+
+
+@dataclass(frozen=True)
+class ExportChatInviteLinkRequest:
+    """Parameters for exporting a chat's invite link."""
+
+    chat_id: Union[ChatID, str]
+
+
+@dataclass(frozen=True)
+class SetChatPhotoRequest:
+    """Parameters for setting a chat's photo."""
+
+    chat_id: Union[ChatID, str]
+    photo: InputFile
+
+
+@dataclass(frozen=True)
+class DeleteChatPhotoRequest:
+    """Parameters for deleting a chat's photo."""
+
+    chat_id: Union[ChatID, str]
+
+
+@dataclass(frozen=True)
+class SetChatTitleRequest:
+    """Parameters for setting a chat's title."""
+
+    chat_id: Union[ChatID, str]
+    title: str
+
+
+@dataclass(frozen=True)
+class SetChatDescriptionRequest:
+    """Parameters for setting a chat's description."""
+
+    chat_id: Union[ChatID, str]
+    description: str
+
+
+@dataclass(frozen=True)
+class PinChatMessageRequest:
+    """Parameters for pinning a message in a chat."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    disable_notification: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class UnpinChatMessageRequest:
+    """Parameters for unpinning the message from a chat."""
+
+    chat_id: Union[ChatID, str]

@@ -11,6 +11,7 @@ from roboto import (
     Chat,
     ChatAction,
     ChatID,
+    ChatPermissions,
     Dice,
     DiceEmoji,
     File,
@@ -1126,3 +1127,257 @@ async def test_get_file(mocked_bot_api: MockedBotAPI):
         file_size=1018,
         file_path='photos/file_0.jpg',
     )
+
+
+@pytest.mark.trio
+async def test_kick_chat_member(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.kick_chat_member creates the correct payload and properly reads
+    back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.kick_chat_member(
+        chat_id=ChatID(1), user_id=UserID(1),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/kickChatMember', json={'chat_id': 1, 'user_id': 1},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_unban_chat_member(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.unban_chat_member creates the correct payload and properly reads
+    back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.unban_chat_member(
+        chat_id=ChatID(1), user_id=UserID(1),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/unbanChatMember', json={'chat_id': 1, 'user_id': 1},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_restrict_chat_member(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.restrict_chat_member creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.restrict_chat_member(
+        chat_id=ChatID(1),
+        user_id=UserID(1),
+        permissions=ChatPermissions(can_change_info=False),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/restrictChatMember',
+        json={'chat_id': 1, 'user_id': 1, 'permissions': '{"can_change_info": false}'},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_promote_chat_member(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.promote_chat_member creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.promote_chat_member(
+        chat_id=ChatID(1), user_id=UserID(1), can_pin_messages=True,
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/promoteChatMember',
+        json={'chat_id': 1, 'user_id': 1, 'can_pin_messages': True},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_set_chat_administrator_custom_title(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.set_chat_administrator_custom_title creates the correct payload
+    and properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.set_chat_administrator_custom_title(
+        chat_id=ChatID(1), user_id=UserID(1), custom_title='ademir',
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/setChatAdministratorCustomTitle',
+        json={'chat_id': 1, 'user_id': 1, 'custom_title': 'ademir'},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_set_chat_permissions(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.set_chat_permissions creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.set_chat_permissions(
+        chat_id=ChatID(1), permissions=ChatPermissions(can_change_info=False),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/setChatPermissions',
+        json={'chat_id': 1, 'permissions': '{"can_change_info": false}'},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_export_chat_invite_link(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.export_chat_invite_link creates the correct payload and
+    properly reads back the returned str.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': 'https://t.me/notarealgroup',
+    }
+
+    result = await mocked_bot_api.api.export_chat_invite_link(chat_id=ChatID(1))
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/exportChatInviteLink', json={'chat_id': 1},
+    )
+
+    assert result == 'https://t.me/notarealgroup'
+
+
+@pytest.mark.trio
+async def test_set_chat_photo(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.set_chat_photo creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    path = Path('dummy.jpg')
+
+    result = await mocked_bot_api.api.set_chat_photo(chat_id=ChatID(1), photo=path)
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/setChatPhoto', multipart={'chat_id': 1, 'photo': path},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_delete_chat_photo(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.delete_chat_photo creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.delete_chat_photo(chat_id=ChatID(1))
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/deleteChatPhoto', json={'chat_id': 1},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_set_chat_title(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.set_chat_title creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.set_chat_title(chat_id=ChatID(1), title='A Chat!')
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/setChatTitle', json={'chat_id': 1, 'title': 'A Chat!'},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_set_chat_description(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.set_chat_description creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.set_chat_description(
+        chat_id=ChatID(1), description='A nice chat.',
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/setChatDescription',
+        json={'chat_id': 1, 'description': 'A nice chat.'},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_pin_chat_message(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.pin_chat_message creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.pin_chat_message(
+        chat_id=ChatID(1), message_id=MessageID(1),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/pinChatMessage', json={'chat_id': 1, 'message_id': 1},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_unpin_chat_message(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.unpin_chat_message creates the correct payload and
+    properly reads back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.unpin_chat_message(chat_id=ChatID(1))
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/unpinChatMessage', json={'chat_id': 1},
+    )
+
+    assert result

@@ -7,6 +7,7 @@ from .api_types import (
     BotUser,
     ChatAction,
     ChatID,
+    ChatPermissions,
     DiceEmoji,
     File,
     FileID,
@@ -36,12 +37,18 @@ from .http_api import (
 )
 from .media import extract_medias
 from .request_types import (
+    DeleteChatPhotoRequest,
     EditInlineMessageLiveLocationRequest,
     EditMessageLiveLocationRequest,
+    ExportChatInviteLinkRequest,
     ForwardMessageRequest,
     GetFileRequest,
     GetUpdatesRequest,
     GetUserProfilePhotosRequest,
+    KickChatMemberRequest,
+    PinChatMessageRequest,
+    PromoteChatMemberRequest,
+    RestrictChatMemberRequest,
     SendAnimationRequest,
     SendAudioRequest,
     SendChatActionRequest,
@@ -57,9 +64,16 @@ from .request_types import (
     SendVideoNoteRequest,
     SendVideoRequest,
     SendVoiceRequest,
+    SetChatAdministratorCustomTitleRequest,
+    SetChatDescriptionRequest,
+    SetChatPermissionsRequest,
+    SetChatPhotoRequest,
+    SetChatTitleRequest,
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
     StopPollRequest,
+    UnbanChatMemberRequest,
+    UnpinChatMessageRequest,
     json_serialize,
     maybe_json_serialize,
 )
@@ -1017,6 +1031,305 @@ class BotAPI:
         return from_json_like(
             File,
             await make_request(self.session, HTTPMethod.POST, '/getFile', request),
+        )
+
+    async def kick_chat_member(
+        self,
+        chat_id: Union[ChatID, str],
+        user_id: UserID,
+        until_date: Optional[int] = None,
+    ) -> bool:
+        """kickChatMember API method.
+
+        Args:
+            chat_id: The ID of the group or channel from where to remove the user.
+            user_id: The ID of the user to kick.
+            until_date: Date when the user will be unbanned, Unix time.
+                        Must be from 30 seconds to 366 days from the current time.
+                        If outside of these bounds, the user is considered to be banned
+                        forever.
+        """
+
+        request = KickChatMemberRequest(chat_id, user_id, until_date)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/kickChatMember', request,
+            ),
+        )
+
+    async def unban_chat_member(
+        self, chat_id: Union[ChatID, str], user_id: UserID,
+    ) -> bool:
+        """unbanChatMember API method.
+
+        Args:
+            chat_id: The ID of the group or channel from where to unban the user.
+            user_id: The ID of the user to unban.
+        """
+
+        request = UnbanChatMemberRequest(chat_id, user_id)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/unbanChatMember', request,
+            ),
+        )
+
+    async def restrict_chat_member(
+        self,
+        chat_id: Union[ChatID, str],
+        user_id: UserID,
+        permissions: ChatPermissions,
+        until_date: Optional[int] = None,
+    ) -> bool:
+        """restrictChatMember API method.
+
+        Args:
+            chat_id: The ID of the group or channel where the user should be restricted.
+            user_id: The ID of the user to restrict.
+            permissions: The new user permissions. Pass False to a permission to
+                         restrict it, or True to a permission to lift a restriction.
+            until_date: Date when the user will have the restrictions lifted, Unix time.
+                        Must be from 30 seconds to 366 days from the current time.
+                        If outside of these bounds, the user is considered to be banned
+                        forever.
+        """
+
+        request = RestrictChatMemberRequest(
+            chat_id, user_id, json_serialize(permissions), until_date,
+        )
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/restrictChatMember', request,
+            ),
+        )
+
+    async def promote_chat_member(
+        self,
+        chat_id: Union[ChatID, str],
+        user_id: UserID,
+        can_change_info: Optional[bool] = None,
+        can_post_messages: Optional[bool] = None,
+        can_edit_messages: Optional[bool] = None,
+        can_delete_messages: Optional[bool] = None,
+        can_invite_users: Optional[bool] = None,
+        can_restrict_members: Optional[bool] = None,
+        can_pin_messages: Optional[bool] = None,
+        can_promote_members: Optional[bool] = None,
+    ) -> bool:
+        """promoteChatMember API method.
+
+        If all permissions are `False`, the user is demoted.
+
+        Args:
+            chat_id: The ID of the group or channel where the user should be promoted to
+                     administrator.
+            user_id: The ID of the user to promote to administrator.
+            can_change_info: Whether the user should change chat title, photo and other
+                             settings.
+            can_post_messages: Whether the user should create channel posts, channels
+                               only.
+            can_edit_messages: Whether the user should edit messages of other users and
+                               can pin messages, channels only.
+            can_delete_messages: Whether the user should delete messages of other users.
+            can_invite_users: Whether the user should invite new users to the chat.
+            can_restrict_members: Whether the user should restrict, ban or unban chat
+                                  members.
+            can_pin_messages: Whether the user should pin messages, supergroups only.
+            can_promote_members: Whether the user should add new administrators with a
+                                 subset of their own privileges or demote administrators
+                                 that he has promoted, directly or indirectly (promoted
+                                 by administrators that were appointed by him).
+
+        """
+
+        request = PromoteChatMemberRequest(
+            chat_id,
+            user_id,
+            can_change_info,
+            can_post_messages,
+            can_edit_messages,
+            can_delete_messages,
+            can_invite_users,
+            can_restrict_members,
+            can_pin_messages,
+            can_promote_members,
+        )
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/promoteChatMember', request,
+            ),
+        )
+
+    async def set_chat_administrator_custom_title(
+        self, chat_id: Union[ChatID, str], user_id: UserID, custom_title: str,
+    ) -> bool:
+        """setChatAdministratorCustomTitle API method.
+
+        Args:
+            chat_id: The ID of the group or channel where the administrator is.
+            user_id: The ID of the administration whose custom title shoulde be set.
+            custom_title: New custom title for the administrator.
+        """
+
+        request = SetChatAdministratorCustomTitleRequest(chat_id, user_id, custom_title)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session,
+                HTTPMethod.POST,
+                '/setChatAdministratorCustomTitle',
+                request,
+            ),
+        )
+
+    async def set_chat_permissions(
+        self, chat_id: Union[ChatID, str], permissions: ChatPermissions,
+    ) -> bool:
+        """setChatPermissions API method.
+
+        Args:
+            chat_id: The ID of the group or channel where the user should be restricted.
+            permissions: The new user permissions. Pass False to a permission to
+                         restrict it, or True to a permission to lift a restriction.
+        """
+
+        request = SetChatPermissionsRequest(chat_id, json_serialize(permissions))
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/setChatPermissions', request,
+            ),
+        )
+
+    async def export_chat_invite_link(self, chat_id: Union[ChatID, str]) -> str:
+        """exportChatInviteLink API method.
+
+        Args:
+            chat_id: The ID of the group or channel to get the invite link to.
+        """
+
+        request = ExportChatInviteLinkRequest(chat_id)
+
+        return from_json_like(
+            str,
+            await make_request(
+                self.session, HTTPMethod.POST, '/exportChatInviteLink', request,
+            ),
+        )
+
+    async def set_chat_photo(
+        self, chat_id: Union[ChatID, str], photo: InputFile,
+    ) -> bool:
+        """setChatPhoto API method.
+
+        Args:
+            chat_id: The ID of the group or channel to change the photo of.
+            photo: The photo to use as an `InputFile`.
+        """
+
+        request = SetChatPhotoRequest(chat_id, photo)
+
+        return from_json_like(
+            bool, await make_multipart_request(self.session, '/setChatPhoto', request),
+        )
+
+    async def delete_chat_photo(self, chat_id: Union[ChatID, str]) -> bool:
+        """deleteChatPhoto API method.
+
+        Args:
+            chat_id: The ID of the group or channel to delete the photo of.
+        """
+
+        request = DeleteChatPhotoRequest(chat_id)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/deleteChatPhoto', request
+            ),
+        )
+
+    async def set_chat_title(self, chat_id: Union[ChatID, str], title: str) -> bool:
+        """setChatTitle API method.
+
+        Args:
+            chat_id: The ID of the group or channel to set the title of.
+            title: The new chat title.
+        """
+
+        request = SetChatTitleRequest(chat_id, title)
+
+        return from_json_like(
+            bool,
+            await make_request(self.session, HTTPMethod.POST, '/setChatTitle', request),
+        )
+
+    async def set_chat_description(
+        self, chat_id: Union[ChatID, str], description: str,
+    ) -> bool:
+        """setChatDescription API method.
+
+        Args:
+            chat_id: The ID of the group or channel to set the description of.
+            description: The new chat description.
+        """
+
+        request = SetChatDescriptionRequest(chat_id, description)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/setChatDescription', request,
+            ),
+        )
+
+    async def pin_chat_message(
+        self,
+        chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        disable_notification: Optional[bool] = None,
+    ) -> bool:
+        """pinChatMessage API method.
+
+        Args:
+            chat_id: The ID of the group or channel where to pin the message.
+            message_id: The ID of the message to pin.
+            disable_notification: Do not notify users that the message was pinned.
+        """
+
+        request = PinChatMessageRequest(chat_id, message_id, disable_notification)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/pinChatMessage', request,
+            ),
+        )
+
+    async def unpin_chat_message(self, chat_id: Union[ChatID, str]) -> bool:
+        """unpinChatMessage API method.
+
+        Args:
+            chat_id: The ID of the group or channel to unpin the pinned message from.
+        """
+
+        request = UnpinChatMessageRequest(chat_id)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/unpinChatMessage', request,
+            ),
         )
 
 
