@@ -478,3 +478,11 @@ class GetChatMembersCountRequest:
     """Parameters for getting the number of members in a chat."""
 
     chat_id: Union[ChatID, str]
+
+
+@dataclass(frozen=True)
+class GetChatMemberRequest:
+    """Parameters for getting information about a member in a chat."""
+
+    chat_id: Union[ChatID, str]
+    user_id: UserID

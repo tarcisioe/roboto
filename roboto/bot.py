@@ -45,6 +45,7 @@ from .request_types import (
     ExportChatInviteLinkRequest,
     ForwardMessageRequest,
     GetChatAdministratorsRequest,
+    GetChatMemberRequest,
     GetChatMembersCountRequest,
     GetChatRequest,
     GetFileRequest,
@@ -1397,6 +1398,25 @@ class BotAPI:
             int,
             await make_request(
                 self.session, HTTPMethod.POST, '/getChatMembersCount', request,
+            ),
+        )
+
+    async def get_chat_member(
+        self, chat_id: Union[ChatID, str], user_id: UserID,
+    ) -> ChatMember:
+        """getChatMember API method.
+
+        Args:
+            chat_id: The ID of the group or channel to get information on the member.
+            user_id: The ID of the user to get information about.
+        """
+
+        request = GetChatMemberRequest(chat_id, user_id)
+
+        return from_json_like(
+            ChatMember,
+            await make_request(
+                self.session, HTTPMethod.POST, '/getChatMember', request,
             ),
         )
 
