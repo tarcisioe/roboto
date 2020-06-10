@@ -494,3 +494,10 @@ class SetChatStickerSetRequest:
 
     chat_id: Union[ChatID, str]
     sticker_set_name: str
+
+
+@dataclass(frozen=True)
+class DeleteChatStickerSetRequest:
+    """Parameters for deleting the sticker set of a supergroup."""
+
+    chat_id: Union[ChatID, str]

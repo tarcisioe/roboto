@@ -40,6 +40,7 @@ from .http_api import (
 from .media import extract_medias
 from .request_types import (
     DeleteChatPhotoRequest,
+    DeleteChatStickerSetRequest,
     EditInlineMessageLiveLocationRequest,
     EditMessageLiveLocationRequest,
     ExportChatInviteLinkRequest,
@@ -1438,6 +1439,22 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/setChatStickerSet', request,
+            ),
+        )
+
+    async def delete_chat_sticker_set(self, chat_id: Union[ChatID, str]) -> bool:
+        """deleteChatStickerSet API method.
+
+        Args:
+            chat_id: The ID of the group to delete the sticker set of.
+        """
+
+        request = DeleteChatStickerSetRequest(chat_id)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/deleteChatStickerSet', request,
             ),
         )
 

@@ -1513,3 +1513,20 @@ async def test_set_chat_sticker_set(mocked_bot_api: MockedBotAPI):
     )
 
     assert result
+
+
+@pytest.mark.trio
+async def test_delete_chat_sticker_set(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.delete_chat_sticker_set creates the correct payload
+    and properly reads back the returned chat.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.delete_chat_sticker_set(chat_id=ChatID(1))
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/deleteChatStickerSet', json={'chat_id': 1},
+    )
+
+    assert result
