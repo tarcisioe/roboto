@@ -75,6 +75,7 @@ from .request_types import (
     SetChatDescriptionRequest,
     SetChatPermissionsRequest,
     SetChatPhotoRequest,
+    SetChatStickerSetRequest,
     SetChatTitleRequest,
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
@@ -1417,6 +1418,26 @@ class BotAPI:
             ChatMember,
             await make_request(
                 self.session, HTTPMethod.POST, '/getChatMember', request,
+            ),
+        )
+
+    async def set_chat_sticker_set(
+        self, chat_id: Union[ChatID, str], sticker_set_name: str,
+    ) -> bool:
+        """setChatStickerSet API method.
+
+        Args:
+            chat_id: The ID of the group to set the sticker set of.
+            sticker_set_name: The name of the sticker set to be set as the group sticker
+                              set.
+        """
+
+        request = SetChatStickerSetRequest(chat_id, sticker_set_name)
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/setChatStickerSet', request,
             ),
         )
 

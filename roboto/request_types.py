@@ -486,3 +486,11 @@ class GetChatMemberRequest:
 
     chat_id: Union[ChatID, str]
     user_id: UserID
+
+
+@dataclass(frozen=True)
+class SetChatStickerSetRequest:
+    """Parameters for setting the sticker set of a supergroup."""
+
+    chat_id: Union[ChatID, str]
+    sticker_set_name: str
