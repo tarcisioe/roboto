@@ -1,10 +1,16 @@
 """Common utilities for tests."""
+import sys
 from dataclasses import dataclass
-
-from asynctest.mock import CoroutineMock as AsyncMock
-from asynctest.mock import MagicMock
+from unittest.mock import MagicMock
 
 from roboto.bot import BotAPI
+
+if sys.version_info < (3, 8):
+    from asynctest.mock import (  # pylint: disable=import-error
+        CoroutineMock as AsyncMock,
+    )
+else:
+    from unittest.mock import AsyncMock  # pylint: disable=import-error
 
 
 @dataclass

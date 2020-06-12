@@ -27,6 +27,7 @@ version = "1.10"
 [[package]]
 category = "dev"
 description = "Enhance the standard unittest package with features for testing asyncio libraries"
+marker = "python_version < \"3.8\""
 name = "asynctest"
 optional = false
 python-versions = ">=3.5"
@@ -374,7 +375,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "804064821d377e38d6516034f7ff8005d09da698d77b61c504cf1304f600dda8"
+content-hash = "11083cdd3e767c74bf6f3d984884ff04cfc197c16169ec8ff00dea4bc5f5cab7"
 python-versions = "^3.7"
 
 [metadata.files]
