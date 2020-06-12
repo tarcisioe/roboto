@@ -101,6 +101,7 @@ def execute(command: Union[str, List[str]], *, raise_error: bool = True) -> Resu
 EVERYTHING = [
     'roboto',
     'tests',
+    'bot_tester',
     'develop.py',
     'tasks.py',
 ]

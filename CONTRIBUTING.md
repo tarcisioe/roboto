@@ -92,3 +92,30 @@ $ python -m tasks test --coverage --html
 ```
 
 and open `htmlcov/index.html` in your browser.
+
+
+`bot_tester`
+------------
+
+The `bot_tester` package provides a way for running a real Telegram bot to test
+certain API features. If something new on the API is implemented, it surely
+deserves a test there.
+
+This package is not run on the CI, because it demands user interaction through
+Telegram.  It is linted and type-checked, though. So our CI should complain if
+it is somehow broken.
+
+Right now, not all API features are tested there. This was introduced late in
+development, so one of our milestones is actually having tests for everything
+we can there.
+
+To run the `bot_tester`, you must use
+
+```bash
+$ python -m bot_tester <subcommand> <token>
+```
+
+Where `subcommand` is the function you want to run, and Token is the token for
+a bot to use for testing. You can create one with @botfather on telegram.
+
+You can also use `python -m bot_tester --help` to list all available test functions.
