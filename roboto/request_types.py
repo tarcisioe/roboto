@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Generic, List, Optional, TypeVar, Union, cast
 
 from .api_types import (
+    BotCommand,
     CallbackQueryID,
     ChatAction,
     ChatID,
@@ -513,3 +514,10 @@ class AnswerCallbackQueryRequest:
     show_alert: Optional[bool] = None
     url: Optional[str] = None
     cache_time: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class SetMyCommandsRequest:
+    """Parameters for setting a bot's command list."""
+
+    commands: JSONSerialized[List[BotCommand]]
