@@ -17,6 +17,7 @@ MessageID = NewType('MessageID', int)
 InlineMessageID = NewType('InlineMessageID', str)
 FileID = NewType('FileID', str)
 PollID = NewType('PollID', str)
+CallbackQueryID = NewType('CallbackQueryID', str)
 
 
 @dataclass(frozen=True)
@@ -619,7 +620,7 @@ class ChosenInlineResult:
 class CallbackQuery:
     """An incoming callback from an inline keyboard."""
 
-    id: str
+    id: CallbackQueryID
     from_: User = field(metadata={'rename': 'from'})
     message: Optional[Message] = None
     inline_message_id: Optional[str] = None
@@ -869,6 +870,7 @@ __all__ = [
     'BotUser',
     'CallbackGame',
     'CallbackQuery',
+    'CallbackQueryID',
     'Chat',
     'ChatAction',
     'ChatID',

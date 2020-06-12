@@ -5,6 +5,7 @@ from typing import List, Optional, Union
 
 from .api_types import (
     BotUser,
+    CallbackQueryID,
     Chat,
     ChatAction,
     ChatID,
@@ -39,6 +40,7 @@ from .http_api import (
 )
 from .media import extract_medias
 from .request_types import (
+    AnswerCallbackQueryRequest,
     DeleteChatPhotoRequest,
     DeleteChatStickerSetRequest,
     EditInlineMessageLiveLocationRequest,
@@ -1455,6 +1457,39 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/deleteChatStickerSet', request,
+            ),
+        )
+
+    async def answer_callback_query(
+        self,
+        callback_query_id: CallbackQueryID,
+        text: Optional[str] = None,
+        show_alert: Optional[bool] = None,
+        url: Optional[str] = None,
+        cache_time: Optional[int] = None,
+    ) -> bool:
+
+        """answerCallbackQuery API method.
+
+        Args:
+            callback_query_id: The id of the callback query to reply to.
+            text: The text to show the user in the notification.
+            show_alert: Use an alert instead of a notification on top of the chat
+                        screen.
+            url: URL for the user's client to open. If the button that generated the
+                 query was a `callback_game` button, this may be a link to a Game.
+            cache_time: The maximum amount of time the client may cache the result of
+                        the callback query.
+        """
+
+        request = AnswerCallbackQueryRequest(
+            callback_query_id, text, show_alert, url, cache_time,
+        )
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/answerCallbackQuery', request,
             ),
         )
 
