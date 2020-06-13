@@ -3,10 +3,17 @@
 Code was lifted directly from comments in
 https://github.com/pytest-dev/pytest-mock/issues/150.
 """
+import sys
 
-import asynctest.mock
 import pytest
 import pytest_mock
+
+from ..common import AsyncMock
+
+if sys.version_info < (3, 8):
+    from asynctest import mock  # pylint: disable=import-error
+else:
+    from unittest import mock  # pylint: disable=import-error
 
 
 @pytest.fixture
@@ -21,10 +28,6 @@ def async_mocker(pytestconfig):
     result.stopall()
 
 
-AsyncMock = asynctest.mock.CoroutineMock
-MagicMock = asynctest.mock.MagicMock
-
-
 class AsyncMockFixture(pytest_mock.MockFixture):
     """Fixture to mock async functions."""
 
@@ -34,8 +37,7 @@ class AsyncMockFixture(pytest_mock.MockFixture):
         self._patches = []  # list of mock._patch objects
         self._mocks = []  # list of MagicMock objects
 
-        # CHANGED: hard coding the asynctest.mock
-        self.mock_module = mock_module = asynctest.mock
+        self.mock_module = mock_module = mock
 
         self.patch = self._Patcher(self._patches, self._mocks, mock_module)
         # aliases for convenience
@@ -53,5 +55,4 @@ class AsyncMockFixture(pytest_mock.MockFixture):
         # CoroutineMock is from asynctest
         # AsyncMock is being added in python 3.8
         # Please use AsyncMock.
-        self.CoroutineMock = mock_module.CoroutineMock  # pylint: disable=invalid-name
-        self.AsyncMock = mock_module.CoroutineMock  # pylint: disable=invalid-name
+        self.AsyncMock = AsyncMock  # pylint: disable=invalid-name

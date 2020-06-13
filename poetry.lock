@@ -4,7 +4,7 @@ description = "High level compatibility layer for multiple asynchronous event lo
 name = "anyio"
 optional = false
 python-versions = ">=3.5.3"
-version = "1.3.0"
+version = "1.3.1"
 
 [package.dependencies]
 async-generator = "*"
@@ -18,19 +18,6 @@ trio = ["trio (>=0.12)"]
 
 [[package]]
 category = "main"
-description = "asks - async http"
-name = "asks"
-optional = false
-python-versions = "*"
-version = "2.3.7"
-
-[package.dependencies]
-anyio = "*"
-async_generator = "*"
-h11 = "*"
-
-[[package]]
-category = "main"
 description = "Async generators and context managers for Python 3.5+"
 name = "async-generator"
 optional = false
@@ -40,6 +27,7 @@ version = "1.10"
 [[package]]
 category = "dev"
 description = "Enhance the standard unittest package with features for testing asyncio libraries"
+marker = "python_version < \"3.8\""
 name = "asynctest"
 optional = false
 python-versions = ">=3.5"
@@ -131,14 +119,14 @@ marker = "python_version < \"3.8\""
 name = "importlib-metadata"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
-version = "1.6.0"
+version = "1.6.1"
 
 [package.dependencies]
 zipp = ">=0.5"
 
 [package.extras]
 docs = ["sphinx", "rst.linker"]
-testing = ["packaging", "importlib-resources"]
+testing = ["packaging", "pep517", "importlib-resources (>=1.3)"]
 
 [[package]]
 category = "dev"
@@ -226,7 +214,7 @@ description = "pytest: simple powerful testing with Python"
 name = "pytest"
 optional = false
 python-versions = ">=3.5"
-version = "5.4.2"
+version = "5.4.3"
 
 [package.dependencies]
 atomicwrites = ">=1.0"
@@ -252,11 +240,11 @@ description = "Pytest plugin for measuring coverage."
 name = "pytest-cov"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "2.9.0"
+version = "2.10.0"
 
 [package.dependencies]
 coverage = ">=4.4"
-pytest = ">=3.6"
+pytest = ">=4.6"
 
 [package.extras]
 testing = ["fields", "hunter", "process-tests (2.0.2)", "six", "pytest-xdist", "virtualenv"]
@@ -267,7 +255,7 @@ description = "Thin-wrapper around the mock package for easier use with pytest"
 name = "pytest-mock"
 optional = false
 python-versions = ">=3.5"
-version = "3.1.0"
+version = "3.1.1"
 
 [package.dependencies]
 pytest = ">=2.7"
@@ -281,12 +269,13 @@ description = "Pytest plugin for trio"
 name = "pytest-trio"
 optional = false
 python-versions = ">=3.5"
-version = "0.5.2"
+version = "0.6.0"
 
 [package.dependencies]
 async-generator = ">=1.9"
+outcome = "*"
 pytest = ">=3.6"
-trio = ">=0.11"
+trio = ">=0.15.0"
 
 [[package]]
 category = "main"
@@ -310,7 +299,7 @@ description = "Sorted Containers -- Sorted List, Sorted Dict, Sorted Set"
 name = "sortedcontainers"
 optional = false
 python-versions = "*"
-version = "2.1.0"
+version = "2.2.2"
 
 [[package]]
 category = "dev"
@@ -318,7 +307,7 @@ description = "A friendly Python library for async concurrency and I/O"
 name = "trio"
 optional = false
 python-versions = ">=3.6"
-version = "0.15.1"
+version = "0.16.0"
 
 [package.dependencies]
 async-generator = ">=1.9"
@@ -343,7 +332,7 @@ description = "Runtime inspection utilities for typing module."
 name = "typing-inspect"
 optional = false
 python-versions = "*"
-version = "0.5.0"
+version = "0.6.0"
 
 [package.dependencies]
 mypy-extensions = ">=0.3.0"
@@ -355,7 +344,7 @@ description = "Python Data Validation for Humans™."
 name = "validators"
 optional = false
 python-versions = "*"
-version = "0.14.3"
+version = "0.15.0"
 
 [package.dependencies]
 decorator = ">=3.4.0"
@@ -366,11 +355,11 @@ test = ["pytest (>=2.2.3)", "flake8 (>=2.4.0)", "isort (>=4.2.2)"]
 
 [[package]]
 category = "dev"
-description = "Measures number of Terminal column cells of wide-character codes"
+description = "Measures the displayed width of unicode strings in a terminal"
 name = "wcwidth"
 optional = false
 python-versions = "*"
-version = "0.1.9"
+version = "0.2.4"
 
 [[package]]
 category = "dev"
@@ -386,16 +375,13 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "7917570c1ad4d42df99da03675fe139872e896098c599cec9210799be7f9828a"
+content-hash = "11083cdd3e767c74bf6f3d984884ff04cfc197c16169ec8ff00dea4bc5f5cab7"
 python-versions = "^3.7"
 
 [metadata.files]
 anyio = [
-    {file = "anyio-1.3.0-py3-none-any.whl", hash = "sha256:db2c3d21576870b95d4fd0b8f4a0f9c64057f777c578f3a8127179a17c8c067e"},
-    {file = "anyio-1.3.0.tar.gz", hash = "sha256:7deae0315dd10aa41c21528b83352e4b52f44e6153a21081a3d1cd8c03728e46"},
-]
-asks = [
-    {file = "asks-2.3.7.tar.gz", hash = "sha256:d0e6c926a1fd4670aa1168db501684ee960bec138996e840c3151991ff1889c1"},
+    {file = "anyio-1.3.1-py3-none-any.whl", hash = "sha256:f21b4fafeec1b7db81e09a907e44e374a1e39718d782a488fdfcdcf949c8950c"},
+    {file = "anyio-1.3.1.tar.gz", hash = "sha256:a46bb2b7743455434afd9adea848a3c4e0b7321aee3e9d08844b11d348d3b5a0"},
 ]
 async-generator = [
     {file = "async_generator-1.10-py3-none-any.whl", hash = "sha256:01c7bf666359b4967d2cda0000cc2e4af16a0ae098cbffcb8472fb9e8ad6585b"},
@@ -493,8 +479,8 @@ idna = [
     {file = "idna-2.9.tar.gz", hash = "sha256:7588d1c14ae4c77d74036e8c22ff447b26d0fde8f007354fd48a7814db15b7cb"},
 ]
 importlib-metadata = [
-    {file = "importlib_metadata-1.6.0-py2.py3-none-any.whl", hash = "sha256:2a688cbaa90e0cc587f1df48bdc97a6eadccdcd9c35fb3f976a09e3b5016d90f"},
-    {file = "importlib_metadata-1.6.0.tar.gz", hash = "sha256:34513a8a0c4962bc66d35b359558fd8a5e10cd472d37aec5f66858addef32c1e"},
+    {file = "importlib_metadata-1.6.1-py2.py3-none-any.whl", hash = "sha256:15ec6c0fd909e893e3a08b3a7c76ecb149122fb14b7efe1199ddd4c7c57ea958"},
+    {file = "importlib_metadata-1.6.1.tar.gz", hash = "sha256:0505dd08068cfec00f53a74a0ad927676d7757da81b7436a6eefe4c7cf75c545"},
 ]
 more-itertools = [
     {file = "more-itertools-8.3.0.tar.gz", hash = "sha256:558bb897a2232f5e4f8e2399089e35aecb746e1f9191b6584a151647e89267be"},
@@ -529,20 +515,20 @@ pyparsing = [
     {file = "pyparsing-2.4.7.tar.gz", hash = "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1"},
 ]
 pytest = [
-    {file = "pytest-5.4.2-py3-none-any.whl", hash = "sha256:95c710d0a72d91c13fae35dce195633c929c3792f54125919847fdcdf7caa0d3"},
-    {file = "pytest-5.4.2.tar.gz", hash = "sha256:eb2b5e935f6a019317e455b6da83dd8650ac9ffd2ee73a7b657a30873d67a698"},
+    {file = "pytest-5.4.3-py3-none-any.whl", hash = "sha256:5c0db86b698e8f170ba4582a492248919255fcd4c79b1ee64ace34301fb589a1"},
+    {file = "pytest-5.4.3.tar.gz", hash = "sha256:7979331bfcba207414f5e1263b5a0f8f521d0f457318836a7355531ed1a4c7d8"},
 ]
 pytest-cov = [
-    {file = "pytest-cov-2.9.0.tar.gz", hash = "sha256:b6a814b8ed6247bd81ff47f038511b57fe1ce7f4cc25b9106f1a4b106f1d9322"},
-    {file = "pytest_cov-2.9.0-py2.py3-none-any.whl", hash = "sha256:c87dfd8465d865655a8213859f1b4749b43448b5fae465cb981e16d52a811424"},
+    {file = "pytest-cov-2.10.0.tar.gz", hash = "sha256:1a629dc9f48e53512fcbfda6b07de490c374b0c83c55ff7a1720b3fccff0ac87"},
+    {file = "pytest_cov-2.10.0-py2.py3-none-any.whl", hash = "sha256:6e6d18092dce6fad667cd7020deed816f858ad3b49d5b5e2b1cc1c97a4dba65c"},
 ]
 pytest-mock = [
-    {file = "pytest-mock-3.1.0.tar.gz", hash = "sha256:ce610831cedeff5331f4e2fc453a5dd65384303f680ab34bee2c6533855b431c"},
-    {file = "pytest_mock-3.1.0-py2.py3-none-any.whl", hash = "sha256:997729451dfc36b851a9accf675488c7020beccda15e11c75632ee3d1b1ccd71"},
+    {file = "pytest-mock-3.1.1.tar.gz", hash = "sha256:636e792f7dd9e2c80657e174c04bf7aa92672350090736d82e97e92ce8f68737"},
+    {file = "pytest_mock-3.1.1-py3-none-any.whl", hash = "sha256:a9fedba70e37acf016238bb2293f2652ce19985ceb245bbd3d7f3e4032667402"},
 ]
 pytest-trio = [
-    {file = "pytest-trio-0.5.2.tar.gz", hash = "sha256:6a50e9585ebbb0ce9ae83d33bde7865952d76c4d4b8759a0345a551f113d468c"},
-    {file = "pytest_trio-0.5.2-py3-none-any.whl", hash = "sha256:848c2ba632d9c2d4e2770fe4eb149c8db69ecefc9239e2e6f77c41d9a2393d5e"},
+    {file = "pytest-trio-0.6.0.tar.gz", hash = "sha256:9bf0a490fd177a33617e8709242293fae47934de2b51f8209eb2c0545b6ca8fe"},
+    {file = "pytest_trio-0.6.0-py3-none-any.whl", hash = "sha256:3f48cc1df66d279d705af38ad38d1639c2e2380ddffcdc3a45bb81758de61f03"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
@@ -553,12 +539,12 @@ sniffio = [
     {file = "sniffio-1.1.0.tar.gz", hash = "sha256:8e3810100f69fe0edd463d02ad407112542a11ffdc29f67db2bf3771afb87a21"},
 ]
 sortedcontainers = [
-    {file = "sortedcontainers-2.1.0-py2.py3-none-any.whl", hash = "sha256:d9e96492dd51fae31e60837736b38fe42a187b5404c16606ff7ee7cd582d4c60"},
-    {file = "sortedcontainers-2.1.0.tar.gz", hash = "sha256:974e9a32f56b17c1bac2aebd9dcf197f3eb9cd30553c5852a3187ad162e1a03a"},
+    {file = "sortedcontainers-2.2.2-py2.py3-none-any.whl", hash = "sha256:c633ebde8580f241f274c1f8994a665c0e54a17724fecd0cae2f079e09c36d3f"},
+    {file = "sortedcontainers-2.2.2.tar.gz", hash = "sha256:4e73a757831fc3ca4de2859c422564239a31d8213d09a2a666e375807034d2ba"},
 ]
 trio = [
-    {file = "trio-0.15.1-py3-none-any.whl", hash = "sha256:992763e99c2c37df0796a2ce8c6f498a91df68570cfa3a63acf8367263903ce7"},
-    {file = "trio-0.15.1.tar.gz", hash = "sha256:3010864ab8d8b2ae44d3bc97b0e8924d8f5170bf32f07c7638a930a129687f33"},
+    {file = "trio-0.16.0-py3-none-any.whl", hash = "sha256:451ddb27b4e5215e00646fcbb8028d341fccf284e053dc376506a14bb133dbcf"},
+    {file = "trio-0.16.0.tar.gz", hash = "sha256:df067dd0560c321af39d412cd81fc3a7d13f55af9150527daab980683e9fcf3c"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.7.4.2-py2-none-any.whl", hash = "sha256:f8d2bd89d25bc39dabe7d23df520442fa1d8969b82544370e03d88b5a591c392"},
@@ -566,16 +552,16 @@ typing-extensions = [
     {file = "typing_extensions-3.7.4.2.tar.gz", hash = "sha256:79ee589a3caca649a9bfd2a8de4709837400dfa00b6cc81962a1e6a1815969ae"},
 ]
 typing-inspect = [
-    {file = "typing_inspect-0.5.0-py2-none-any.whl", hash = "sha256:75c97b7854426a129f3184c68588db29091ff58e6908ed520add1d52fc44df6e"},
-    {file = "typing_inspect-0.5.0-py3-none-any.whl", hash = "sha256:c6ed1cd34860857c53c146a6704a96da12e1661087828ce350f34addc6e5eee3"},
-    {file = "typing_inspect-0.5.0.tar.gz", hash = "sha256:811b44f92e780b90cfe7bac94249a4fae87cfaa9b40312765489255045231d9c"},
+    {file = "typing_inspect-0.6.0-py2-none-any.whl", hash = "sha256:de08f50a22955ddec353876df7b2545994d6df08a2f45d54ac8c05e530372ca0"},
+    {file = "typing_inspect-0.6.0-py3-none-any.whl", hash = "sha256:3b98390df4d999a28cf5b35d8b333425af5da2ece8a4ea9e98f71e7591347b4f"},
+    {file = "typing_inspect-0.6.0.tar.gz", hash = "sha256:8f1b1dd25908dbfd81d3bebc218011531e7ab614ba6e5bf7826d887c834afab7"},
 ]
 validators = [
-    {file = "validators-0.14.3.tar.gz", hash = "sha256:6a0d9502219aee486f1ee12d8a9635e4a56f3dbcfa204b4e0de3a038ae35f34f"},
+    {file = "validators-0.15.0.tar.gz", hash = "sha256:31e8bb01b48b48940a021b8a9576b840f98fa06b91762ef921d02cb96d38727a"},
 ]
 wcwidth = [
-    {file = "wcwidth-0.1.9-py2.py3-none-any.whl", hash = "sha256:cafe2186b3c009a04067022ce1dcd79cb38d8d65ee4f4791b8888d6599d1bbe1"},
-    {file = "wcwidth-0.1.9.tar.gz", hash = "sha256:ee73862862a156bf77ff92b09034fc4825dd3af9cf81bc5b360668d425f3c5f1"},
+    {file = "wcwidth-0.2.4-py2.py3-none-any.whl", hash = "sha256:79375666b9954d4a1a10739315816324c3e73110af9d0e102d906fdb0aec009f"},
+    {file = "wcwidth-0.2.4.tar.gz", hash = "sha256:8c6b5b6ee1360b842645f336d9e5d68c55817c26d3050f46b235ef2bc650e48f"},
 ]
 zipp = [
     {file = "zipp-3.1.0-py3-none-any.whl", hash = "sha256:aa36550ff0c0b7ef7fa639055d797116ee891440eac1a56f378e2d3179e0320b"},
