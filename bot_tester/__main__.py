@@ -37,7 +37,7 @@ async def run_bot(token: str, handler: Callable[[BotAPI, Update], Awaitable[None
 
 
 async def callback_query_handler(bot: BotAPI, update: Update):
-    """Test inline_keyboard with callback_query and answer_callback_query."""
+    """Test inline keyboard with callback query and answer_callback_query."""
     if update.message is not None and update.message.text is not None:
         await bot.send_message(
             update.message.chat.id,
@@ -60,7 +60,7 @@ async def callback_query_handler(bot: BotAPI, update: Update):
 
 @app.command()
 def callback_query(token: str):
-    """Run a bot with `callback_query_handler`."""
+    """Run a bot that answers callback queries from an inline keyboard."""
     trio.run(run_bot, token, callback_query_handler)
 
 
@@ -88,7 +88,7 @@ async def set_get_commands_bot(token: str):
 
 @app.command()
 def set_get_commands(token: str):
-    """Run a bot with `callback_query_handler`."""
+    """Run a bot that tests setMyCommands and getMyCommands."""
     trio.run(set_get_commands_bot, token)
 
 
