@@ -78,13 +78,13 @@ Achieved milestones
 Next milestones
 ---------------
 
-- [ ] All functions under `Available methods` in the documentation (0.6.0).
-- [ ] All functions under `Updating messages` in the documentation (0.7.0).
-- [ ] All functions under `Stickers` in the documentation (0.8.0).
-- [ ] Inline mode functionality (0.9.0).
-- [ ] Payments functionality (0.10.0).
-- [ ] Telegram Passport functionality (0.11.0).
-- [ ] Games functionality (0.12.0).
+- [ ] All functions under `Available methods` in the documentation (0.3.0).
+- [ ] All functions under `Updating messages` in the documentation (0.4.0).
+- [ ] All functions under `Stickers` in the documentation (0.5.0).
+- [ ] Inline mode functionality (0.6.0).
+- [ ] Payments functionality (0.7.0).
+- [ ] Telegram Passport functionality (0.8.0).
+- [ ] Games functionality (0.9.0).
 - [ ] Tests for all bot API functions in `bot_tester`.
 - [ ] API cleanup/streamlining (e.g. use kw-only arguments in bot methods) (1.0.0).
 - [ ] High-level API (abstraction for command handlers, necessary internal
