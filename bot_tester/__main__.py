@@ -98,4 +98,4 @@ def main():
 
 
 if __name__ == '__main__':
-    app()
+    typer.main.get_command(app)(prog_name=__package__)
