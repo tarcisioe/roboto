@@ -73,12 +73,12 @@ Principles
 Achieved milestones
 -------------------
 - [X] Support for other async runtimes other than asyncio (especially
-      [`trio`](https://github.com/python-trio/trio)) (done in v0.2.0).
+      [`trio`](https://github.com/python-trio/trio)) (done in 0.2.0).
+- [X] All functions under `Available methods` in the documentation (0.3.0).
 
 Next milestones
 ---------------
 
-- [ ] All functions under `Available methods` in the documentation (0.3.0).
 - [ ] All functions under `Updating messages` in the documentation (0.4.0).
 - [ ] All functions under `Stickers` in the documentation (0.5.0).
 - [ ] Inline mode functionality (0.6.0).
