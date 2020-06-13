@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import List, Optional, Union
 
 from .api_types import (
+    BotCommand,
     BotUser,
     CallbackQueryID,
     Chat,
@@ -80,6 +81,7 @@ from .request_types import (
     SetChatPhotoRequest,
     SetChatStickerSetRequest,
     SetChatTitleRequest,
+    SetMyCommandsRequest,
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
     StopPollRequest,
@@ -1468,7 +1470,6 @@ class BotAPI:
         url: Optional[str] = None,
         cache_time: Optional[int] = None,
     ) -> bool:
-
         """answerCallbackQuery API method.
 
         Args:
@@ -1491,6 +1492,30 @@ class BotAPI:
             await make_request(
                 self.session, HTTPMethod.POST, '/answerCallbackQuery', request,
             ),
+        )
+
+    async def set_my_commands(self, commands: List[BotCommand]) -> bool:
+        """setMyCommands API method.
+
+        Args:
+            commands: List of BotCommand objects describing the bot's commands.
+        """
+
+        request = SetMyCommandsRequest(json_serialize(commands))
+
+        return from_json_like(
+            bool,
+            await make_request(
+                self.session, HTTPMethod.POST, '/setMyCommands', request,
+            ),
+        )
+
+    async def get_my_commands(self) -> List[BotCommand]:
+        """getMyCommands API method."""
+
+        return from_json_like(
+            List[BotCommand],
+            await make_request(self.session, HTTPMethod.POST, '/getMyCommands'),
         )
 
 

@@ -4,7 +4,14 @@ from typing import Awaitable, Callable
 import trio
 import typer
 
-from roboto import BotAPI, InlineKeyboardButton, InlineKeyboardMarkup, Token, Update
+from roboto import (
+    BotAPI,
+    BotCommand,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Token,
+    Update,
+)
 
 app = typer.Typer()
 
@@ -55,6 +62,34 @@ async def callback_query_handler(bot: BotAPI, update: Update):
 def callback_query(token: str):
     """Run a bot with `callback_query_handler`."""
     trio.run(run_bot, token, callback_query_handler)
+
+
+async def set_get_commands_bot(token: str):
+    """Test setMyCommands and getMyCommands."""
+    commands = [BotCommand('test', 'Test description.')]
+
+    async with BotAPI.make(Token(token)) as bot:
+        print('Setting commands as', commands)
+        await bot.set_my_commands(commands)
+
+        commands_from_server = await bot.get_my_commands()
+
+        print('From server:', commands_from_server)
+        assert commands_from_server == commands
+
+        print('Clearing commands.')
+        await bot.set_my_commands([])
+
+        commands_from_server = await bot.get_my_commands()
+
+        print('From server:', commands_from_server)
+        assert commands_from_server == []
+
+
+@app.command()
+def set_get_commands(token: str):
+    """Run a bot with `callback_query_handler`."""
+    trio.run(set_get_commands_bot, token)
 
 
 @app.callback()

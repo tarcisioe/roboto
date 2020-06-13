@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from roboto import (
+    BotCommand,
     BotUser,
     CallbackQueryID,
     Chat,
@@ -1552,3 +1553,44 @@ async def test_answer_callback_query(mocked_bot_api: MockedBotAPI):
     )
 
     assert result
+
+
+@pytest.mark.trio
+async def test_set_my_commands(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.set_my_commands creates the correct payload
+    and properly reads back the returned chat.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.set_my_commands(
+        commands=[BotCommand(command='test', description='Test.')],
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/setMyCommands',
+        json={'commands': '[{"command": "test", "description": "Test."}]'},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_get_my_commands(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.get_my_commands creates the correct payload
+    and properly reads back the returned chat.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': [{'command': 'test', 'description': 'Test.'}],
+    }
+
+    result = await mocked_bot_api.api.get_my_commands()
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/getMyCommands', json=None,
+    )
+
+    assert result == [BotCommand(command='test', description='Test.')]
