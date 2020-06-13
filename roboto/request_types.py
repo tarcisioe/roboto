@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Generic, List, Optional, TypeVar, Union, cast
 
 from .api_types import (
+    CallbackQueryID,
     ChatAction,
     ChatID,
     ChatPermissions,
@@ -501,3 +502,14 @@ class DeleteChatStickerSetRequest:
     """Parameters for deleting the sticker set of a supergroup."""
 
     chat_id: Union[ChatID, str]
+
+
+@dataclass(frozen=True)
+class AnswerCallbackQueryRequest:
+    """Parameters for answering a callback query from an inline keyboard."""
+
+    callback_query_id: CallbackQueryID
+    text: Optional[str] = None
+    show_alert: Optional[bool] = None
+    url: Optional[str] = None
+    cache_time: Optional[int] = None

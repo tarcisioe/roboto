@@ -8,6 +8,7 @@ import pytest
 
 from roboto import (
     BotUser,
+    CallbackQueryID,
     Chat,
     ChatAction,
     ChatID,
@@ -1527,6 +1528,27 @@ async def test_delete_chat_sticker_set(mocked_bot_api: MockedBotAPI):
 
     mocked_bot_api.request.assert_called_with(
         'post', path='/deleteChatStickerSet', json={'chat_id': 1},
+    )
+
+    assert result
+
+
+@pytest.mark.trio
+async def test_answer_callback_query(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.answer_callback_query creates the correct payload
+    and properly reads back the returned chat.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.answer_callback_query(
+        callback_query_id=CallbackQueryID('abc'), text='Yay!',
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/answerCallbackQuery',
+        json={'callback_query_id': 'abc', 'text': 'Yay!'},
     )
 
     assert result
