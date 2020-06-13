@@ -74,18 +74,26 @@ Achieved milestones
 -------------------
 - [X] Support for other async runtimes other than asyncio (especially
       [`trio`](https://github.com/python-trio/trio)) (done in 0.2.0).
-- [X] All functions under `Available methods` in the documentation (0.3.0).
+- [X] All functions under [`Available methods` in the official
+      documentation](https://core.telegram.org/bots/api#available-methods) (0.3.0).
 
 Next milestones
 ---------------
 
-- [ ] All functions under `Updating messages` in the documentation (0.4.0).
-- [ ] All functions under `Stickers` in the documentation (0.5.0).
-- [ ] Inline mode functionality (0.6.0).
-- [ ] Payments functionality (0.7.0).
-- [ ] Telegram Passport functionality (0.8.0).
-- [ ] Games functionality (0.9.0).
+- [ ] All functions under [`Updating messages` in the official
+      documentation](https://core.telegram.org/bots/api#updating-messages) (0.4.0).
+- [ ] All functions under [`Stickers` in the
+      documentation](https://core.telegram.org/bots/api#stickers) (0.5.0).
+- [ ] [Inline mode
+      functionality](https://core.telegram.org/bots/api#inline-mode) (0.6.0).
+- [ ] [Payments functionality](https://core.telegram.org/bots/api#payments) (0.7.0).
+- [ ] [Telegram Passport
+      functionality](https://core.telegram.org/bots/api#telegram-passport) (0.8.0).
+- [ ] [Games functionality](https://core.telegram.org/bots/api#games) (0.9.0).
 - [ ] Tests for all bot API functions in `bot_tester`.
+- [ ] Documentation with examples and tutorials.
+- [ ] API documentation (automatically generated, likely with
+      [Sphinx](https://www.sphinx-doc.org/en/master/)).
 - [ ] API cleanup/streamlining (e.g. use kw-only arguments in bot methods) (1.0.0).
 - [ ] High-level API (abstraction for command handlers, necessary internal
       state, etc.).
