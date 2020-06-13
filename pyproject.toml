@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "roboto-telegram"
-version = "0.2.0"
+version = "0.3.0"
 description = "A type-hinted async Telegram bot library."
 authors = ["Tarcísio Eduardo Moreira Crocomo <tarcisioe@pm.me>"]
 license = "MIT"
