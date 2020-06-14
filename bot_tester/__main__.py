@@ -1,4 +1,5 @@
 """Module for running test bots for testing Roboto's API."""
+from pathlib import Path
 from typing import Awaitable, Callable
 
 import trio
@@ -126,6 +127,33 @@ async def send_edit_message_handler(bot: BotAPI, update: Update):
 def send_edit_message(token: str):
     """Run a bot that tests sendMessage and editMessageText"""
     trio.run(run_bot, token, send_edit_message_handler)
+
+
+async def edit_photo_caption_handler(bot: BotAPI, update: Update, photo: Path):
+    """Test sendPhoto and editMessageCaption."""
+
+    if update.message is not None and update.message.text is not None:
+        msg = await bot.send_photo(
+            update.message.chat.id,
+            photo,
+            caption='This caption will be edited in 5 seconds',
+        )
+        await trio.sleep(5)
+        await bot.edit_message_caption(
+            update.message.chat.id,
+            msg.message_id,
+            'This caption will be removed in 5 seconds.',
+        )
+        await trio.sleep(5)
+        await bot.edit_message_caption(
+            update.message.chat.id, msg.message_id,
+        )
+
+
+@app.command()
+def edit_photo_caption(token: str, photo: Path):
+    """Run a bot that tests sendMessage and editMessageText"""
+    trio.run(run_bot, token, lambda b, u: edit_photo_caption_handler(b, u, photo))
 
 
 if __name__ == '__main__':

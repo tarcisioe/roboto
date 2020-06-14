@@ -547,6 +547,27 @@ class EditInlineMessageTextRequest:
 
 
 @dataclass(frozen=True)
+class EditMessageCaptionRequest:
+    """Parameters for editing the caption of a message."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    caption: Optional[str] = None
+    parse_mode: Optional[ParseMode] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class EditInlineMessageCaptionRequest:
+    """Parameters for editing the caption of an inline message."""
+
+    inline_message_id: InlineMessageID
+    caption: Optional[str] = None
+    parse_mode: Optional[ParseMode] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
 class DeleteMessageRequest:
     """Parameters for deleting a message."""
 
