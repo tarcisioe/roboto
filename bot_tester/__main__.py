@@ -152,7 +152,7 @@ async def edit_photo_caption_handler(bot: BotAPI, update: Update, photo: Path):
 
 @app.command()
 def edit_photo_caption(token: str, photo: Path):
-    """Run a bot that tests sendMessage and editMessageText"""
+    """Run a bot that tests sendPhoto and editMessageCaption"""
     trio.run(run_bot, token, lambda b, u: edit_photo_caption_handler(b, u, photo))
 
 

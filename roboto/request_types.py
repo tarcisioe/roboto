@@ -548,7 +548,7 @@ class EditInlineMessageTextRequest:
 
 @dataclass(frozen=True)
 class EditMessageCaptionRequest:
-    """Parameters for editing the caption of a message."""
+    """Parameters for editing the caption of a non-inline message."""
 
     chat_id: Union[ChatID, str]
     message_id: MessageID

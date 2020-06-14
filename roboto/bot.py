@@ -1610,7 +1610,7 @@ class BotAPI:
         parse_mode: Optional[ParseMode] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
     ) -> Message:
-        """editMessageCaption API method (for normal messages).
+        """editMessageCaption API method (for non-inline messages).
 
         Even though the REST API method for inline messages is the same, for a
         less error-prone API this is split into two methods. See
