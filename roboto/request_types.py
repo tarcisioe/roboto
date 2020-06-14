@@ -524,6 +524,29 @@ class SetMyCommandsRequest:
 
 
 @dataclass(frozen=True)
+class EditMessageTextRequest:
+    """Parameters for editing the text of a message."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    text: str
+    parse_mode: Optional[ParseMode] = None
+    disable_web_page_preview: Optional[bool] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class EditInlineMessageTextRequest:
+    """Parameters for editing the text of an inline message."""
+
+    inline_message_id: InlineMessageID
+    text: str
+    parse_mode: Optional[ParseMode] = None
+    disable_web_page_preview: Optional[bool] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
 class DeleteMessageRequest:
     """Parameters for deleting a message."""
 
