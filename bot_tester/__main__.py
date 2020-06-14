@@ -109,9 +109,23 @@ def send_delete_message(token: str):
     trio.run(run_bot, token, send_delete_message_handler)
 
 
-@app.callback()
-def main():
-    """This exists so we always have subcommands. May be removed when there are two."""
+async def send_edit_message_handler(bot: BotAPI, update: Update):
+    """Test sendMessage and editMessageText."""
+
+    if update.message is not None and update.message.text is not None:
+        msg = await bot.send_message(
+            update.message.chat.id, 'This message will be edited in 5 seconds',
+        )
+        await trio.sleep(5)
+        await bot.edit_message_text(
+            update.message.chat.id, msg.message_id, 'This message was edited.',
+        )
+
+
+@app.command()
+def send_edit_message(token: str):
+    """Run a bot that tests sendMessage and editMessageText"""
+    trio.run(run_bot, token, send_edit_message_handler)
 
 
 if __name__ == '__main__':

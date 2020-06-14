@@ -1597,6 +1597,74 @@ async def test_get_my_commands(mocked_bot_api: MockedBotAPI):
 
 
 @pytest.mark.trio
+async def test_edit_message_text(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.edit_message_text creates the correct payload
+    and properly reads back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    message = await mocked_bot_api.api.edit_message_text(
+        chat_id=ChatID(1), message_id=MessageID(1), text='Edited.',
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/editMessageText',
+        json={'chat_id': 1, 'message_id': 1, 'text': 'Edited.'},
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_edit_inline_message_text(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.edit_inline_message_text creates the correct payload
+    and properly reads back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    message = await mocked_bot_api.api.edit_inline_message_text(
+        inline_message_id=InlineMessageID('abc'), text='Edited.',
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/editMessageText',
+        json={'inline_message_id': 'abc', 'text': 'Edited.'},
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
 async def test_delete_message(mocked_bot_api: MockedBotAPI):
     """Test that BotAPI.delete_message creates the correct payload and properly reads
     back the returned bool.

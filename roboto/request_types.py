@@ -209,7 +209,7 @@ class SendLocationRequest:
 
 @dataclass(frozen=True)
 class EditMessageLiveLocationRequest:
-    """Parameters for editing a live location normal message."""
+    """Parameters for editing a live location non-inline message."""
 
     chat_id: Union[ChatID, str]
     message_id: MessageID
@@ -230,7 +230,7 @@ class EditInlineMessageLiveLocationRequest:
 
 @dataclass(frozen=True)
 class StopMessageLiveLocationRequest:
-    """Parameters for stopping a live location normal message."""
+    """Parameters for stopping a live location non-inline message."""
 
     chat_id: Union[ChatID, str]
     message_id: MessageID
@@ -521,6 +521,29 @@ class SetMyCommandsRequest:
     """Parameters for setting a bot's command list."""
 
     commands: JSONSerialized[List[BotCommand]]
+
+
+@dataclass(frozen=True)
+class EditMessageTextRequest:
+    """Parameters for editing the text of a non-inline message."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    text: str
+    parse_mode: Optional[ParseMode] = None
+    disable_web_page_preview: Optional[bool] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class EditInlineMessageTextRequest:
+    """Parameters for editing the text of an inline message."""
+
+    inline_message_id: InlineMessageID
+    text: str
+    parse_mode: Optional[ParseMode] = None
+    disable_web_page_preview: Optional[bool] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
 
 
 @dataclass(frozen=True)
