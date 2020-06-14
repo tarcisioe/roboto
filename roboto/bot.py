@@ -45,8 +45,10 @@ from .request_types import (
     DeleteChatPhotoRequest,
     DeleteChatStickerSetRequest,
     DeleteMessageRequest,
+    EditInlineMessageCaptionRequest,
     EditInlineMessageLiveLocationRequest,
     EditInlineMessageTextRequest,
+    EditMessageCaptionRequest,
     EditMessageLiveLocationRequest,
     EditMessageTextRequest,
     ExportChatInviteLinkRequest,
@@ -1597,6 +1599,79 @@ class BotAPI:
             Message,
             await make_request(
                 self.session, HTTPMethod.POST, '/editMessageText', request
+            ),
+        )
+
+    async def edit_message_caption(
+        self,
+        chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """editMessageCaption API method (for non-inline messages).
+
+        Even though the REST API method for inline messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `edit_inline_message_caption`.
+
+        Args:
+            chat_id: The ID of the chat where the message to be edited is.
+            message_id: The id of the message to edit.
+            caption: New caption for the edited message. Can be omitted for removing the
+                     caption.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = EditMessageCaptionRequest(
+            chat_id,
+            message_id,
+            caption,
+            parse_mode,
+            maybe_json_serialize(reply_markup),
+        )
+
+        return from_json_like(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/editMessageCaption', request
+            ),
+        )
+
+    async def edit_inline_message_caption(
+        self,
+        inline_message_id: InlineMessageID,
+        caption: Optional[str] = None,
+        parse_mode: Optional[ParseMode] = None,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """editMessageCaption API method (for inline messages).
+
+        Even though the REST API method for normal messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `edit_message_caption`.
+
+        Args:
+            inline_message_id: The id of the inline message to edit.
+            caption: New caption for the edited message. Can be omitted for removing the
+                     caption.
+            parse_mode: How to parse the text (see `ParseMode`). Parses as
+                        plain text if omitted.
+            disable_web_page_preview: Avoid showing previews for links.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = EditInlineMessageCaptionRequest(
+            inline_message_id, caption, parse_mode, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json_like(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/editMessageCaption', request
             ),
         )
 
