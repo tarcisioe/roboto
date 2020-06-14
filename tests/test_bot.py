@@ -1594,3 +1594,22 @@ async def test_get_my_commands(mocked_bot_api: MockedBotAPI):
     )
 
     assert result == [BotCommand(command='test', description='Test.')]
+
+
+@pytest.mark.trio
+async def test_delete_message(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.delete_message creates the correct payload and properly reads
+    back the returned bool.
+    """
+
+    mocked_bot_api.response.json.return_value = {'ok': True, 'result': True}
+
+    result = await mocked_bot_api.api.delete_message(
+        chat_id=ChatID(1), message_id=MessageID(1),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/deleteMessage', json={'chat_id': 1, 'message_id': 1},
+    )
+
+    assert result

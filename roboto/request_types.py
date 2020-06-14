@@ -521,3 +521,11 @@ class SetMyCommandsRequest:
     """Parameters for setting a bot's command list."""
 
     commands: JSONSerialized[List[BotCommand]]
+
+
+@dataclass(frozen=True)
+class DeleteMessageRequest:
+    """Parameters for deleting a message."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
