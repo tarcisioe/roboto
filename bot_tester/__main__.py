@@ -92,6 +92,23 @@ def set_get_commands(token: str):
     trio.run(set_get_commands_bot, token)
 
 
+async def send_delete_message_handler(bot: BotAPI, update: Update):
+    """Test sendMessage and deleteMessage."""
+
+    if update.message is not None and update.message.text is not None:
+        msg = await bot.send_message(
+            update.message.chat.id, 'This message will self-destruct in 5 seconds',
+        )
+        await trio.sleep(5)
+        await bot.delete_message(update.message.chat.id, msg.message_id)
+
+
+@app.command()
+def send_delete_message(token: str):
+    """Run a bot that tests sendMessage and deleteMessage"""
+    trio.run(run_bot, token, send_delete_message_handler)
+
+
 @app.callback()
 def main():
     """This exists so we always have subcommands. May be removed when there are two."""
