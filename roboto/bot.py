@@ -665,7 +665,7 @@ class BotAPI:
         longitude: float,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
     ) -> Message:
-        """editMessageLiveLocation API method (for normal messages).
+        """editMessageLiveLocation API method (for non-inline messages).
 
         Even though the REST API method for inline messages is the same, for a
         less error-prone API this is split into two methods. See
@@ -703,7 +703,7 @@ class BotAPI:
     ) -> Message:
         """editMessageLiveLocation API method (for inline messages).
 
-        Even though the REST API method for normal messages is the same, for a
+        Even though the REST API method for non-inline messages is the same, for a
         less error-prone API this is split into two methods. See
         `edit_message_live_location`.
 
@@ -731,7 +731,7 @@ class BotAPI:
         message_id: MessageID,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
     ) -> Message:
-        """stopMessageLiveLocation API method (for normal messages).
+        """stopMessageLiveLocation API method (for non-inline messages).
 
         Even though the REST API method for inline messages is the same, for a
         less error-prone API this is split into two methods. See
@@ -761,7 +761,7 @@ class BotAPI:
     ) -> Message:
         """stopMessageLiveLocation API method (for inline messages).
 
-        Even though the REST API method for normal messages is the same, for a
+        Even though the REST API method for non-inline messages is the same, for a
         less error-prone API this is split into two methods. See
         `stop_message_live_location`.
 
@@ -1530,7 +1530,7 @@ class BotAPI:
         disable_web_page_preview: Optional[bool] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
     ) -> Message:
-        """editMessageText API method (for normal messages).
+        """editMessageText API method (for non-inline messages).
 
         Even though the REST API method for inline messages is the same, for a
         less error-prone API this is split into two methods. See
@@ -1572,7 +1572,7 @@ class BotAPI:
     ) -> Message:
         """editMessageText API method (for inline messages).
 
-        Even though the REST API method for normal messages is the same, for a
+        Even though the REST API method for non-inline messages is the same, for a
         less error-prone API this is split into two methods. See
         `edit_message_text`.
 

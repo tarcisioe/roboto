@@ -209,7 +209,7 @@ class SendLocationRequest:
 
 @dataclass(frozen=True)
 class EditMessageLiveLocationRequest:
-    """Parameters for editing a live location normal message."""
+    """Parameters for editing a live location non-inline message."""
 
     chat_id: Union[ChatID, str]
     message_id: MessageID
@@ -230,7 +230,7 @@ class EditInlineMessageLiveLocationRequest:
 
 @dataclass(frozen=True)
 class StopMessageLiveLocationRequest:
-    """Parameters for stopping a live location normal message."""
+    """Parameters for stopping a live location non-inline message."""
 
     chat_id: Union[ChatID, str]
     message_id: MessageID
@@ -525,7 +525,7 @@ class SetMyCommandsRequest:
 
 @dataclass(frozen=True)
 class EditMessageTextRequest:
-    """Parameters for editing the text of a message."""
+    """Parameters for editing the text of a non-inline message."""
 
     chat_id: Union[ChatID, str]
     message_id: MessageID
