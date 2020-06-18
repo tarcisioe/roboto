@@ -102,6 +102,8 @@ Next milestones
 Acknowledgements
 ----------------
 
-This package currently contains the code for a modified version of
-[asks](https://github.com/theelous3/asks) v2.3.7, which is under the MIT License as
-well. Thanks @theelous3 for the great library!
+This used to be a disclaimer that we were vendoring
+[asks](https://asks.readthedocs.io). We are not anymore (the feature we needed is
+now on upstream, but I will still keep the acknowledgemente because it (through
+[anyio](https://anyio.readthedocs.io) gives us the ability to support the three
+major async event loops, `asyncio`, `trio` and `curio`!
