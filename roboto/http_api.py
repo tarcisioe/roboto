@@ -4,12 +4,12 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Awaitable, Callable, Dict, Optional, Union
 
+from asks import Session
+from asks.multipart import MultipartData
+from asks.response_objects import Response
 from typing_extensions import Literal, Protocol
 
 from .api_types import FileDescription
-from .asks import Session
-from .asks.multipart import MultipartData
-from .asks.response_objects import Response
 from .datautil import from_json_like, to_json_like
 from .error import BotAPIError
 

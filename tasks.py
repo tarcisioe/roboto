@@ -106,9 +106,7 @@ EVERYTHING = [
     'tasks.py',
 ]
 
-EXCLUDES = [
-    'asks',
-]
+EXCLUDES: List[str] = []
 
 
 def apply_excludes(files: List[str]):

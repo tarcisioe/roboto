@@ -3,6 +3,8 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from typing import List, Optional, Union
 
+from asks import Session
+
 from .api_types import (
     BotCommand,
     BotUser,
@@ -31,7 +33,6 @@ from .api_types import (
     UserID,
     UserProfilePhotos,
 )
-from .asks import Session
 from .datautil import from_json_like
 from .http_api import (
     HTTPMethod,
