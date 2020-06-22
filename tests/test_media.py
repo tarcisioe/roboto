@@ -63,20 +63,16 @@ def test_extract_medias() -> None:
     """Ensure extract_medias extract the correct medias and sets the correct
     attachments.
     """
-    medias: List[Union[InputMediaPhoto, InputMediaVideo]]
+    medias: List[Union[InputMediaPhoto, InputMediaVideo]] = [
+        InputMediaPhoto(URL.make('https://example.com/bla.jpg')),
+        InputMediaVideo(FileID('AAAAAAAAAAA')),
+        InputMediaPhoto(Path('test.jpg')),
+        InputMediaVideo(
+            FileDescription(Path('test'), mime_type='video/mp4', basename='image.jpg')
+        ),
+    ]
 
-    medias, files = extract_medias(
-        [
-            InputMediaPhoto(URL.make('https://example.com/bla.jpg')),
-            InputMediaVideo(FileID('AAAAAAAAAAA')),
-            InputMediaPhoto(Path('test.jpg')),
-            InputMediaVideo(
-                FileDescription(
-                    Path('test'), mime_type='video/mp4', basename='image.jpg'
-                )
-            ),
-        ]
-    )
+    medias, files = extract_medias(medias)
 
     assert isinstance(medias[2].media, str)
     assert medias[2].media.startswith('attach://')
