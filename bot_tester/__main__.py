@@ -160,7 +160,7 @@ def edit_photo_caption(token: str, photo: Path):
 async def edit_message_media_handler(
     bot: BotAPI, update: Update, photo1: Path, photo2: Path
 ):
-    """Test sendPhoto and editMessageCaption."""
+    """Test sendPhoto and editMessageMedia."""
 
     if update.message is not None and update.message.text is not None:
         msg = await bot.send_photo(
