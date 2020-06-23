@@ -14,6 +14,7 @@ from .api_types import (
     InlineKeyboardMarkup,
     InlineMessageID,
     InputFile,
+    InputMedia,
     InputMediaPhoto,
     InputMediaVideo,
     MessageID,
@@ -564,6 +565,25 @@ class EditInlineMessageCaptionRequest:
     inline_message_id: InlineMessageID
     caption: Optional[str] = None
     parse_mode: Optional[ParseMode] = None
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class EditMessageMediaRequest:
+    """Parameters for editing the media of a non-inline message."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    media: JSONSerialized[InputMedia]
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class EditInlineMessageMediaRequest:
+    """Parameters for editing the media of an inline message."""
+
+    inline_message_id: InlineMessageID
+    media: JSONSerialized[InputMedia]
     reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
 
 

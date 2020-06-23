@@ -10,6 +10,7 @@ from roboto import (
     BotCommand,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
+    InputMediaPhoto,
     Token,
     Update,
 )
@@ -154,6 +155,33 @@ async def edit_photo_caption_handler(bot: BotAPI, update: Update, photo: Path):
 def edit_photo_caption(token: str, photo: Path):
     """Run a bot that tests sendPhoto and editMessageCaption"""
     trio.run(run_bot, token, lambda b, u: edit_photo_caption_handler(b, u, photo))
+
+
+async def edit_message_media_handler(
+    bot: BotAPI, update: Update, photo1: Path, photo2: Path
+):
+    """Test sendPhoto and editMessageMedia."""
+
+    if update.message is not None and update.message.text is not None:
+        msg = await bot.send_photo(
+            update.message.chat.id,
+            photo1,
+            caption='This photo will be changed in 5 seconds',
+        )
+        await trio.sleep(5)
+        await bot.edit_message_media(
+            update.message.chat.id,
+            msg.message_id,
+            InputMediaPhoto(media=photo2, caption=''),
+        )
+
+
+@app.command()
+def edit_message_media(token: str, photo1: Path, photo2: Path):
+    """Run a bot that tests editMessageMedia"""
+    trio.run(
+        run_bot, token, lambda b, u: edit_message_media_handler(b, u, photo1, photo2)
+    )
 
 
 if __name__ == '__main__':

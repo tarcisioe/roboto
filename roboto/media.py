@@ -5,11 +5,9 @@ from pathlib import Path
 from typing import BinaryIO, Dict, List, Optional, Sequence, Tuple, TypeVar, Union
 from uuid import uuid4
 
-from .api_types import FileDescription, InputMediaPhoto, InputMediaVideo
+from .api_types import FileDescription, InputMedia
 
-ConstrainedInputMedia = TypeVar(
-    'ConstrainedInputMedia', InputMediaPhoto, InputMediaVideo
-)
+ConstrainedInputMedia = TypeVar('ConstrainedInputMedia', bound=InputMedia)
 
 
 def get_mimetype(input_file: Union[Path, BinaryIO]):
@@ -52,14 +50,11 @@ def extract_media(
     )
 
 
-# Unfortunately we have to use a generic type-var to convince mypy that the same union
-# that goes in will come out.
-T = TypeVar('T')
-
-
-def extract_medias(media: Sequence[T],) -> Tuple[List[T], Dict[str, FileDescription]]:
+def extract_medias(
+    media: Sequence[ConstrainedInputMedia],
+) -> Tuple[List[ConstrainedInputMedia], Dict[str, FileDescription]]:
     """Apply extract_media to a sequence of InputMedia and transpose the result."""
-    medias_and_files = [extract_media(m) for m in media]  # type: ignore
+    medias_and_files = [extract_media(m) for m in media]
 
     medias, files = zip(*medias_and_files)
 
