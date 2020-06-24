@@ -184,5 +184,49 @@ def edit_message_media(token: str, photo1: Path, photo2: Path):
     )
 
 
+async def edit_message_reply_markup_handler(
+    bot: BotAPI, update: Update,
+):
+    """Test sendPhoto and editMessageReplyMarkup."""
+
+    if update.message is not None and update.message.text is not None:
+        msg = await bot.send_message(
+            update.message.chat.id,
+            'Reply keyboard edit test.',
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [
+                        InlineKeyboardButton(
+                            text='This button will change in 5 seconds',
+                            callback_data='button_pressed',
+                        ),
+                    ],
+                ]
+            ),
+        )
+        await trio.sleep(5)
+        await bot.edit_message_reply_markup(
+            update.message.chat.id,
+            msg.message_id,
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [
+                        InlineKeyboardButton(
+                            text='Edited', callback_data='button_pressed',
+                        ),
+                    ],
+                ],
+            ),
+        )
+
+
+@app.command()
+def edit_message_reply_markup(token: str):
+    """Run a bot that tests editMessageReplyMarkup"""
+    trio.run(
+        run_bot, token, edit_message_reply_markup_handler,
+    )
+
+
 if __name__ == '__main__':
     typer.main.get_command(app)(prog_name=__package__)

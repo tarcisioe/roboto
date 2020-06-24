@@ -588,6 +588,23 @@ class EditInlineMessageMediaRequest:
 
 
 @dataclass(frozen=True)
+class EditMessageReplyMarkupRequest:
+    """Parameters for editing the reply markup of a non-inline message."""
+
+    chat_id: Union[ChatID, str]
+    message_id: MessageID
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
+class EditInlineMessageReplyMarkupRequest:
+    """Parameters for editing the reply markup of an inline message."""
+
+    inline_message_id: InlineMessageID
+    reply_markup: Optional[JSONSerialized[ReplyMarkup]] = None
+
+
+@dataclass(frozen=True)
 class DeleteMessageRequest:
     """Parameters for deleting a message."""
 

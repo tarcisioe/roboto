@@ -21,6 +21,8 @@ from roboto import (
     File,
     FileDescription,
     FileID,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
     InlineMessageID,
     InputMediaPhoto,
     InputMediaVideo,
@@ -1826,6 +1828,90 @@ async def test_edit_inline_message_media(
             ),
             'inline_message_id': 'abc',
             'media': '{"media": "attach://attachedDUMMY-UUID", "type": "photo"}',
+        },
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_edit_message_reply_markup(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.edit_message_reply_markup creates the correct payload
+    and properly reads back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    message = await mocked_bot_api.api.edit_message_reply_markup(
+        chat_id=ChatID(1),
+        message_id=MessageID(1),
+        reply_markup=InlineKeyboardMarkup(
+            inline_keyboard=[[InlineKeyboardButton('Bla.')]],
+        ),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/editMessageReplyMarkup',
+        json={
+            'chat_id': 1,
+            'message_id': 1,
+            'reply_markup': '{"inline_keyboard": [[{"text": "Bla."}]]}',
+        },
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_edit_inline_message_reply_markup(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.edit_inline_message_reply_markup creates the correct payload
+    and properly reads back the returned message.
+    """
+
+    mock_uuid.return_value = 'DUMMY-UUID'
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    message = await mocked_bot_api.api.edit_inline_message_reply_markup(
+        inline_message_id=InlineMessageID('abc'),
+        reply_markup=InlineKeyboardMarkup(
+            inline_keyboard=[[InlineKeyboardButton('Bla.')]],
+        ),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post',
+        path='/editMessageReplyMarkup',
+        json={
+            'inline_message_id': 'abc',
+            'reply_markup': '{"inline_keyboard": [[{"text": "Bla."}]]}',
         },
     )
 
