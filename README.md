@@ -104,6 +104,6 @@ Acknowledgements
 
 This used to be a disclaimer that we were vendoring
 [asks](https://asks.readthedocs.io). We are not anymore (the feature we needed is
-now on upstream, but I will still keep the acknowledgemente because it (through
-[anyio](https://anyio.readthedocs.io) gives us the ability to support the three
+now on upstream), but I will still keep the acknowledgemente because it (through
+[anyio](https://anyio.readthedocs.io)) gives us the ability to support the three
 major async event loops, `asyncio`, `trio` and `curio`!
