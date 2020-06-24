@@ -50,10 +50,12 @@ from .request_types import (
     EditInlineMessageCaptionRequest,
     EditInlineMessageLiveLocationRequest,
     EditInlineMessageMediaRequest,
+    EditInlineMessageReplyMarkupRequest,
     EditInlineMessageTextRequest,
     EditMessageCaptionRequest,
     EditMessageLiveLocationRequest,
     EditMessageMediaRequest,
+    EditMessageReplyMarkupRequest,
     EditMessageTextRequest,
     ExportChatInviteLinkRequest,
     ForwardMessageRequest,
@@ -1745,6 +1747,62 @@ class BotAPI:
             Message,
             await make_multipart_request_with_attachments(
                 self.session, '/editMessageMedia', request, attachments,
+            ),
+        )
+
+    async def edit_message_reply_markup(
+        self,
+        chat_id: Union[ChatID, str],
+        message_id: MessageID,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """editMessageReplyMarkup API method (for non-inline messages).
+
+        Even though the REST API method for inline messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `edit_inline_message_reply_markup`.
+
+        Args:
+            chat_id: The ID of the chat where the message to be edited is.
+            message_id: The id of the message to edit.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = EditMessageReplyMarkupRequest(
+            chat_id, message_id, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json_like(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/editMessageReplyMarkup', request,
+            ),
+        )
+
+    async def edit_inline_message_reply_markup(
+        self,
+        inline_message_id: InlineMessageID,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Message:
+        """editMessageReplyMarkup API method (for inline messages).
+
+        Even though the REST API method for inline messages is the same, for a
+        less error-prone API this is split into two methods. See
+        `edit_message_reply_markup`.
+
+        Args:
+            inline_message_id: The id of the inline message to edit.
+            reply_markup: Markup for a new inline keyboard.
+        """
+
+        request = EditInlineMessageReplyMarkupRequest(
+            inline_message_id, maybe_json_serialize(reply_markup),
+        )
+
+        return from_json_like(
+            Message,
+            await make_request(
+                self.session, HTTPMethod.POST, '/editMessageReplyMarkup', request,
             ),
         )
 
