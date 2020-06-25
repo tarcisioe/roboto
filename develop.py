@@ -6,7 +6,7 @@ from subprocess import run
 def develop(test_only: bool, ci: bool):
     """Run the development bootstrap commands."""
     run(['poetry', 'install'], check=True)
-    run(['poetry', 'run', 'pip', 'install', 'typer'], check=True)
+    run(['poetry', 'run', 'pip', 'install', 'typer>=0.3.0'], check=True)
 
     if not test_only:
         ci_args = ['--ci'] if ci else []

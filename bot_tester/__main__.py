@@ -229,4 +229,4 @@ def edit_message_reply_markup(token: str):
 
 
 if __name__ == '__main__':
-    typer.main.get_command(app)(prog_name=__package__)
+    app(prog_name=__package__)
