@@ -76,12 +76,12 @@ Achieved milestones
       [`trio`](https://github.com/python-trio/trio)) (done in 0.2.0).
 - [X] All functions under [`Available methods` in the official
       documentation](https://core.telegram.org/bots/api#available-methods) (0.3.0).
+- [X] All functions under [`Updating messages` in the official
+      documentation](https://core.telegram.org/bots/api#updating-messages) (0.4.0).
 
 Next milestones
 ---------------
 
-- [ ] All functions under [`Updating messages` in the official
-      documentation](https://core.telegram.org/bots/api#updating-messages) (0.4.0).
 - [ ] All functions under [`Stickers` in the
       documentation](https://core.telegram.org/bots/api#stickers) (0.5.0).
 - [ ] [Inline mode
