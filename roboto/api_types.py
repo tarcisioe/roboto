@@ -19,6 +19,7 @@ FileID = NewType('FileID', str)
 FileUniqueID = NewType('FileUniqueID', str)
 PollID = NewType('PollID', str)
 CallbackQueryID = NewType('CallbackQueryID', str)
+StickerSetName = NewType('StickerSetName', str)
 
 
 @dataclass(frozen=True)
@@ -245,7 +246,7 @@ class Sticker:
     is_animated: bool
     thumb: Optional[PhotoSize] = None
     emoji: Optional[str] = None
-    set_name: Optional[str] = None
+    set_name: Optional[StickerSetName] = None
     mask_position: Optional[MaskPosition] = None
     file_size: Optional[int] = None
 
@@ -254,7 +255,7 @@ class Sticker:
 class StickerSet:
     """Data about a sticker set."""
 
-    name: str
+    name: StickerSetName
     title: str
     is_animated: bool
     contains_masks: bool
@@ -945,6 +946,7 @@ __all__ = [
     'ShippingQuery',
     'Sticker',
     'StickerSet',
+    'StickerSetName',
     'SuccessfulPayment',
     'Token',
     'Update',
