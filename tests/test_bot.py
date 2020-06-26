@@ -35,6 +35,9 @@ from roboto import (
     PollOption,
     PollType,
     ReplyKeyboardMarkup,
+    Sticker,
+    StickerSet,
+    StickerSetName,
     Token,
     Update,
     User,
@@ -1941,3 +1944,85 @@ async def test_delete_message(mocked_bot_api: MockedBotAPI):
     )
 
     assert result
+
+
+@pytest.mark.trio
+async def test_send_sticker(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.send_sticker creates the correct payload and properly reads
+    back the returned message.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'message_id': 1,
+            'date': 0,
+            'chat': {'id': 1, 'type': 'private'},
+            'from': {'id': 1, 'is_bot': True, 'first_name': 'Test'},
+        },
+    }
+
+    message = await mocked_bot_api.api.send_sticker(
+        chat_id=ChatID(1), sticker=FileID('abc'),
+    )
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/sendSticker', multipart={'chat_id': 1, 'sticker': 'abc'},
+    )
+
+    assert message == Message(
+        message_id=MessageID(1),
+        date=0,
+        chat=Chat(id=ChatID(1), type='private'),
+        from_=User(id=UserID(1), is_bot=True, first_name='Test'),
+    )
+
+
+@pytest.mark.trio
+async def test_get_sticker_set(mocked_bot_api: MockedBotAPI):
+    """Test that BotAPI.get_sticker_set creates the correct payload and properly reads
+    back the returned sticker set.
+    """
+
+    mocked_bot_api.response.json.return_value = {
+        'ok': True,
+        'result': {
+            'name': 'abc',
+            'title': 'Abc Stickers',
+            'is_animated': False,
+            'contains_masks': False,
+            'stickers': [
+                {
+                    'file_id': 'file1',
+                    'file_unique_id': 'file1unique',
+                    'width': 512,
+                    'height': 512,
+                    'is_animated': False,
+                    'set_name': 'abc',
+                },
+            ],
+        },
+    }
+
+    message = await mocked_bot_api.api.get_sticker_set(name=StickerSetName('abc'))
+
+    mocked_bot_api.request.assert_called_with(
+        'post', path='/getStickerSet', json={'name': 'abc'},
+    )
+
+    assert message == StickerSet(
+        name=StickerSetName('abc'),
+        title='Abc Stickers',
+        is_animated=False,
+        contains_masks=False,
+        stickers=[
+            Sticker(
+                file_id=FileID('file1'),
+                file_unique_id=FileUniqueID('file1unique'),
+                width=512,
+                height=512,
+                is_animated=False,
+                set_name=StickerSetName('abc'),
+            ),
+        ],
+    )

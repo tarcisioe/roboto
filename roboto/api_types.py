@@ -260,7 +260,7 @@ class StickerSet:
     is_animated: bool
     contains_masks: bool
     stickers: List[Sticker]
-    thumb: PhotoSize
+    thumb: Optional[PhotoSize] = None
 
 
 @dataclass(frozen=True)

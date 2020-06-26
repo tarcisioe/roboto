@@ -228,5 +228,36 @@ def edit_message_reply_markup(token: str):
     )
 
 
+async def send_sticker_and_get_sticker_set_handler(
+    bot: BotAPI, update: Update,
+):
+    """Test sendSticker and getStickerSet."""
+
+    if update.message is not None and update.message.sticker is not None:
+        if update.message.sticker.set_name is None:
+            await bot.send_message(
+                update.message.chat.id, 'Sticker is not part of a set.',
+            )
+            return
+
+        await bot.send_message(
+            update.message.chat.id, 'First sticker in the set is....'
+        )
+
+        sticker_set = await bot.get_sticker_set(update.message.sticker.set_name)
+
+        await bot.send_sticker(
+            update.message.chat.id, sticker_set.stickers[0].file_id,
+        )
+
+
+@app.command()
+def send_sticker(token: str):
+    """Run a bot that tests sendSticker and getStickerSet"""
+    trio.run(
+        run_bot, token, send_sticker_and_get_sticker_set_handler,
+    )
+
+
 if __name__ == '__main__':
     app(prog_name=__package__)

@@ -29,6 +29,8 @@ from .api_types import (
     Poll,
     PollType,
     ReplyMarkup,
+    StickerSet,
+    StickerSetName,
     Token,
     Update,
     UserID,
@@ -64,6 +66,7 @@ from .request_types import (
     GetChatMembersCountRequest,
     GetChatRequest,
     GetFileRequest,
+    GetStickerSetRequest,
     GetUpdatesRequest,
     GetUserProfilePhotosRequest,
     KickChatMemberRequest,
@@ -82,6 +85,7 @@ from .request_types import (
     SendMessageRequest,
     SendPhotoRequest,
     SendPollRequest,
+    SendStickerRequest,
     SendVenueRequest,
     SendVideoNoteRequest,
     SendVideoRequest,
@@ -1822,6 +1826,51 @@ class BotAPI:
             bool,
             await make_request(
                 self.session, HTTPMethod.POST, '/deleteMessage', request,
+            ),
+        )
+
+    async def send_sticker(
+        self,
+        chat_id: Union[ChatID, str],
+        sticker: InputFile,
+        disable_notification: Optional[bool] = None,
+        reply_to_message_id: Optional[MessageID] = None,
+        reply_markup: Optional[ReplyMarkup] = None,
+    ) -> Message:
+        """sendSticker API method.
+
+        Args:
+            chat_id: The ID of the chat to delete the message.
+            sticker: Sticker to send. Either a FileID or a file to be sent.
+            disable_notification: Do not notify users that the message was sent.
+            reply_to_message_id: ID of a message that the sent message should
+                                 be a reply to.
+            reply_markup: Markup for offering an interface for the user to
+                          reply to the bot.
+        """
+
+        request = SendStickerRequest(
+            chat_id, sticker, disable_notification, reply_to_message_id, reply_markup,
+        )
+
+        return from_json_like(
+            Message,
+            await make_multipart_request(self.session, '/sendSticker', request),
+        )
+
+    async def get_sticker_set(self, name: StickerSetName) -> StickerSet:
+        """getStickerSet API method.
+
+        Args:
+            name: Name of the sticker set to get.
+        """
+
+        request = GetStickerSetRequest(name)
+
+        return from_json_like(
+            StickerSet,
+            await make_request(
+                self.session, HTTPMethod.POST, '/getStickerSet', request,
             ),
         )
 
