@@ -21,6 +21,7 @@ from roboto import (
     File,
     FileDescription,
     FileID,
+    FileUniqueID,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     InlineMessageID,
@@ -1138,7 +1139,7 @@ async def test_get_file(mocked_bot_api: MockedBotAPI):
             'AgACAgQAAxkDAAPIXt2uWLhlNVKKIJVNlb0bFrnPCNMAAla'
             'oMRsGCZxQ96KmYduqAAE-QmygGgAEAQADAgADcwADrcoFAAEaBA'
         ),
-        file_unique_id=FileID('AQADQmygGgAErcoFAAE'),
+        file_unique_id=FileUniqueID('AQADQmygGgAErcoFAAE'),
         file_size=1018,
         file_path='photos/file_0.jpg',
     )
