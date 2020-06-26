@@ -242,11 +242,24 @@ class Sticker:
     file_unique_id: FileUniqueID
     width: int
     height: int
+    is_animated: bool
     thumb: Optional[PhotoSize] = None
     emoji: Optional[str] = None
     set_name: Optional[str] = None
     mask_position: Optional[MaskPosition] = None
     file_size: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class StickerSet:
+    """Data about a sticker set."""
+
+    name: str
+    title: str
+    is_animated: bool
+    contains_masks: bool
+    stickers: List[Sticker]
+    thumb: PhotoSize
 
 
 @dataclass(frozen=True)
@@ -931,6 +944,7 @@ __all__ = [
     'ShippingAddress',
     'ShippingQuery',
     'Sticker',
+    'StickerSet',
     'SuccessfulPayment',
     'Token',
     'Update',
