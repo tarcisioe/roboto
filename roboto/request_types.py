@@ -610,3 +610,21 @@ class DeleteMessageRequest:
 
     chat_id: Union[ChatID, str]
     message_id: MessageID
+
+
+@dataclass(frozen=True)
+class SendStickerRequest:
+    """Parameters for sending a sticker."""
+
+    chat_id: Union[ChatID, str]
+    sticker: InputFile
+    disable_notification: Optional[bool] = None
+    reply_to_message_id: Optional[MessageID] = None
+    reply_markup: Optional[ReplyMarkup] = None
+
+
+@dataclass(frozen=True)
+class GetStickerSetRequest:
+    """Parameters for getting a sticker set."""
+
+    name: str

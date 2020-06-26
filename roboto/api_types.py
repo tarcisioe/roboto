@@ -16,8 +16,10 @@ ChatID = NewType('ChatID', int)
 MessageID = NewType('MessageID', int)
 InlineMessageID = NewType('InlineMessageID', str)
 FileID = NewType('FileID', str)
+FileUniqueID = NewType('FileUniqueID', str)
 PollID = NewType('PollID', str)
 CallbackQueryID = NewType('CallbackQueryID', str)
+StickerSetName = NewType('StickerSetName', str)
 
 
 @dataclass(frozen=True)
@@ -82,9 +84,9 @@ class ChatPhoto:
     """Information for fetching the chat picture."""
 
     small_file_id: FileID
-    small_file_unique_id: FileID
+    small_file_unique_id: FileUniqueID
     big_file_id: FileID
-    big_file_unique_id: FileID
+    big_file_unique_id: FileUniqueID
 
 
 @dataclass(frozen=True)
@@ -164,7 +166,7 @@ class PhotoSize:
     """Data about an image size both in pixels and bytes."""
 
     file_id: FileID
-    file_unique_id: FileID
+    file_unique_id: FileUniqueID
     width: int
     height: int
     file_size: Optional[int] = None
@@ -175,7 +177,7 @@ class Audio:
     """Metadata about an audio message."""
 
     file_id: FileID
-    file_unique_id: FileID
+    file_unique_id: FileUniqueID
     duration: int
     performer: Optional[str] = None
     title: Optional[str] = None
@@ -189,7 +191,7 @@ class Document:
     """Metadata about a generic file."""
 
     file_id: FileID
-    file_unique_id: FileID
+    file_unique_id: FileUniqueID
     thumb: Optional[PhotoSize] = None
     file_name: Optional[str] = None
     mime_type: Optional[str] = None
@@ -201,7 +203,7 @@ class Animation:
     """Metadata about a message with an animation (gif, mp4)."""
 
     file_id: FileID
-    file_unique_id: FileID
+    file_unique_id: FileUniqueID
     width: int
     height: int
     duration: int
@@ -238,13 +240,27 @@ class Sticker:
     """Metadata about a given sticker."""
 
     file_id: FileID
+    file_unique_id: FileUniqueID
     width: int
     height: int
+    is_animated: bool
     thumb: Optional[PhotoSize] = None
     emoji: Optional[str] = None
-    set_name: Optional[str] = None
+    set_name: Optional[StickerSetName] = None
     mask_position: Optional[MaskPosition] = None
     file_size: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class StickerSet:
+    """Data about a sticker set."""
+
+    name: StickerSetName
+    title: str
+    is_animated: bool
+    contains_masks: bool
+    stickers: List[Sticker]
+    thumb: Optional[PhotoSize] = None
 
 
 @dataclass(frozen=True)
@@ -252,7 +268,7 @@ class Video:
     """Metadata about a video message."""
 
     file_id: FileID
-    file_unique_id: FileID
+    file_unique_id: FileUniqueID
     width: int
     height: int
     duration: int
@@ -266,7 +282,7 @@ class Voice:
     """Metadata about a voice message."""
 
     file_id: FileID
-    file_unique_id: FileID
+    file_unique_id: FileUniqueID
     duration: int
     mime_type: Optional[str] = None
     file_size: Optional[int] = None
@@ -277,7 +293,7 @@ class VideoNote:
     """Metadata on a video note."""
 
     file_id: FileID
-    file_unique_id: FileID
+    file_unique_id: FileUniqueID
     length: int
     duration: int
     thumb: Optional[PhotoSize] = None
@@ -386,7 +402,7 @@ class File:
     """A file ready to be downloaded."""
 
     file_id: FileID
-    file_unique_id: FileID
+    file_unique_id: FileUniqueID
     file_size: Optional[int]
     file_path: Optional[str]
 
@@ -887,6 +903,7 @@ __all__ = [
     'File',
     'FileDescription',
     'FileID',
+    'FileUniqueID',
     'ForceReply',
     'Game',
     'InlineKeyboardButton',
@@ -928,6 +945,8 @@ __all__ = [
     'ShippingAddress',
     'ShippingQuery',
     'Sticker',
+    'StickerSet',
+    'StickerSetName',
     'SuccessfulPayment',
     'Token',
     'Update',
