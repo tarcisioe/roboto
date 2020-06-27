@@ -17,6 +17,7 @@ from .api_types import (
     InputMedia,
     InputMediaPhoto,
     InputMediaVideo,
+    MaskPosition,
     MessageID,
     ParseMode,
     PollType,
@@ -628,3 +629,37 @@ class GetStickerSetRequest:
     """Parameters for getting a sticker set."""
 
     name: str
+
+
+@dataclass(frozen=True)
+class UploadStickerFileRequest:
+    """Parameters for uploading a file for a sticker."""
+
+    user_id: UserID
+    png_sticker: InputFile
+
+
+@dataclass(frozen=True)
+class CreateNewPngStickerSetRequest:
+    """Parameters for creating a new sticker set with a PNG sticker."""
+
+    user_id: UserID
+    name: str
+    title: str
+    png_sticker: InputFile
+    emojis: str
+    contains_masks: Optional[bool] = None
+    mask_position: Optional[MaskPosition] = None
+
+
+@dataclass(frozen=True)
+class CreateNewTgsStickerSetRequest:
+    """Parameters for creating a new sticker set with a TGS (animated) sticker."""
+
+    user_id: UserID
+    name: str
+    title: str
+    tgs_sticker: InputFile
+    emojis: str
+    contains_masks: Optional[bool] = None
+    mask_position: Optional[MaskPosition] = None

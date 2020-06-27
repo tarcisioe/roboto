@@ -102,6 +102,7 @@ from .request_types import (
     StopPollRequest,
     UnbanChatMemberRequest,
     UnpinChatMessageRequest,
+    UploadStickerFileRequest,
     json_serialize,
     maybe_json_serialize,
 )
@@ -1871,6 +1872,26 @@ class BotAPI:
             StickerSet,
             await make_request(
                 self.session, HTTPMethod.POST, '/getStickerSet', request,
+            ),
+        )
+
+    async def upload_sticker_file(
+        self, user_id: UserID, png_sticker: InputFile,
+    ) -> File:
+        """uploadStickerFile API method.
+
+        Args:
+            user_id: User identifier of the sticker file owner.
+            png_sticker: PNG image for the sticker. Must obey the file size and image
+                         dimension restrictions set by Telegram.
+        """
+
+        request = UploadStickerFileRequest(user_id, png_sticker)
+
+        return from_json_like(
+            File,
+            await make_request(
+                self.session, HTTPMethod.POST, '/uploadStickerFile', request,
             ),
         )
 
