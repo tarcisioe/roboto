@@ -135,9 +135,9 @@ def install_dev_tools(
             'black',
             'flake8',
             'flake8-bugbear',
-            'isort',
+            'isort==4.3.21',
             'mypy',
-            'pylint',
+            'pylint==2.5.3',
             'pylint-quotes',
             *extra_deps,
         ],
@@ -217,9 +217,7 @@ def format(  # pylint: disable=redefined-builtin
 
     return [
         execute(['black', '-q', *black_check_flag, *subject], raise_error=False),
-        execute(
-            ['isort', '-rc', '-y', '-q', *isort_check_flag, *subject], raise_error=False
-        ),
+        execute(['isort', '-q', *isort_check_flag, *subject], raise_error=False),
     ]
 
 
