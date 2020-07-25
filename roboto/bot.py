@@ -97,6 +97,7 @@ from .request_types import (
     SetChatStickerSetRequest,
     SetChatTitleRequest,
     SetMyCommandsRequest,
+    SetStickerSetThumbRequest,
     StopInlineMessageLiveLocationRequest,
     StopMessageLiveLocationRequest,
     StopPollRequest,
@@ -1893,6 +1894,31 @@ class BotAPI:
             await make_request(
                 self.session, HTTPMethod.POST, '/uploadStickerFile', request,
             ),
+        )
+
+    async def set_sticker_set_thumb(
+        self,
+        name: str,
+        user_id: UserID,
+        thumb: Optional[Union[InputFile, FileID]] = None,
+    ) -> bool:
+        """setStickerSetThumb API method.
+
+        Args:
+            name: Sticker set name
+            user_id: User identifier of the sticker set owner.
+            thumb: An FileID of a file already uploaded to Telegram servers,
+                    or an InputFile for the thumbnail.
+                    Must obey the file size and image dimension
+                    restrictions set by Telegram.
+                    See the documentation on InputFile.
+        """
+
+        request = SetStickerSetThumbRequest(name, user_id, thumb,)
+
+        return from_json_like(
+            bool,
+            await make_multipart_request(self.session, '/setStickerSetThumb', request),
         )
 
 

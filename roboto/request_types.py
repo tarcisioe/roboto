@@ -663,3 +663,12 @@ class CreateNewTgsStickerSetRequest:
     emojis: str
     contains_masks: Optional[bool] = None
     mask_position: Optional[MaskPosition] = None
+
+
+@dataclass(frozen=True)
+class SetStickerSetThumbRequest:
+    """Parameters for setting a thumb of a sticker set."""
+
+    name: str
+    user_id: UserID
+    thumb: Optional[Union[InputFile, FileID]] = None
